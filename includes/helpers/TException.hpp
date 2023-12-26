@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/25 10:12:59 by bamrouch          #+#    #+#             */
-/*   Updated: 2023/12/25 14:02:51 by bamrouch         ###   ########.fr       */
+/*   Updated: 2023/12/26 15:44:52 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,12 +25,12 @@ class TException : exception
         ERR_T err_c;
         CLEANUP_T *cleanup;
     public :
-        TException(const string n_msg, const ERR_T &err, const CLEANUP_T *cln): msg(n_msg), err_c(err), cleanup(cln)
+        TException(const string n_msg, const ERR_T &err, CLEANUP_T *cln): msg(n_msg), err_c(err), cleanup(cln)
         {
             if (cleanup)
                 delete cleanup;
         };
-        const char *what() const throw()
+        virtual const char *what() const throw()
         {
             return msg.c_str();
         };

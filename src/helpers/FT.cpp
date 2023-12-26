@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/25 12:46:06 by bamrouch          #+#    #+#             */
-/*   Updated: 2023/12/25 14:16:24 by bamrouch         ###   ########.fr       */
+/*   Updated: 2023/12/26 10:38:19 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,4 +48,3 @@ void *FT::memcpy(void *dst, const void *src, size_t n)
 	}
 	return (dst);
 }
-

@@ -1,6 +1,6 @@
 NAME = webserv
 
-INCLUDES = -I./includes
+INCLUDES = -I./includes -I./includes/server -I./includes/helpers -I./includes/config 
 
 FLAGS = -Wall -Wextra -Werror -std=c++98 ${INCLUDES} -g -fsanitize=address,undefined
 

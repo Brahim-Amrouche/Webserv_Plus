@@ -6,13 +6,14 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/25 14:24:00 by bamrouch          #+#    #+#             */
-/*   Updated: 2023/12/25 20:24:06 by bamrouch         ###   ########.fr       */
+/*   Updated: 2023/12/26 16:42:21 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webserv.hpp"
+#include "TException.hpp"
 
-LoadBalancer::LoadBalancerExceptions::LoadBalancerExceptions(const loadbalancer_errors &err, const LoadBalancer *cln): TException("LoadBalancer Error: ", err, cln)
+LoadBalancer::LoadBalancerExceptions::LoadBalancerExceptions(const loadbalancer_errors &err, LoadBalancer *cln): TException("LoadBalancer Error: ", err, cln)
 {
     switch (err_c)
     {
@@ -28,18 +29,15 @@ LoadBalancer::LoadBalancerExceptions::LoadBalancerExceptions(const loadbalancer_
         case E_CREATE_CLIENT:
             msg += "Couldn't add a new client";
             break;
-        case E_LOADBALANCER_OUTOFMEM:
-            break;
         default:
             msg += "Unknown Error";
     }
 }
 
-LoadBalancer::LoadBalancer(Socket *sock):listener(sock), events_trigered(0) ,load(0)
+LoadBalancer::LoadBalancer(Socket *sock):listener(sock), epoll_fd(-1), events_trigered(0) ,load(0)
 {
     cout << "Initiating The Load Balancer" << endl;
-    epoll_fd = epoll_create(1);
-    if (epoll_fd = -1)
+    if ((epoll_fd = epoll_create(1)) == -1)
         throw LoadBalancer::LoadBalancerExceptions(E_EPOLLINIT, this);
     FT::memset(&(events[0]), 0, sizeof(EPOLL_EVENT));
     listener->fill_epoll_event(&(events[0]), EPOLLIN);
@@ -53,9 +51,8 @@ LoadBalancer::LoadBalancer(Socket *sock):listener(sock), events_trigered(0) ,loa
 void LoadBalancer::loop()
 {
     while (true)
-    {
+    {   
         FT::memset(events, 0, sizeof(EPOLL_EVENT) * load);
-        events_trigered = 0;
         events_trigered = epoll_wait(epoll_fd, events, load, -1);
         if (events_trigered == -1)
             throw LoadBalancer::LoadBalancerExceptions(E_EPOLLWAIT, this);
@@ -69,13 +66,79 @@ void LoadBalancer::loop()
 void LoadBalancer::handle_request()
 {
     int i = -1;
+    ClientDeqIt cl_it = clients.end();
+    int event_fd = -1;
     while (++i < events_trigered)
     {
-        if (events[i].data.fd == listener->getSockid())
+        cl_it = clients.end();
+        event_fd =  events[i].data.fd;  
+        if (event_fd == listener->getSockid())
         {
             cout << "making new connection" << endl;
             if (events[i].events & EPOLLIN)
-                new_connection(i);
+                add_client(i);
+        }
+        else if ((cl_it = find_client(event_fd)) != clients.end())
+        {
+            try
+            {
+                if (events[i].events & EPOLLIN)
+                    cl_it->receive();
+                else if (events[i].events & EPOLLOUT)
+                    cl_it->send();
+            }
+            catch (const Client::ClientExceptions &e)
+            {
+                cout << e.what() << endl;
+                clients.erase(cl_it);
+            }
         }
     }
+}
+
+void LoadBalancer::add_client(int event_id)
+{
+    Socket *new_client_sock = listener->sockAccept();
+    Client tmp_client(new_client_sock);
+    clients.push_back(tmp_client);
+    tmp_client.setSocket(NULL);
+    FT::memset(&(events[event_id]), 0, sizeof(EPOLL_EVENT));
+    new_client_sock->fill_epoll_event(&(events[event_id]), EPOLLIN | EPOLLOUT);
+    if (epoll_ctl(epoll_fd, EPOLL_CTL_ADD, new_client_sock->getSockid(), &(events[event_id])) == -1)
+        throw LoadBalancer::LoadBalancerExceptions(E_EPOLLCTL, this);
+    ++load;
+    cout << "New Client Added" << endl;
+}
+
+ClientDeqIt LoadBalancer::find_client(SOCKET_ID &sock_id)
+{
+    for (ClientDeqIt it = clients.begin(); it != clients.end(); it++)
+    {
+        if (it->getSocketId() == sock_id)
+            return it;
+    }
+    return clients.end();
+}
+
+void    LoadBalancer::remove_client(ClientDeqIt &rm_cl)
+{
+    SOCKET_ID rm_id = rm_cl->getSocketId();
+    clients.erase(rm_cl);
+    try
+    {
+        if (epoll_ctl(epoll_fd, EPOLL_CTL_DEL, rm_id, NULL) == -1)
+            throw LoadBalancer::LoadBalancerExceptions(E_EPOLLCTL, NULL);
+    }
+    catch (const LoadBalancer::LoadBalancerExceptions &e)
+    {
+        cout << "Couldn't Remove Client From epoll_ctl" << endl;
+    }
+}
+
+LoadBalancer::~LoadBalancer()
+{
+    if (listener)
+        delete listener;
+    if (epoll_fd >= 0)
+        close(epoll_fd);
 }

@@ -6,12 +6,12 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/25 12:36:57 by bamrouch          #+#    #+#             */
-/*   Updated: 2023/12/25 16:32:23 by bamrouch         ###   ########.fr       */
+/*   Updated: 2023/12/26 09:19:12 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 #include "Socket.hpp"
+#include "Client.hpp"
 #include "LoadBalancer.hpp"
-
 

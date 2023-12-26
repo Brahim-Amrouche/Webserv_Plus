@@ -6,13 +6,13 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/25 12:36:29 by bamrouch          #+#    #+#             */
-/*   Updated: 2023/12/25 19:52:35 by bamrouch         ###   ########.fr       */
+/*   Updated: 2023/12/26 15:55:56 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webserv.hpp"
 
-Socket::SocketExceptions::SocketExceptions(const socket_errors &err, const Socket *cleanup):TException("Socket Error: ",err, cleanup)
+Socket::SocketExceptions::SocketExceptions(const socket_errors &err, Socket *cln):TException("Socket Error: ",err, cln)
 {
     switch (err_c)
     {
@@ -65,7 +65,7 @@ Socket::Socket(const char *host, const char *port)
     cout << "Socket successfully opened" << endl;
 }
 
-void Socket::sockBind() const
+void Socket::sockBind()
 {
     cout << "Binding Socket" << endl;
     if (bind(sock_id, &sock_addr, sock_addr_len))
@@ -73,7 +73,7 @@ void Socket::sockBind() const
     cout << "Binding successfull" << endl;
 }
 
-void Socket::sockListen() const
+void Socket::sockListen()
 {
     cout << "Attempting to list on socket" << endl;
     if (listen(sock_id, SOMAXCONN))
@@ -81,7 +81,7 @@ void Socket::sockListen() const
     cout << "Socket listening" << endl;
 }
 
-Socket *Socket::sockAccept() const
+Socket *Socket::sockAccept()
 {
     cout << "Accepting a new connection" << endl;
     Socket *client_socket = new Socket();
@@ -95,13 +95,13 @@ Socket *Socket::sockAccept() const
     return client_socket;   
 }
 
-void Socket::fill_epoll_event(EPOLL_EVENT *e_event, uint32_t mode) const
+void Socket::fill_epoll_event(EPOLL_EVENT *e_event, uint32_t mode)
 {
     e_event->events = mode;
     e_event->data.fd = sock_id;
 }
 
-SOCKET_ID Socket::getSockid() const
+SOCKET_ID Socket::getSockid()
 {
     return sock_id;
 }

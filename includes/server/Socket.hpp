@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/25 10:10:24 by bamrouch          #+#    #+#             */
-/*   Updated: 2023/12/25 19:52:21 by bamrouch         ###   ########.fr       */
+/*   Updated: 2023/12/26 15:55:31 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,14 +62,15 @@ class Socket
         class SocketExceptions : TException<socket_errors, Socket>
         {
             public :
-                SocketExceptions(const socket_errors &err, const Socket *cleanup);
+                SocketExceptions(const socket_errors &err, Socket *cleanup);
+                virtual const char *what() const throw();
         };
         Socket();
         Socket(const char *host, const char *port);
-        void sockBind() const;
-        void sockListen() const;
-        Socket *sockAccept() const;
-        void    fill_epoll_event(EPOLL_EVENT *e_event, uint32_t mode) const;
-        SOCKET_ID getSockid() const;
+        void sockBind();
+        void sockListen();
+        Socket *sockAccept();
+        void    fill_epoll_event(EPOLL_EVENT *e_event, uint32_t mode);
+        SOCKET_ID getSockid();
         ~Socket();
 };
