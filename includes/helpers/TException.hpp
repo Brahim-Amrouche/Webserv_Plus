@@ -6,16 +6,18 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/25 10:12:59 by bamrouch          #+#    #+#             */
-/*   Updated: 2023/12/26 15:44:52 by bamrouch         ###   ########.fr       */
+/*   Updated: 2023/12/28 03:36:44 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 #include <exception>
 #include <string>
+#include <iostream>
 
 using std::exception;
 using std::string;
+
 
 template <typename ERR_T, typename CLEANUP_T>
 class TException : exception
@@ -28,7 +30,10 @@ class TException : exception
         TException(const string n_msg, const ERR_T &err, CLEANUP_T *cln): msg(n_msg), err_c(err), cleanup(cln)
         {
             if (cleanup)
+            {
                 delete cleanup;
+                cleanup = NULL;
+            }
         };
         virtual const char *what() const throw()
         {

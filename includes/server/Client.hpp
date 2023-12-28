@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/26 08:12:13 by bamrouch          #+#    #+#             */
-/*   Updated: 2023/12/26 16:02:17 by bamrouch         ###   ########.fr       */
+/*   Updated: 2023/12/28 00:56:49 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,11 +24,16 @@ class Client
     private :
         Socket *socket;
     public :
-        class ClientExceptions: TException<client_errors, Client>
+        class ClientExceptions: public TException<client_errors, Client>
         {
             public:
                 ClientExceptions(const client_errors &err, Client *cln);
-                const char *what() const throw();
+                const char *what() const throw() 
+                {
+                    return TException::what();
+                };
+                ~ClientExceptions() throw()
+                {};
         };
         Client();
         Client(Socket *cl_sock);

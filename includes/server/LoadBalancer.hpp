@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/25 14:24:24 by bamrouch          #+#    #+#             */
-/*   Updated: 2023/12/26 16:16:31 by bamrouch         ###   ########.fr       */
+/*   Updated: 2023/12/27 13:16:31 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,11 @@ class LoadBalancer
         {
             public:
                 LoadBalancerExceptions(const loadbalancer_errors &err, LoadBalancer *cln);
-                virtual const char *what() const throw();
+                virtual const char *what() const throw()
+                { 
+                    return TException::what();
+                };
+                virtual ~LoadBalancerExceptions() throw() {};
         };
         LoadBalancer(Socket *sock);
         void loop();

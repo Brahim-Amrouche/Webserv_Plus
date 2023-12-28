@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/25 10:10:24 by bamrouch          #+#    #+#             */
-/*   Updated: 2023/12/26 15:55:31 by bamrouch         ###   ########.fr       */
+/*   Updated: 2023/12/28 00:57:00 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,11 +59,16 @@ class Socket
         SOCK_ADDR_STORAGE sock_addr;
         SOCK_ADDR_LEN   sock_addr_len;
     public :
-        class SocketExceptions : TException<socket_errors, Socket>
+        class SocketExceptions : public TException<socket_errors, Socket>
         {
             public :
                 SocketExceptions(const socket_errors &err, Socket *cleanup);
-                virtual const char *what() const throw();
+                virtual const char *what() const throw()
+                {
+                    return TException::what();
+                };
+                virtual ~SocketExceptions() throw()
+                {};
         };
         Socket();
         Socket(const char *host, const char *port);

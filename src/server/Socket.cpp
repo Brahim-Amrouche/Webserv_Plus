@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/25 12:36:29 by bamrouch          #+#    #+#             */
-/*   Updated: 2023/12/26 15:55:56 by bamrouch         ###   ########.fr       */
+/*   Updated: 2023/12/28 03:53:29 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ Socket::Socket(const char *host, const char *port)
     sock_id = socket(bind_address->ai_family, bind_address->ai_socktype, bind_address->ai_protocol);
     freeaddrinfo(bind_address);
     if (!ISVALIDSOCKET(sock_id))
-        throw Socket::SocketExceptions(E_SOCKET_OPEN, this);
+        throw Socket::SocketExceptions(E_SOCKET_OPEN, NULL);
     cout << "Socket successfully opened" << endl;
 }
 

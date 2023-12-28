@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/25 14:24:00 by bamrouch          #+#    #+#             */
-/*   Updated: 2023/12/26 16:42:21 by bamrouch         ###   ########.fr       */
+/*   Updated: 2023/12/28 03:56:30 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,12 +37,16 @@ LoadBalancer::LoadBalancerExceptions::LoadBalancerExceptions(const loadbalancer_
 LoadBalancer::LoadBalancer(Socket *sock):listener(sock), epoll_fd(-1), events_trigered(0) ,load(0)
 {
     cout << "Initiating The Load Balancer" << endl;
-    if ((epoll_fd = epoll_create(1)) == -1)
-        throw LoadBalancer::LoadBalancerExceptions(E_EPOLLINIT, this);
-    FT::memset(&(events[0]), 0, sizeof(EPOLL_EVENT));
-    listener->fill_epoll_event(&(events[0]), EPOLLIN);
-    if (epoll_ctl(epoll_fd, EPOLL_CTL_ADD, listener->getSockid(), &(events[0])) == -1)
-        throw LoadBalancer::LoadBalancerExceptions(E_EPOLLCTL, this);
+    if ((epoll_fd = epoll_create(1)) < 0)
+        throw LoadBalancer::LoadBalancerExceptions(E_EPOLLINIT, NULL);
+    FT::memset(events, 0, sizeof(EPOLL_EVENT));
+    listener->fill_epoll_event(events, EPOLLIN);
+    if (epoll_ctl(epoll_fd, EPOLL_CTL_ADD, listener->getSockid(), events) == -1)
+    {
+        close(epoll_fd);
+        delete listener;
+        throw LoadBalancer::LoadBalancerExceptions(E_EPOLLCTL, NULL);
+    }
     ++load;
     FT::memset(events, 0, sizeof(EPOLL_EVENT) * MAX_EVENTS);
     cout << "Load Balancer Initialized" << endl;
@@ -54,9 +58,9 @@ void LoadBalancer::loop()
     {   
         FT::memset(events, 0, sizeof(EPOLL_EVENT) * load);
         events_trigered = epoll_wait(epoll_fd, events, load, -1);
-        if (events_trigered == -1)
+        if (events_trigered < 0)
             throw LoadBalancer::LoadBalancerExceptions(E_EPOLLWAIT, this);
-        if (events_trigered > 0)
+        else if (events_trigered > 0)
             handle_request();
         else
             cout << "listening..." << endl;
@@ -74,7 +78,6 @@ void LoadBalancer::handle_request()
         event_fd =  events[i].data.fd;  
         if (event_fd == listener->getSockid())
         {
-            cout << "making new connection" << endl;
             if (events[i].events & EPOLLIN)
                 add_client(i);
         }
