@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/27 17:30:56 by bamrouch          #+#    #+#             */
-/*   Updated: 2023/12/28 21:28:50 by bamrouch         ###   ########.fr       */
+/*   Updated: 2023/12/30 16:52:13 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,8 +69,6 @@ const char *directives[] =
     "upload_dir",
     "redirection",
 };
-
-const
 
 class ConfigParser
 {
