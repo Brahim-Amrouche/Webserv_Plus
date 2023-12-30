@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/28 06:28:14 by bamrouch          #+#    #+#             */
-/*   Updated: 2023/12/30 19:06:26 by bamrouch         ###   ########.fr       */
+/*   Updated: 2023/12/30 20:03:35 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -305,17 +305,42 @@ void    ConfigParser::parseCgiDirective(TokenIt &start_token, ServerConfiguratio
 {
     if (depth < 1)
         throw ConfigParserException(E_CGI_DIRECTIVE, this);
-    ++start_token;
-    if (start_token == tokens->end())
+    std::advance(start_token, 1);
+    if (start_token == tokens->end() || *start_token != "php" && *start_token != "py")
         throw ConfigParserException(E_CGI_DIRECTIVE, this);
-    ++start_token;
+    try
+    {
+        ServerConfiguration temp(*start_token);
+        config->pushSubdirective(directives[CGI], temp);
+        temp.setToNull();
+    }
+    catch(const std::exception& e)
+    {
+        throw ConfigParserException(E_CGI_DIRECTIVE, this);
+    }
+    std::advance(start_token, 1);
+    if (start_token == tokens->end() || *start_token != ";")
+        throw ConfigParserException(E_CGI_DIRECTIVE, this);
+    std::advance(start_token, 1);
 }
 
 void    ConfigParser::parseUploadDirDirective(TokenIt &start_token, ServerConfiguration *config)
 {
     if (depth < 1)
         throw ConfigParserException(E_UPLOAD_DIR_DIRECTIVE, this);
-    ++start_token;
+    std::advance(start_token, 1);
+    if (start_token == tokens->end() || !PH::strIsPath(*start_token))
+        throw ConfigParserException(E_UPLOAD_DIR_DIRECTIVE, this);
+    try
+    {
+        ServerConfiguration temp(*start_token);
+        config->pushSubdirective(directives[UPLOAD_DIR], temp);
+        temp.setToNull();
+    }
+    catch(const std::exception& e)
+    {
+        throw ConfigParserException(E_UPLOAD_DIR_DIRECTIVE, this);
+    }
     if (start_token == tokens->end())
         throw ConfigParserException(E_UPLOAD_DIR_DIRECTIVE, this);
     ++start_token;
@@ -325,12 +350,29 @@ void    ConfigParser::parseRedirectionDirective(TokenIt &start_token, ServerConf
 {
     if (depth < 1)
         throw ConfigParserException(E_REDIRECTION_DIRECTIVE, this);
-    ++start_token;
-    if (start_token == tokens->end())
+    std::advance(start_token, 1);
+    if (start_token == tokens->end() || PH::getHttpCodeType(*start_token) == UNVALID_CODE 
+        || PH::getHttpCodeType(*start_token) != REDIRECTION_CODE)
         throw ConfigParserException(E_REDIRECTION_DIRECTIVE, this);
-    ++start_token;
+    ServerConfiguration *subdir = NULL;
+    if (subdir = config->getSubdirective(directives[REDIRECTION]))
+        throw ConfigParserException(E_ERROR_PAGE_DIRECTIVE, this);
+    else
+    {
+        ServerConfiguration temp(directives[REDIRECTION]);
+        config->pushSubdirective(directives[REDIRECTION], temp);
+        temp.setToNull();
+        subdir = config->getSubdirective(directives[REDIRECTION]);
+    }
+    subdir->pushConfValue(*start_token);
+    std::advance(start_token, 1);
+    if (start_token == tokens->end() || !PH::strIsPath(*start_token))
+        throw ConfigParserException(E_ERROR_PAGE_DIRECTIVE, this);
+    subdir->pushConfValue(*start_token);
+    if (start_token == tokens->end() || *start_token != ";")
+        throw ConfigParserException(E_REDIRECTION_DIRECTIVE, this);
+    std::advance(start_token, 1);
 }
-
 
 ConfigParser::~ConfigParser()
 {
