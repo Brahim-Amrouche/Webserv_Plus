@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/28 06:28:14 by bamrouch          #+#    #+#             */
-/*   Updated: 2023/12/31 19:14:12 by bamrouch         ###   ########.fr       */
+/*   Updated: 2023/12/31 19:51:48 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ ConfigParser::ConfigParserException::ConfigParserException(const config_errors &
             msg+="Location Directive Format location [path] {}";
             break;
         case E_ROOT_DIRECTIVE:
-            msg+="Location Directive Format root [path];";
+            msg+="Root Directive Format root [path];";
             break;
         case E_AUTOINDEX_DIRECTIVE:
             msg+="Autoindex Directive Format autoindex [on|off];";
@@ -308,7 +308,8 @@ void    ConfigParser::parseIndexDirective(TokenIt &start_token)
     if (depth < 1)
         throw ConfigParserException(E_INDEX_DIRECTIVE, this);
     std::advance(start_token, 1);
-    if (start_token == tokens->end() || !PH::strIsPath(*start_token))
+    cout << "index_directive token: " << *start_token << endl;
+    if (start_token == tokens->end() || PH::strIsBreakToken(*start_token))
         throw ConfigParserException(E_INDEX_DIRECTIVE, this);
     try
     {
