@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/30 14:06:45 by bamrouch          #+#    #+#             */
-/*   Updated: 2023/12/30 19:05:17 by bamrouch         ###   ########.fr       */
+/*   Updated: 2023/12/31 15:46:21 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,4 +127,31 @@ bool PH::strIsPath(const string &str)
     if (str.size() && str[0] == '/')
         return true;
     return false;
+}
+
+
+void PH::parseErrorPage(list<string>::iterator &start, list<string>::iterator &end, deque<string> *error_list)
+{
+    size_t error_codes = 0;
+    bool path_set = false;
+    while (start != end && *start != ";")
+    {
+        if (PH::strIsPath(*start))
+        {
+            if (error_codes == 0 || std::find(error_list->begin(), error_list->end(), *start) != error_list->end())
+                throw PHException();
+            error_list->push_back(*start);
+            std::advance(start, 1);
+            path_set = true;
+            break;
+        }
+        else if (std::find(error_list->begin(), error_list->end(), *start) != error_list->end() || PH::getHttpCodeType(*start) == UNVALID_CODE 
+            || (PH::getHttpCodeType(*start) != CLIENT_ERROR_CODE && PH::getHttpCodeType(*start) != SERVER_ERROR_CODE) )
+            throw PHException();
+        error_list->push_back(*start);
+        ++error_codes;
+        std::advance(start, 1);
+    }
+    if (error_codes == 0 || !path_set || *start != ";")
+        throw PHException();
 }

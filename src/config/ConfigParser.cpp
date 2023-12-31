@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/28 06:28:14 by bamrouch          #+#    #+#             */
-/*   Updated: 2023/12/30 20:03:35 by bamrouch         ###   ########.fr       */
+/*   Updated: 2023/12/31 15:46:34 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -158,9 +158,6 @@ void    ConfigParser::parseErrorPageDirective(TokenIt &start_token, ServerConfig
     if (depth < 1)
         throw ConfigParserException(E_ERROR_PAGE_DIRECTIVE, this);
     std::advance(start_token, 1);
-    if (start_token == tokens->end() || PH::getHttpCodeType(*start_token) == UNVALID_CODE 
-        || (PH::getHttpCodeType(*start_token) != CLIENT_ERROR_CODE && PH::getHttpCodeType(*start_token) != SERVER_ERROR_CODE))
-        throw ConfigParserException(E_ERROR_PAGE_DIRECTIVE, this);
     ServerConfiguration *subdir = NULL;
     if (subdir = config->getSubdirective(directives[ERROR_PAGE]))
         throw ConfigParserException(E_ERROR_PAGE_DIRECTIVE, this);
@@ -171,14 +168,15 @@ void    ConfigParser::parseErrorPageDirective(TokenIt &start_token, ServerConfig
         temp.setToNull();
         subdir = config->getSubdirective(directives[ERROR_PAGE]);
     }
-    subdir->pushConfValue(*start_token);
-    std::advance(start_token, 1);
-    if (start_token == tokens->end() || !PH::strIsPath(*start_token))
+    try
+    {
+        TokenIt end_token = tokens->end();
+        PH::parseErrorPage(start_token, end_token, subdir->getConfigValue());
+    }
+    catch(const std::exception& e)
+    {
         throw ConfigParserException(E_ERROR_PAGE_DIRECTIVE, this);
-    subdir->pushConfValue(*start_token);
-    std::advance(start_token, 1);
-    if (start_token == tokens->end() || *start_token != ";")
-        throw ConfigParserException(E_ERROR_PAGE_DIRECTIVE, this);
+    }
     std::advance(start_token, 1);
 }
 

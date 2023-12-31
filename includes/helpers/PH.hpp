@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/30 13:54:13 by bamrouch          #+#    #+#             */
-/*   Updated: 2023/12/30 19:02:43 by bamrouch         ###   ########.fr       */
+/*   Updated: 2023/12/31 15:52:02 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,5 +51,7 @@ class PH
         static http_code_type getHttpCodeType(const string &code);
         static bool strIsBreakToken(const string &str);
         static bool strIsPath(const string &str);
+        static void parseErrorPage(list<string>::iterator &start, list<string>::iterator &end, deque<string> *error_list);
+        static void parseRedirection(list<string>::iterator &start, list<string>::iterator &end, deque<string> *redirection_list);
 };
 
