@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/30 14:06:45 by bamrouch          #+#    #+#             */
-/*   Updated: 2023/12/31 15:46:21 by bamrouch         ###   ########.fr       */
+/*   Updated: 2023/12/31 18:42:54 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,9 @@
 
 void PH::validIp(const string &host_str, size_t start, size_t len)
 {
-    if (len > 3)
-        throw PHException();
     string numb = host_str.substr(start, len);
+    if (numb.size() == 0 || numb.size() > 3)
+        throw PHException();
     stringstream ss(numb);
     int num = 0;
     if (!FT::strIsDigit(numb) || !(ss >> num) || num < 0 || num > 255)
@@ -57,7 +57,9 @@ void PH::parseHostString(const string &str, string (&info)[2])
     if (!FT::strIsDigit(port) || !(ss >> port_num) || port_num < 0)
         throw PHException();
     if (!host.size())
-        info[0] = "localhost";
+        host = "localhost";
+    info[0] = host;
+    info[1] = port;
 }
 
 string PH::parseBodySize(const string &str)
@@ -79,8 +81,9 @@ string PH::parseBodySize(const string &str)
     return oss.str();
 }
 
-string PH::strIsAllowedMethod(list<string>::iterator &start, list<string>::iterator &end, deque<string> *methods)
+void PH::strIsAllowedMethod(list<string>::iterator &start, list<string>::iterator &end, deque<string> *methods)
 {
+    bool method_set = false;
     while (start != end && *start != ";")
     {
         if (methods->size() == 4 || (*start != "GET" && *start != "POST" && *start != "DELETE"))
@@ -88,9 +91,12 @@ string PH::strIsAllowedMethod(list<string>::iterator &start, list<string>::itera
         for (size_t i = 1; i < methods->size(); i++)
             if (methods->at(i) == *start)
                 throw PHException();
+        method_set = true;
         methods->push_back(*start);
         std::advance(start, 1);
     }
+    if (start == end || !method_set || *start != ";")
+        throw PHException();
 }
 
 http_code_type PH::getHttpCodeType(const string &code)
@@ -155,3 +161,17 @@ void PH::parseErrorPage(list<string>::iterator &start, list<string>::iterator &e
     if (error_codes == 0 || !path_set || *start != ";")
         throw PHException();
 }
+
+// void PH::parseRedirection(list<string>::iterator &start, list<string>::iterator &end, deque<string> *redir_list)
+// {
+//     if (start == end || PH::getHttpCodeType(*start) == UNVALID_CODE || PH::getHttpCodeType(*start) != REDIRECTION_CODE)
+//         throw PHException();
+//     redir_list->push_back(*start);
+//     std::advance(start, 1);
+//     if (start == end || !PH::strIsPath(*start))
+//         throw PHException();
+//     redir_list->push_back(*start);
+//     std::advance(start, 1);
+//     if  (start == end || *start != ";")
+//         throw PHException();
+// }

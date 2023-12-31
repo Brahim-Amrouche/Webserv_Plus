@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/27 17:30:56 by bamrouch          #+#    #+#             */
-/*   Updated: 2023/12/30 16:52:13 by bamrouch         ###   ########.fr       */
+/*   Updated: 2023/12/31 17:41:49 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,27 +53,13 @@ enum DIRECTIVES_INDEX
     REDIRECTION,
 };
 
-const char *directives[] =
-{
-    "server",
-    "listen",
-    "server_name",
-    "error_page",
-    "location",
-    "root",
-    "autoindex",
-    "index",
-    "client_max_body_size",
-    "allow_methods",
-    "cgi",
-    "upload_dir",
-    "redirection",
-};
+extern const char *directives[13];
 
 class ConfigParser
 {
     private:
         list<string> *tokens;
+        ServerConfiguration *config;
         short int depth;
         deque<ServerConfiguration> servers;
     public:
@@ -91,19 +77,21 @@ class ConfigParser
         };
         
         ConfigParser(list<string> *new_tokens);
-        void parseConfig(TokenIt &it, ServerConfiguration *config);
-        void parseServerDirective(TokenIt &it, ServerConfiguration *config);
-        void parseListenDirective(TokenIt &it, ServerConfiguration *config);
-        void parseServerNameDirective(TokenIt &it, ServerConfiguration *config);
-        void parseErrorPageDirective(TokenIt &it, ServerConfiguration *config);
-        void parseLocationDirective(TokenIt &it, ServerConfiguration *config);
-        void parseRootDirective(TokenIt &it, ServerConfiguration *config);
-        void parseAutoindexDirective(TokenIt &it, ServerConfiguration *config);
-        void parseIndexDirective(TokenIt &it, ServerConfiguration *config);
-        void parseClientMaxBodySizeDirective(TokenIt &it, ServerConfiguration *config);
-        void parseAllowMethodsDirective(TokenIt &it, ServerConfiguration *config);
-        void parseCgiDirective(TokenIt &it, ServerConfiguration *config);
-        void parseUploadDirDirective(TokenIt &it, ServerConfiguration *config);
-        void parseRedirectionDirective(TokenIt &it, ServerConfiguration *config);
+        TokenIt getTokenStart();
+        void parseConfig(TokenIt &it);
+        void parseServerDirective(TokenIt &it);
+        void parseListenDirective(TokenIt &it);
+        void parseServerNameDirective(TokenIt &it);
+        void parseErrorPageDirective(TokenIt &it);
+        void parseLocationDirective(TokenIt &it);
+        void parseRootDirective(TokenIt &it);
+        void parseAutoindexDirective(TokenIt &it);
+        void parseIndexDirective(TokenIt &it);
+        void parseClientMaxBodySizeDirective(TokenIt &it);
+        void parseAllowMethodsDirective(TokenIt &it);
+        void parseCgiDirective(TokenIt &it);
+        void parseUploadDirDirective(TokenIt &it);
+        void parseRedirectionDirective(TokenIt &it);
+        void debug_print_servers();
         ~ConfigParser();
 };

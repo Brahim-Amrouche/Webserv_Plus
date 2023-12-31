@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/28 05:52:51 by bamrouch          #+#    #+#             */
-/*   Updated: 2023/12/30 17:00:22 by bamrouch         ###   ########.fr       */
+/*   Updated: 2023/12/31 19:00:06 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,9 +91,28 @@ void ServerConfiguration::pushSubdirective(const string &path, const ServerConfi
         subdirective = new map<string, ServerConfiguration>();
     if (subdirective->find(path) != subdirective->end())
         throw ServerConfiguarationException();
-    subdirective->insert(std::pair<string, ServerConfiguration>(path, config));
+    (*subdirective)[path] = config;
 }
 
+void ServerConfiguration::debug_print_directives()
+{
+    if (config_values)
+    {
+        cout << "config_values-> ";
+        for (deque<string>::iterator it = config_values->begin(); it != config_values->end(); it++)
+            cout << *it << " ";
+        cout << std::endl;
+    }
+    if (subdirective)
+    {
+        std::cout << "subdirective: " << std::endl;
+        for (ConfigIt it = subdirective->begin(); it != subdirective->end(); it++)
+        {
+            std::cout << it->first << "-> ";
+            it->second.debug_print_directives();
+        }
+    }
+}
 
 ServerConfiguration::~ServerConfiguration()
 {

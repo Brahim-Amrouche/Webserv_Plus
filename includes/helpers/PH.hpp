@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/30 13:54:13 by bamrouch          #+#    #+#             */
-/*   Updated: 2023/12/31 15:52:02 by bamrouch         ###   ########.fr       */
+/*   Updated: 2023/12/31 17:08:26 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,12 +16,14 @@
 #include <exception>
 #include <iostream>
 #include <list>
+#include <deque>
 
 using std::string;
 using std::stringstream;
 using std::exception;
 using std::ostringstream;
 using std::list;
+using std::deque;
 
 typedef enum HTTP_CODE_TYPE
 {
@@ -46,12 +48,12 @@ class PH
         };
         static void parseHostString(const string &str, string (&info)[2]);
         static void validIp(const string &host_str, size_t start, size_t len);
+        static void strIsAllowedMethod(list<string>::iterator &start, list<string>::iterator &end, deque<string> *methods);
         static string parseBodySize(const string &str);
-        static string strIsAllowedMethod(list<string>::iterator &start, list<string>::iterator &end, deque<string> *methods);
         static http_code_type getHttpCodeType(const string &code);
         static bool strIsBreakToken(const string &str);
         static bool strIsPath(const string &str);
         static void parseErrorPage(list<string>::iterator &start, list<string>::iterator &end, deque<string> *error_list);
-        static void parseRedirection(list<string>::iterator &start, list<string>::iterator &end, deque<string> *redirection_list);
+        // static void parseRedirection(list<string>::iterator &start, list<string>::iterator &end, deque<string> *redirection_list);
 };
 
