@@ -6,13 +6,14 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/27 17:30:56 by bamrouch          #+#    #+#             */
-/*   Updated: 2023/12/31 17:41:49 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/01 17:31:59 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 #include "TokenizeInput.hpp"
 #include "ServerConfiguration.hpp"
+#include "Socket.hpp"
 #include <map>
 
 using std::map;
@@ -34,6 +35,7 @@ typedef enum CONFIG_PARSER_ERR_CODES
     E_CGI_DIRECTIVE,
     E_UPLOAD_DIR_DIRECTIVE,
     E_REDIRECTION_DIRECTIVE,
+    E_LISTEN_DIRECTIVE_MISSING
 }   config_errors;
 
 enum DIRECTIVES_INDEX
@@ -62,6 +64,8 @@ class ConfigParser
         ServerConfiguration *config;
         short int depth;
         deque<ServerConfiguration> servers;
+        deque<ServerSocket>        *server_sockets;
+        deque<size_t>   similar_servers;
     public:
         typedef list<string>::iterator TokenIt;
         class ConfigParserException: public TException<config_errors, ConfigParser>
@@ -92,6 +96,8 @@ class ConfigParser
         void parseCgiDirective(TokenIt &it);
         void parseUploadDirDirective(TokenIt &it);
         void parseRedirectionDirective(TokenIt &it);
+        void generateServerSockets();
+        deque<ServerSocket> *getServerSockets();
         void debug_print_servers();
         ~ConfigParser();
 };

@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/27 17:31:00 by bamrouch          #+#    #+#             */
-/*   Updated: 2023/12/28 06:24:29 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/01 17:56:23 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,4 +15,4 @@
 #include "ConfigParser.hpp"
 
 
-void    configure(const char *path);
+deque<ServerSocket> *configure(const char *path);

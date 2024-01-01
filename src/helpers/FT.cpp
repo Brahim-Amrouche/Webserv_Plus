@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/25 12:46:06 by bamrouch          #+#    #+#             */
-/*   Updated: 2023/12/30 14:09:27 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/01 14:44:39 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,11 +49,21 @@ void *FT::memcpy(void *dst, const void *src, size_t n)
 	return (dst);
 }
 
-bool	FT::strIsDigit(const std::string &str)
+bool	FT::strIsDigit(const string &str)
 {
 	size_t i = -1;
 	while (++i < str.size())
 		if (!isdigit(str[i]))
 			return false;
 	return true;
+}
+
+string FT::strToLowercase(const string &str)
+{
+	string new_str;
+	for (size_t i = 0; i< str.size(); i++)
+	{
+		new_str.push_back(std::tolower(str[i]));
+	}
+	return new_str;
 }

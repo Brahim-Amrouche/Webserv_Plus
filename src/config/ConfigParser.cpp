@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/28 06:28:14 by bamrouch          #+#    #+#             */
-/*   Updated: 2023/12/31 19:51:48 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/01 20:02:48 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,9 @@ ConfigParser::ConfigParserException::ConfigParserException(const config_errors &
         case E_REDIRECTION_DIRECTIVE:
             msg+="Redirection Directive Format redirection [code] [path];";
             break;
+        case E_LISTEN_DIRECTIVE_MISSING:
+            msg+="No Listen Directive Given";
+            break;
         default:
             msg+= "Unknown Error";
             break;
@@ -82,7 +85,7 @@ ConfigParser::ConfigParserException::ConfigParserException(const config_errors &
 }
 
 
-ConfigParser::ConfigParser(list<string> *new_tokens):tokens(new_tokens), config(NULL), depth(0)
+ConfigParser::ConfigParser(list<string> *new_tokens):tokens(new_tokens), config(NULL), depth(0), server_sockets(NULL)
 {}
 
 ConfigParser::TokenIt ConfigParser::getTokenStart()
@@ -94,7 +97,7 @@ void    ConfigParser::parseConfig(TokenIt &start_token)
 {
     while (start_token != tokens->end())
     {
-        cout << "token: " << *start_token << endl;
+        // cout << "token: " << *start_token << endl;
         if (*start_token == directives[SERVER])
             parseServerDirective(start_token);
         else if (*start_token == directives[LISTEN])
@@ -154,6 +157,8 @@ void ConfigParser::parseServerDirective(TokenIt &start_token)
     temp.setToNull();
     config = &(servers.back());
     parseConfig(start_token);
+    if (!config->getSubdirective(directives[LISTEN]))
+        throw ConfigParserException(E_LISTEN_DIRECTIVE_MISSING, this);
     config = NULL;
 }
 
@@ -308,7 +313,6 @@ void    ConfigParser::parseIndexDirective(TokenIt &start_token)
     if (depth < 1)
         throw ConfigParserException(E_INDEX_DIRECTIVE, this);
     std::advance(start_token, 1);
-    cout << "index_directive token: " << *start_token << endl;
     if (start_token == tokens->end() || PH::strIsBreakToken(*start_token))
         throw ConfigParserException(E_INDEX_DIRECTIVE, this);
     try
@@ -441,6 +445,42 @@ void    ConfigParser::parseRedirectionDirective(TokenIt &start_token)
         throw ConfigParserException(E_REDIRECTION_DIRECTIVE, this);
 }
 
+void ConfigParser::generateServerSockets()
+{
+    server_sockets = new deque<ServerSocket>();
+    for (size_t i= 0; i < servers.size() ; i++)
+    {
+        if (std::find(similar_servers.begin(), similar_servers.end(), i) !=  similar_servers.end())
+            continue;
+        ServerConfiguration *curr_dir = servers[i][directives[LISTEN]];
+        deque<string> *listen_val = **curr_dir;
+        string host_val = (*listen_val)[0], port_val= (*listen_val)[1];
+        ServerSocket new_server(servers[i], host_val.c_str(), port_val.c_str());
+        servers[i].setToNull();
+        server_sockets->push_back(new_server);
+        for (size_t j = i + 1; j < servers.size(); j++)
+        {
+            ServerConfiguration *tmp_dir = servers[j][directives[LISTEN]];
+            deque<string> *tmp_listen_val = **tmp_dir;
+            string tmp_host = (*tmp_listen_val)[0], tmp_port = (*tmp_listen_val)[1];
+            if(tmp_host == host_val && tmp_port == port_val)
+            {
+                new_server.pushServerConfig(servers[j]);
+                servers[j].setToNull();
+                similar_servers.push_back(j);
+            }
+        }
+        new_server.nullify();
+    } 
+}
+
+deque<ServerSocket> *ConfigParser::getServerSockets()
+{
+    deque<ServerSocket> *temp = server_sockets;
+    server_sockets = NULL;
+    return temp;   
+}
+
 void ConfigParser::debug_print_servers()
 {
     deque<ServerConfiguration>::iterator it = servers.begin();
@@ -454,5 +494,8 @@ void ConfigParser::debug_print_servers()
 
 ConfigParser::~ConfigParser()
 {
-    delete tokens;
+    if (tokens)
+        delete tokens;
+    if (server_sockets)
+        delete server_sockets;
 }

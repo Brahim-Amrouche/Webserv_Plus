@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/28 05:52:51 by bamrouch          #+#    #+#             */
-/*   Updated: 2023/12/31 19:00:06 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/01 18:14:06 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,6 +94,21 @@ void ServerConfiguration::pushSubdirective(const string &path, const ServerConfi
     (*subdirective)[path] = config;
 }
 
+deque<string> *ServerConfiguration::operator*()
+{
+    return config_values;
+}
+
+ServerConfiguration *ServerConfiguration::operator[](string dir_name)
+{
+    if (!subdirective)
+        return NULL;
+    map<string, ServerConfiguration>::iterator found = subdirective->find(dir_name);
+    if (found == subdirective->end())
+        return NULL;
+    return &(found->second);
+}
+
 void ServerConfiguration::debug_print_directives()
 {
     if (config_values)
@@ -113,6 +128,7 @@ void ServerConfiguration::debug_print_directives()
         }
     }
 }
+
 
 ServerConfiguration::~ServerConfiguration()
 {

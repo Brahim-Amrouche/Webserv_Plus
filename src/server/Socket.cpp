@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/25 12:36:29 by bamrouch          #+#    #+#             */
-/*   Updated: 2023/12/28 03:53:29 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/01 20:04:54 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,23 @@ Socket::Socket(const char *host, const char *port)
     cout << "Socket successfully opened" << endl;
 }
 
+Socket::Socket(const Socket &cpy_sock)
+{
+    Socket::operator=(cpy_sock);
+}
+
+
+Socket &Socket::operator=(const Socket &eq_sock)
+{
+    if (this != &eq_sock)
+    {
+        sock_id = eq_sock.sock_id;
+        sock_addr = eq_sock.sock_addr;
+        sock_addr_len = eq_sock.sock_addr_len;
+    }
+    return *this;
+}
+
 void Socket::sockBind()
 {
     cout << "Binding Socket" << endl;
@@ -106,8 +123,55 @@ SOCKET_ID Socket::getSockid()
     return sock_id;
 }
 
+void Socket::nullify()
+{
+    sock_id = -1;
+    sock_addr_len = 0;
+    FT::memset(&sock_addr, 0, sizeof(SOCK_ADDR_STORAGE));
+}
+
 Socket::~Socket()
 {
     if (ISVALIDSOCKET(sock_id))
         close(sock_id);
+    cout << "Socket closed" << endl;
+}
+
+
+ServerSocket::ServerSocket(ServerConfiguration &first_server, const char *host, const char *port):Socket(host, port)
+{
+    configs = new deque<ServerConfiguration>;
+    configs->push_back(first_server);
+}
+
+ServerSocket::ServerSocket(const ServerSocket &cpy_srv_sock)
+{
+    ServerSocket::operator=(cpy_srv_sock);
+}
+
+ServerSocket &ServerSocket::operator=(const ServerSocket &eq_srv_sock)
+{
+    if (this != &eq_srv_sock)
+    {
+        Socket::operator=(eq_srv_sock);
+        configs = eq_srv_sock.configs;
+    }
+    return (*this);
+}
+
+void ServerSocket::nullify()
+{
+    Socket::nullify();
+    configs = NULL;
+}
+
+void ServerSocket::pushServerConfig(ServerConfiguration &new_config)
+{
+    configs->push_back(new_config);
+}
+
+ServerSocket::~ServerSocket()
+{
+    if (configs)
+        delete configs;
 }

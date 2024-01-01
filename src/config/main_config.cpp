@@ -6,13 +6,13 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/28 03:16:57 by bamrouch          #+#    #+#             */
-/*   Updated: 2023/12/31 18:40:51 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/01 20:04:18 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webserv.hpp"
 
-void    configure(const char *path)
+deque<ServerSocket>   *configure(const char *path)
 {
     TokenizeInput *tokenizer = NULL;
     list<string> *tokens = NULL;
@@ -20,34 +20,30 @@ void    configure(const char *path)
     {
         tokenizer = new TokenizeInput(path);
         tokens = tokenizer->getTokensList();
-        // ConfigParser::TokenIt start = tokens->begin();
-        // ConfigParser::TokenIt end  = tokens->end();
-        // while (start != end)
-        // {
-        //     std::cout << *start << std::endl;
-        //     start++;
-        // }
     }
     catch(const TokenizeInput::TokenizeInputExceptions& e)
     {  
         cout << e.what() << endl;
-        return ;
+        return NULL;
     }
-    
+    ConfigParser *parser = new ConfigParser(tokens);
+    deque<ServerSocket> *server_sockets = NULL;
     try 
     {
-        // delete tokens;
-        ConfigParser *parser = new ConfigParser(tokens);
         ConfigParser::TokenIt it = parser->getTokenStart();
         parser->parseConfig(it);
+        parser->generateServerSockets();
+        server_sockets = parser->getServerSockets();
         parser->debug_print_servers();
-        delete parser;
     }
     catch (const ConfigParser::ConfigParserException &e)
     {
         cout << e.what() << endl;
         delete tokenizer;
-        return ;
+        return NULL;
     }
+    delete parser;
     delete tokenizer;
+    delete server_sockets;
+    return NULL;
 }

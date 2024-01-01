@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/25 12:43:17 by bamrouch          #+#    #+#             */
-/*   Updated: 2023/12/30 14:08:28 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/01 14:40:14 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,8 @@ class FT
         static void	*memset(void *b, int c, size_t len);
         static void	*memcpy(void *dst, const void *src, size_t n);
         static size_t  strlen(const char *str);
-        static bool    strIsDigit(const std::string &str);
+        static bool    strIsDigit(const string &str);
+        static string  strToLowercase(const string &str);
 };
 
 

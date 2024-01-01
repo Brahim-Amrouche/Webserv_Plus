@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/30 14:06:45 by bamrouch          #+#    #+#             */
-/*   Updated: 2023/12/31 18:42:54 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/01 18:32:04 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,43 +23,50 @@ void PH::validIp(const string &host_str, size_t start, size_t len)
         throw PHException();
 }
 
+void PH::getHostString(const string &str, string &host, string &port, size_t colons_pos)
+{
+    size_t point1, point2, point3;
+    string numb1, numb2, numb3, numb4;
+    host = str.substr(0, colons_pos);
+    if (colons_pos + 1 < str.size())
+        port = str.substr(colons_pos + 1, string::npos);
+    else
+        throw PHException();
+    host = FT::strToLowercase(host);
+    if (host == "localhost")
+        return;
+    point1 = host.find_first_of('.');
+    if (point1 == string::npos)
+        throw PHException();
+    point2 = host.find_first_of('.', point1 + 1);
+    if (point2 == string::npos)
+        throw PHException();
+    point3 = host.find_first_of('.', point2 + 1);
+    if (point3 == string::npos)
+        throw PHException();
+    PH::validIp(host, 0, point1);
+    PH::validIp(host, point1 + 1, point2 - point1 - 1);
+    PH::validIp(host, point2 + 1, point3 - point2 - 1);
+    PH::validIp(host, point3 + 1, string::npos);
+}
+
 void PH::parseHostString(const string &str, string (&info)[2])
 {
     string host, port;
     size_t colons_pos = str.find_first_of(":");
     if (colons_pos != string::npos)
-    {
-        size_t point1, point2, point3;
-        string numb1, numb2, numb3, numb4;
-        host = str.substr(0, colons_pos);
-        if (colons_pos + 1 < str.size())
-            port = str.substr(colons_pos + 1, string::npos);
-        else
-            throw PHException();
-        point1 = host.find_first_of('.');
-        if (point1 == string::npos)
-            throw PHException();
-        point2 = host.find_first_of('.', point1 + 1);
-        if (point2 == string::npos)
-            throw PHException();
-        point3 = host.find_first_of('.', point2 + 1);
-        if (point3 == string::npos)
-            throw PHException();
-        PH::validIp(host, 0, point1);
-        PH::validIp(host, point1 + 1, point2 - point1 - 1);
-        PH::validIp(host, point2 + 1, point3 - point2 - 1);
-        PH::validIp(host, point3 + 1, string::npos);
-    }
+        PH::getHostString(str, host, port, colons_pos);
     else
         port = str;
     stringstream ss(port);
     int port_num = 0;
     if (!FT::strIsDigit(port) || !(ss >> port_num) || port_num < 0)
         throw PHException();
-    if (!host.size())
-        host = "localhost";
+    if (!host.size() || host == "localhost")
+        host = "127.0.0.1";
     info[0] = host;
     info[1] = port;
+    // cout << "info[0]:" << info[0] << " info[1]:" << info[1] << endl;
 }
 
 string PH::parseBodySize(const string &str)

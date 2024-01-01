@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/28 05:50:19 by bamrouch          #+#    #+#             */
-/*   Updated: 2023/12/31 17:45:43 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/01 18:11:43 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,8 @@ class ServerConfiguration
         void    setToNull();
         void    pushConfValue(const string &value);
         void    pushSubdirective(const    string &directive, const ServerConfiguration &config);
+        deque<string> *operator*();
+        ServerConfiguration *operator[](string dir_name);
         void    debug_print_directives();
         ~ServerConfiguration();
 };

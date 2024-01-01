@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/25 10:10:24 by bamrouch          #+#    #+#             */
-/*   Updated: 2023/12/28 00:57:00 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/01 19:54:27 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,9 @@
 #include <sstream>
 #include <cstdlib>
 #include <csignal>
+#include <deque>
 #include "helpers.hpp"
+#include "ServerConfiguration.hpp"
 
 #define IPV4_AND_6 AF_UNSPEC
 #define TCP_SOCK SOCK_STREAM
@@ -51,10 +53,11 @@ typedef enum SOCKET_ERR_CODES
 
 using std::cout;
 using std::endl;
+using std::deque;
 
 class Socket
 {
-    private :
+    protected :
         SOCKET_ID sock_id;
         SOCK_ADDR_STORAGE sock_addr;
         SOCK_ADDR_LEN   sock_addr_len;
@@ -72,10 +75,27 @@ class Socket
         };
         Socket();
         Socket(const char *host, const char *port);
+        Socket(const Socket &cpy_sock);
+        Socket &operator=(const Socket &eq_sock);
         void sockBind();
         void sockListen();
         Socket *sockAccept();
         void    fill_epoll_event(EPOLL_EVENT *e_event, uint32_t mode);
         SOCKET_ID getSockid();
-        ~Socket();
+        virtual void nullify();
+        virtual ~Socket();
+};
+
+
+class ServerSocket: public Socket
+{
+    private:
+        deque<ServerConfiguration> *configs;
+    public:
+        ServerSocket(ServerConfiguration &first_conf, const char *host, const char *port);
+        ServerSocket(const ServerSocket &cpy_srv_sock);
+        ServerSocket &operator=(const ServerSocket &eq_srv_sock);
+        void pushServerConfig(ServerConfiguration &new_config);
+        void nullify();
+        virtual ~ServerSocket();
 };
