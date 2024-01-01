@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/28 06:28:14 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/01 20:02:48 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/01 22:08:35 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -455,9 +455,11 @@ void ConfigParser::generateServerSockets()
         ServerConfiguration *curr_dir = servers[i][directives[LISTEN]];
         deque<string> *listen_val = **curr_dir;
         string host_val = (*listen_val)[0], port_val= (*listen_val)[1];
-        ServerSocket new_server(servers[i], host_val.c_str(), port_val.c_str());
+        ServerSocket *new_server = new ServerSocket(servers[i], host_val.c_str(), port_val.c_str());
         servers[i].setToNull();
-        server_sockets->push_back(new_server);
+        new_server->sockBind();
+        new_server->sockListen();
+        server_sockets->push_back(*new_server);
         for (size_t j = i + 1; j < servers.size(); j++)
         {
             ServerConfiguration *tmp_dir = servers[j][directives[LISTEN]];
@@ -465,12 +467,13 @@ void ConfigParser::generateServerSockets()
             string tmp_host = (*tmp_listen_val)[0], tmp_port = (*tmp_listen_val)[1];
             if(tmp_host == host_val && tmp_port == port_val)
             {
-                new_server.pushServerConfig(servers[j]);
+                new_server->pushServerConfig(servers[j]);
                 servers[j].setToNull();
                 similar_servers.push_back(j);
             }
         }
-        new_server.nullify();
+        new_server->nullify();
+        delete new_server;
     } 
 }
 

@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/25 10:10:24 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/01 19:54:27 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/01 22:39:24 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,7 @@ typedef enum SOCKET_ERR_CODES
 {
     E_ADDRESS_LOOKUP,
     E_SOCKET_OPEN,
+    E_SOCKET_OPT,
     E_SOCKET_BIND_FAILED,
     E_LISTEN_FAILED,
     E_SOCKET_ACCEPT
@@ -77,11 +78,11 @@ class Socket
         Socket(const char *host, const char *port);
         Socket(const Socket &cpy_sock);
         Socket &operator=(const Socket &eq_sock);
-        void sockBind();
-        void sockListen();
-        Socket *sockAccept();
-        void    fill_epoll_event(EPOLL_EVENT *e_event, uint32_t mode);
-        SOCKET_ID getSockid();
+        virtual void sockBind();
+        virtual void sockListen();
+        virtual Socket *sockAccept();
+        virtual void    fill_epoll_event(EPOLL_EVENT *e_event, uint32_t mode);
+        virtual SOCKET_ID getSockid();
         virtual void nullify();
         virtual ~Socket();
 };
@@ -96,6 +97,6 @@ class ServerSocket: public Socket
         ServerSocket(const ServerSocket &cpy_srv_sock);
         ServerSocket &operator=(const ServerSocket &eq_srv_sock);
         void pushServerConfig(ServerConfiguration &new_config);
-        void nullify();
+        virtual void nullify();
         virtual ~ServerSocket();
 };

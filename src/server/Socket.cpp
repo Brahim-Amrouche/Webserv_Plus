@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/25 12:36:29 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/01 20:04:54 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/01 22:39:13 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,9 @@ Socket::SocketExceptions::SocketExceptions(const socket_errors &err, Socket *cln
             break;
         case E_SOCKET_OPEN:
             msg += "Openning New Socket Failed";
+            break;
+        case E_SOCKET_OPT:
+            msg += "Setting Socket Options Failed";
             break;
         case E_SOCKET_BIND_FAILED:
             msg += "Binding Socket Failed";
@@ -43,6 +46,8 @@ Socket::Socket():sock_id(-1), sock_addr_len(0)
 
 Socket::Socket(const char *host, const char *port)
 {
+    cout << "host is " << host << endl;
+    cout << "port is " << port << endl;
     ADDRESS_INFO hints;
     FT::memset(&hints, 0, sizeof(ADDRESS_INFO));
     hints.ai_family = IPV4_AND_6;
@@ -61,6 +66,9 @@ Socket::Socket(const char *host, const char *port)
     sock_id = socket(bind_address->ai_family, bind_address->ai_socktype, bind_address->ai_protocol);
     freeaddrinfo(bind_address);
     if (!ISVALIDSOCKET(sock_id))
+        throw Socket::SocketExceptions(E_SOCKET_OPEN, NULL);
+    int opt = 1;
+    if (setsockopt(sock_id, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) == -1)
         throw Socket::SocketExceptions(E_SOCKET_OPEN, NULL);
     cout << "Socket successfully opened" << endl;
 }
@@ -85,6 +93,7 @@ Socket &Socket::operator=(const Socket &eq_sock)
 void Socket::sockBind()
 {
     cout << "Binding Socket" << endl;
+    cout << "sock_addr_len is " << sock_addr_len << endl;
     if (bind(sock_id, &sock_addr, sock_addr_len))
         throw Socket::SocketExceptions(E_SOCKET_BIND_FAILED, this);
     cout << "Binding successfull" << endl;
@@ -92,7 +101,7 @@ void Socket::sockBind()
 
 void Socket::sockListen()
 {
-    cout << "Attempting to list on socket" << endl;
+    cout << "Attempting to listen on socket" << endl;
     if (listen(sock_id, SOMAXCONN))
         throw Socket::SocketExceptions(E_LISTEN_FAILED, this);
     cout << "Socket listening" << endl;
@@ -138,9 +147,9 @@ Socket::~Socket()
 }
 
 
-ServerSocket::ServerSocket(ServerConfiguration &first_server, const char *host, const char *port):Socket(host, port)
+ServerSocket::ServerSocket(ServerConfiguration &first_server, const char *host, const char *port):Socket(host, port), configs(NULL)
 {
-    configs = new deque<ServerConfiguration>;
+    configs = new deque<ServerConfiguration>();
     configs->push_back(first_server);
 }
 
@@ -174,4 +183,5 @@ ServerSocket::~ServerSocket()
 {
     if (configs)
         delete configs;
+    cout << "Server Socket Closed"  << endl;
 }

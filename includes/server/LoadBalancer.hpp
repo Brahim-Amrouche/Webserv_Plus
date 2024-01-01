@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/25 14:24:24 by bamrouch          #+#    #+#             */
-/*   Updated: 2023/12/27 13:16:31 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/01 21:08:22 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,11 +30,12 @@ typedef enum LOADBALANCER_ERR_CODES
 } loadbalancer_errors;
 
 typedef deque<Client>::iterator ClientDeqIt;
+typedef deque<ServerSocket>::iterator SrvSockDeqIt;
 
 class LoadBalancer
 {
     public:
-        Socket *listener;
+        deque<ServerSocket> *listeners;
         int epoll_fd;
         EPOLL_EVENT events[MAX_EVENTS];
         int events_trigered;
@@ -51,11 +52,12 @@ class LoadBalancer
                 };
                 virtual ~LoadBalancerExceptions() throw() {};
         };
-        LoadBalancer(Socket *sock);
+        LoadBalancer(deque<ServerSocket> *sockets);
         void loop();
         void handle_request();
-        void add_client(int event_id);
+        void add_client(int event_id, SrvSockDeqIt &server);
         ClientDeqIt find_client(SOCKET_ID &sock_id);
+        SrvSockDeqIt find_server(SOCKET_ID &sock_id);
         void remove_client(ClientDeqIt &rm_cl);
         ~LoadBalancer();
 };

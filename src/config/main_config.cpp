@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/28 03:16:57 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/01 20:04:18 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/01 22:17:57 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@ deque<ServerSocket>   *configure(const char *path)
     {
         tokenizer = new TokenizeInput(path);
         tokens = tokenizer->getTokensList();
+        delete tokenizer;
+        tokenizer = NULL;
     }
     catch(const TokenizeInput::TokenizeInputExceptions& e)
     {  
@@ -35,15 +37,20 @@ deque<ServerSocket>   *configure(const char *path)
         parser->generateServerSockets();
         server_sockets = parser->getServerSockets();
         parser->debug_print_servers();
+        delete parser;
+        parser = NULL;
     }
     catch (const ConfigParser::ConfigParserException &e)
     {
         cout << e.what() << endl;
-        delete tokenizer;
         return NULL;
     }
-    delete parser;
-    delete tokenizer;
-    delete server_sockets;
-    return NULL;
+    catch (const Socket::SocketExceptions &e)
+    {
+        cout << e.what() << endl;
+        delete parser;
+        return NULL;
+    }
+    cleanup_data.cleanup_server_sock = server_sockets;
+    return server_sockets;
 }
