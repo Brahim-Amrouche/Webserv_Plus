@@ -1,27 +1,14 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   webserv.hpp                                        :+:      :+:    :+:   */
+/*   main.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/12/25 14:12:51 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/02 14:49:06 by bamrouch         ###   ########.fr       */
+/*   Created: 2024/01/02 14:48:31 by bamrouch          #+#    #+#             */
+/*   Updated: 2024/01/02 14:48:53 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
-#include "./server/server.hpp"
-#include "./helpers/helpers.hpp"
-#include "./config/config.hpp"
-#include "./request/main.hpp"
-
-#define DEFAULT_CONFIG "./config/default_config.conf"
-
-typedef struct s_cleanup
-{
-    deque<ServerSocket>   *cleanup_server_sock;
-    LoadBalancer *cleanup_loadbalancer;
-}   t_cleanup;
-
-extern t_cleanup cleanup_data;
+#include "Request.hpp"

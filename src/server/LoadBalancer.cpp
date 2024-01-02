@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/25 14:24:00 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/01 21:09:37 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/02 22:59:26 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,13 +102,16 @@ void LoadBalancer::handle_request()
             {
                 if (events[i].events & EPOLLIN)
                     cl_it->receive();
-                else if (events[i].events & EPOLLOUT)
-                    cl_it->send();
+                // else
+                //     cout << "write to me man" << endl;
+                // else if (events[i].events & EPOLLOUT)
+                //     cl_it->send();
             }
             catch (const Client::ClientExceptions &e)
             {
                 cout << e.what() << endl;
                 clients.erase(cl_it);
+                --load;
             }
         }
     }
@@ -117,9 +120,9 @@ void LoadBalancer::handle_request()
 void LoadBalancer::add_client(int event_id, SrvSockDeqIt &server)
 {
     Socket *new_client_sock = server->sockAccept();
-    Client tmp_client(new_client_sock);
+    Client tmp_client(new_client_sock, *server);
     clients.push_back(tmp_client);
-    tmp_client.setSocket(NULL);
+    tmp_client.nullify();
     FT::memset(&(events[event_id]), 0, sizeof(EPOLL_EVENT));
     new_client_sock->fill_epoll_event(&(events[event_id]), EPOLLIN | EPOLLOUT);
     if (epoll_ctl(epoll_fd, EPOLL_CTL_ADD, new_client_sock->getSockid(), &(events[event_id])) == -1)

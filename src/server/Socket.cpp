@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/25 12:36:29 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/01 22:39:13 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/02 17:12:36 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,6 @@ Socket &Socket::operator=(const Socket &eq_sock)
 void Socket::sockBind()
 {
     cout << "Binding Socket" << endl;
-    cout << "sock_addr_len is " << sock_addr_len << endl;
     if (bind(sock_id, &sock_addr, sock_addr_len))
         throw Socket::SocketExceptions(E_SOCKET_BIND_FAILED, this);
     cout << "Binding successfull" << endl;

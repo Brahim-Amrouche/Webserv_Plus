@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/25 12:37:54 by bamrouch          #+#    #+#             */
-/*   Updated: 2023/12/30 14:06:38 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/02 15:15:07 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,3 +14,4 @@
 #include "TException.hpp"
 #include "FT.hpp"
 #include "PH.hpp"
+#include "REQH.hpp"
