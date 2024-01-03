@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 14:48:01 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/03 21:16:11 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/03 22:56:21 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,9 @@ Request::RequestException::RequestException(const request_err &err, Request *cln
             break;
         case E_REQUEST_LINE:
             msg += "Request Line Error";
+            break;
+        case E_INVALID_HTTP_VERSION:
+            msg += "Invalid HTTP Version";
             break;
         case E_BODY_SIZE_OVERFLOW:
             msg += "Body Size Overflow";
@@ -74,8 +77,29 @@ void Request::parseRequestLine()
 {
     size_t pos = req_method.find(' ');
     if (pos == string::npos)
-        throw RequestException(E_FAILED_READ, NULL);
-    req_method = req_method.substr(0, pos);
+        throw RequestException(E_REQUEST_LINE, NULL);
+    string method = req_method.substr(0, pos);
+    req_method = req_method.substr(pos + 1);
+    size_t pos2 = req_method.find_first_of(' ');
+    if (pos == string::npos || pos2 == pos + 1)
+        throw RequestException(E_REQUEST_LINE, NULL);
+    string path = req_method.substr(0, pos2);
+    if (path[path.size() -1] == '/')
+        path.erase(path.size() - 1 ,1);
+    // Checking Method;
+    Path path_value(path);
+    server_config = (*server_config)[path_value];
+    deque<string>::iterator it = server_config->getConfigValue()->begin() , end = server_config->getConfigValue()->end();
+    if (std::find(++it, end, method) == end)
+        throw RequestException(E_INVALID_METHOD, NULL);
+    req_method = req_method.substr(pos2 + 1);
+    size_t pos3 = req_method.find_first_of('\r', pos2 + 1);
+    if (pos3 == string::npos || pos3 == pos2 + 1)
+        throw RequestException(E_REQUEST_LINE, NULL);
+    // Checking HTTP Version
+    string version = req_method.substr(0, pos3);
+    if (version != "HTTP/1.1")
+        throw RequestException(E_REQUEST_LINE, NULL);
 }
 
 void Request::configureRequest()
@@ -87,8 +111,7 @@ void Request::configureRequest()
     Path host_value(it->second);
     server_config = server_sock[host_value];
     server_config->debug_print_directives();
-    
-    (*server_config)[P]
+    parseRequestLine();
 }
 
 void Request::readHeaders()

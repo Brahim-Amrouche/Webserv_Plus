@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/28 06:28:14 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/03 20:56:08 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/03 22:50:32 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -151,6 +151,15 @@ void ConfigParser::validateServerConfig()
         deque<string> &server_name = *(server_conf[directives[SERVER_NAME]]->getConfigValue());
         ServerConfiguration temp(server_name[0]);
         server_conf.pushSubdirective(directives[SERVER_NAME], temp);
+        temp.setToNull();
+    }
+    if (!server_conf[directives[ALLOW_METHODS]])
+    {
+        ServerConfiguration temp(directives[ALLOW_METHODS]);
+        temp.pushConfValue("GET");
+        temp.pushConfValue("POST");
+        temp.pushConfValue("DELETE");
+        server_conf.pushSubdirective(directives[ALLOW_METHODS], temp);
         temp.setToNull();
     }
     server_conf.normalizeLocations();

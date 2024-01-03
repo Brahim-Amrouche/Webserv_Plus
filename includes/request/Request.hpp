@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 14:23:31 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/03 21:12:35 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/03 22:55:37 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,8 @@ typedef enum REQUEST_ERR_CODES
     E_REQ_BUFFER_OVERFLOW,
     E_DUPLICATE_HEADERS,
     E_REQUEST_LINE,
+    E_INVALID_METHOD,
+    E_INVALID_HTTP_VERSION,
     E_NO_HOST_HEADER,
     E_FAILED_BODY_WRITE,
     E_BODY_SIZE_OVERFLOW,
