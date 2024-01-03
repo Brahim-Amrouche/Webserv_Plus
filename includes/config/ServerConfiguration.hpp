@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/28 05:50:19 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/03 17:01:22 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/03 20:51:43 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ class ServerConfiguration
         void    normalizeLocations();
         deque<string> *operator*();
         ServerConfiguration *operator[](Path &location_path);
-        ServerConfiguration *operator[](string dir_name);
+        ServerConfiguration *operator[](const string &dir_name);
         void    debug_print_directives();
         ~ServerConfiguration();
 };

@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/28 05:52:51 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/03 17:20:58 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/03 20:52:02 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,14 +143,9 @@ ServerConfiguration *ServerConfiguration::operator[](Path &location_path)
     return this;
 }
 
-ServerConfiguration *ServerConfiguration::operator[](string dir_name)
+ServerConfiguration *ServerConfiguration::operator[](const string &dir_name)
 {
-    if (!subdirective)
-        return NULL;
-    map<string, ServerConfiguration>::iterator found = subdirective->find(dir_name);
-    if (found == subdirective->end())
-        return NULL;
-    return &(found->second);
+    return getSubdirective(dir_name);
 }
 
 void ServerConfiguration::debug_print_directives()

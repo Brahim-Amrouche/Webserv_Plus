@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/25 10:10:24 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/03 18:04:46 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/03 19:24:53 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,7 @@ class ServerSocket: public Socket
         ServerSocket(const ServerSocket &cpy_srv_sock);
         ServerSocket &operator=(const ServerSocket &eq_srv_sock);
         void pushServerConfig(ServerConfiguration &new_config);
-        ServerConfiguration *operator[](Path (&path)[2]);
+        ServerConfiguration *operator[](Path &host);
         virtual void nullify();
         virtual ~ServerSocket();
 };

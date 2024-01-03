@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/30 14:06:45 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/03 17:00:33 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/03 20:46:24 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,8 +136,7 @@ bool PH::strIsBreakToken(const string &str)
 
 bool PH::strIsPath(const string &str)
 {
-    if (str.size() && str[0] == '/' 
-        && (str.size() == 1 || str[str.size() - 1] != '/'))
+    if (str.size() && str[0] == '/')
         return true;
     return false;
 }

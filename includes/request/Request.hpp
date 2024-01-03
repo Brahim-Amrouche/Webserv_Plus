@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 14:23:31 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/03 14:06:35 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/03 21:12:35 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,11 +17,15 @@
 #include <fstream>
 #define REQ_BUFFER_SIZE 8192
 
+using std::ofstream;
+
 typedef enum REQUEST_ERR_CODES
 {
     E_FAILED_READ,
     E_REQ_BUFFER_OVERFLOW,
     E_DUPLICATE_HEADERS,
+    E_REQUEST_LINE,
+    E_NO_HOST_HEADER,
     E_FAILED_BODY_WRITE,
     E_BODY_SIZE_OVERFLOW,
     E_READING_DONE,
@@ -29,7 +33,14 @@ typedef enum REQUEST_ERR_CODES
 
 typedef map<string, string>::iterator HeadersIt;
 
-using std::ofstream;
+enum REQUEST_HEADERS
+{
+    HOST,
+    CONTENT_LENGTH,
+    TRANSFER_ENCODING,
+} ;
+
+extern const char *request_headers[3];
 
 
 class Request
@@ -48,6 +59,7 @@ class Request
         bool    headers_done;
         bool    body_done;
     public:
+        map<string, string>::iterator Headersit;
         class RequestException : public TException<request_err, Request>
         {
             public:
@@ -58,11 +70,13 @@ class Request
         Request(const Request &cpy_req);
         Request &operator=(const Request &eq_req);
         void    operator<<(const char *buffer);
+        void parseRequestLine();
+        void configureRequest();
         void readHeaders();
         void readBody();
         void read();
-        void parse();
         void debugHeaders();
+        string operator[](const REQUEST_HEADERS &key);
         ~Request();
         
     

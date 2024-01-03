@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/28 06:28:14 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/03 16:02:07 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/03 20:56:08 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,6 +141,21 @@ void    ConfigParser::parseConfig(TokenIt &start_token)
     }
 }
 
+void ConfigParser::validateServerConfig()
+{
+    ServerConfiguration &server_conf = *config;
+    if (!server_conf[directives[LISTEN]])
+        throw ConfigParserException(E_LISTEN_DIRECTIVE_MISSING, this);
+    if (!server_conf[directives[SERVER_NAME]])
+    {
+        deque<string> &server_name = *(server_conf[directives[SERVER_NAME]]->getConfigValue());
+        ServerConfiguration temp(server_name[0]);
+        server_conf.pushSubdirective(directives[SERVER_NAME], temp);
+        temp.setToNull();
+    }
+    server_conf.normalizeLocations();
+}
+
 void ConfigParser::parseServerDirective(TokenIt &start_token)
 {
     if (depth != 0)
@@ -155,8 +170,7 @@ void ConfigParser::parseServerDirective(TokenIt &start_token)
     temp.setToNull();
     config = &(servers.back());
     parseConfig(start_token);
-    if (!config->getSubdirective(directives[LISTEN]))
-        throw ConfigParserException(E_LISTEN_DIRECTIVE_MISSING, this);
+    validateServerConfig();
     config = NULL;
 }
 
@@ -220,7 +234,7 @@ void    ConfigParser::parseLocationDirective(TokenIt &start_token)
         ServerConfiguration temp(directives[LOCATION]);
         config->pushSubdirective(*start_token, temp);
         temp.setToNull();
-        config = config->getSubdirective(*start_token);
+        config = (*config)[*start_token];
         std::advance(start_token, 1);
         if (start_token == tokens->end() || *start_token != "{")
             throw ConfigParserException(E_LOCATION_DIRECTIVE, NULL);
@@ -241,14 +255,14 @@ void    ConfigParser::parseErrorPageDirective(TokenIt &start_token)
         throw ConfigParserException(E_ERROR_PAGE_DIRECTIVE, this);
     std::advance(start_token, 1);
     ServerConfiguration *subdir = NULL;
-    if ((subdir = config->getSubdirective(directives[ERROR_PAGE])))
+    if ((subdir = (*config)[directives[ERROR_PAGE]]))
         ;
     else
     {
         ServerConfiguration temp(directives[ERROR_PAGE]);
         config->pushSubdirective(directives[ERROR_PAGE], temp);
         temp.setToNull();
-        subdir = config->getSubdirective(directives[ERROR_PAGE]);
+        subdir = (*config)[directives[ERROR_PAGE]];
     }
     try
     {
