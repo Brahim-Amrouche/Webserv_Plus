@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/28 06:28:14 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/01 22:08:35 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/03 16:02:07 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,8 +139,6 @@ void    ConfigParser::parseConfig(TokenIt &start_token)
         if (start_token != tokens->end())
             ++start_token;
     }
-    if (depth != 0)
-        throw ConfigParserException(E_WRONG_DIRECTIVE, this);
 }
 
 void ConfigParser::parseServerDirective(TokenIt &start_token)
@@ -475,6 +473,12 @@ void ConfigParser::generateServerSockets()
         new_server->nullify();
         delete new_server;
     } 
+}
+
+void ConfigParser::normalizeServerConfigs()
+{
+    for (deque<ServerConfiguration>::iterator it = servers.begin(); it != servers.end(); it++)
+        it->normalizeLocations();
 }
 
 deque<ServerSocket> *ConfigParser::getServerSockets()

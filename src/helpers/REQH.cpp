@@ -6,22 +6,26 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 15:29:17 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/02 23:25:38 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/03 13:57:50 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webserv.hpp"
 
-ssize_t REQH::get_headers(const string &req, const ssize_t &headers_size, map<string,string> &req_headers)
+
+ssize_t REQH::get_headers(const string &req, const ssize_t &headers_size, string &req_path, map<string,string> &req_headers)
 {
+    if (req.find("\r\n\r\n") == string::npos)
+        return -1;
     stringstream ss(req);
     string line;
-    ssize_t pos = 0;
+    std::getline(ss, req_path);
+    ssize_t pos = req_path.size() + 1;
     while (std::getline(ss, line) && pos < headers_size)
     {
         pos += line.size() + 1;   
         if (line == "\r")
-            return pos;
+            break;
         size_t colon_pos = line.find(": ");
         if (colon_pos != string::npos)
         {
@@ -32,7 +36,7 @@ ssize_t REQH::get_headers(const string &req, const ssize_t &headers_size, map<st
             req_headers.insert(std::pair<string, string>(key, value));   
         }
     }
-    return (-1);
+    return pos;
 }
 
 string REQH::generateReqId()

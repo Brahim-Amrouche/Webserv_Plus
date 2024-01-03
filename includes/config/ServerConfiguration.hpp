@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/28 05:50:19 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/01 18:11:43 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/03 16:34:11 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@ class ServerConfiguration
         ServerConfiguration();
         ServerConfiguration(const string &value);
         ServerConfiguration(const map<string, ServerConfiguration> &config);
+        ServerConfiguration(ServerConfiguration *cpy_config);
         ServerConfiguration(const ServerConfiguration &cpy_config);
         ServerConfiguration &operator=(const ServerConfiguration &eq_config);
         deque<string>       *getConfigValue();
@@ -48,6 +49,7 @@ class ServerConfiguration
         void    setToNull();
         void    pushConfValue(const string &value);
         void    pushSubdirective(const    string &directive, const ServerConfiguration &config);
+        void    normalizeLocations();
         deque<string> *operator*();
         ServerConfiguration *operator[](string dir_name);
         void    debug_print_directives();

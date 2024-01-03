@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/28 05:52:51 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/01 18:14:06 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/03 16:22:07 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,28 @@ ServerConfiguration::ServerConfiguration(const map<string, ServerConfiguration> 
     subdirective = new map<string, ServerConfiguration>();
     for (ConfigConstIt it = config.begin(); it != config.end(); it++)
         subdirective->insert(std::pair<string, ServerConfiguration>(it->first, it->second));
+}
+
+ServerConfiguration::ServerConfiguration(ServerConfiguration *cpy_config):config_values(NULL), subdirective(NULL)
+{
+    if (!cpy_config)
+        return;
+    if (cpy_config->config_values)
+    {
+        config_values = new deque<string>();
+        for (deque<string>::iterator it = cpy_config->config_values->begin(); it != cpy_config->config_values->end(); it++)
+            config_values->push_back(*it);
+    }
+    if (cpy_config->subdirective)
+    {
+        subdirective = new map<string, ServerConfiguration>();
+        for (ConfigIt it = cpy_config->subdirective->begin(); it != cpy_config->subdirective->end(); it++)
+        {
+            ServerConfiguration temp(&it->second);
+            (*subdirective)[it->first] = temp;
+            temp.setToNull();
+        }
+    }
 }
 
 ServerConfiguration::ServerConfiguration(const ServerConfiguration &cpy_config)
@@ -58,20 +80,6 @@ ServerConfiguration *ServerConfiguration::getSubdirective(const string &path)
     return &(it->second);
 }
 
-// void    ServerConfiguration::setConfigValue(string *value)
-// {
-//     if (config_values)
-//         delete config_value;
-//     config_values = value;
-// }
-
-// void    ServerConfiguration::setSubdirective(map<string, ServerConfiguration> *config)
-// {
-//     if (subdirective)
-//         delete subdirective;
-//     subdirective = config;
-// }
-
 void    ServerConfiguration::setToNull()
 {
     config_values = NULL;
@@ -94,6 +102,28 @@ void ServerConfiguration::pushSubdirective(const string &path, const ServerConfi
     (*subdirective)[path] = config;
 }
 
+void ServerConfiguration::normalizeLocations()
+{
+    if (!subdirective)
+        return;
+    for (ConfigIt it = subdirective->begin(); it != subdirective->end(); it++)
+    {
+        if (!PH::strIsPath(it->first))
+            continue;
+        ServerConfiguration &location = it->second;
+        for (ConfigIt it = subdirective->begin(); it != subdirective->end(); it++)
+        {
+            if(PH::strIsPath(it->first))
+                continue;
+            if (location[it->first])
+                continue;
+            ServerConfiguration temp(&it->second);
+            location.pushSubdirective(it->first, temp);
+            temp.setToNull();
+        }
+    }
+}
+
 deque<string> *ServerConfiguration::operator*()
 {
     return config_values;
@@ -106,6 +136,7 @@ ServerConfiguration *ServerConfiguration::operator[](string dir_name)
     map<string, ServerConfiguration>::iterator found = subdirective->find(dir_name);
     if (found == subdirective->end())
         return NULL;
+    
     return &(found->second);
 }
 
@@ -120,14 +151,16 @@ void ServerConfiguration::debug_print_directives()
     }
     if (subdirective)
     {
-        std::cout << "subdirective: " << std::endl;
+        std::cout << "subdirective => " << std::endl;
         for (ConfigIt it = subdirective->begin(); it != subdirective->end(); it++)
         {
             std::cout << it->first << "-> ";
             it->second.debug_print_directives();
         }
+        std::cout << "subdirective end <=" << std::endl;
     }
 }
+
 
 
 ServerConfiguration::~ServerConfiguration()

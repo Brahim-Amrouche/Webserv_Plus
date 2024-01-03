@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 14:23:31 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/02 22:53:16 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/03 14:06:35 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ typedef enum REQUEST_ERR_CODES
     E_REQ_BUFFER_OVERFLOW,
     E_DUPLICATE_HEADERS,
     E_FAILED_BODY_WRITE,
+    E_BODY_SIZE_OVERFLOW,
     E_READING_DONE,
 } request_err;
 
@@ -35,6 +36,7 @@ class Request
 {
     private:
         char      req_buffer[REQ_BUFFER_SIZE + 1];
+        string    req_method;
         map<string, string> req_headers;
         Socket  &client_sock;
         ServerSocket &server_sock;

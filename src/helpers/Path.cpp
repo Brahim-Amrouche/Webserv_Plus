@@ -1,20 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   helpers.hpp                                        :+:      :+:    :+:   */
+/*   Path.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/12/25 12:37:54 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/03 16:28:27 by bamrouch         ###   ########.fr       */
+/*   Created: 2024/01/03 16:28:12 by bamrouch          #+#    #+#             */
+/*   Updated: 2024/01/03 16:32:37 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#pragma once
-#include "TException.hpp"
-#include "FT.hpp"
-#include "PH.hpp"
-#include "REQH.hpp"
-#include "Path.hpp"
+#include "webserv.hpp"
 
-
+Path::Path(const std::string &path)
+{
+    value = path;
+}

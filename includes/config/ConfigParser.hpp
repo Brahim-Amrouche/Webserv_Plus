@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/27 17:30:56 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/01 17:31:59 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/03 16:00:13 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,6 +97,7 @@ class ConfigParser
         void parseUploadDirDirective(TokenIt &it);
         void parseRedirectionDirective(TokenIt &it);
         void generateServerSockets();
+        void normalizeServerConfigs();
         deque<ServerSocket> *getServerSockets();
         void debug_print_servers();
         ~ConfigParser();

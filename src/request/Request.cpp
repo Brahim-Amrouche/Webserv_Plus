@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 14:48:01 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/02 23:38:28 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/03 16:12:18 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,9 @@ Request::RequestException::RequestException(const request_err &err, Request *cln
         case E_DUPLICATE_HEADERS:
             msg += "Duplicate Headers";
             break;
+        case E_BODY_SIZE_OVERFLOW:
+            msg += "Body Size Overflow";
+            break;
         case E_READING_DONE:
             msg += "Reading Done";
             break;
@@ -33,7 +36,7 @@ Request::RequestException::RequestException(const request_err &err, Request *cln
     }
 }
 
-Request::Request(Socket &client_sock, ServerSocket &server_sock): client_sock(client_sock), server_sock(server_sock),
+Request::Request(Socket &client_sock, ServerSocket &server_sock):client_sock(client_sock), server_sock(server_sock),
     headers_size(0), server_config(NULL), headers_done(false), body_done(false)
 {}
 
@@ -63,7 +66,7 @@ void Request::readHeaders()
     req_buffer[headers_size] = '\0';
     try
     {
-        if ((counter = REQH::get_headers(req_buffer , headers_size, req_headers)) < 0)
+        if ((counter = REQH::get_headers(req_buffer , headers_size, req_method, req_headers)) < 0)
             return;
     }
     catch(const REQH::REQHException &e)
@@ -83,6 +86,8 @@ void Request::readHeaders()
         headers_size = 0;
         body_size = counter;
     }
+    cout << req_method << endl;
+    debugHeaders();
     counter = -1;
 
 }
@@ -91,7 +96,8 @@ void Request::readBody()
 {
     std::istringstream iss(req_headers["Content-Length"]);
     ssize_t content_length = 0;
-    iss >> content_length;
+    if (!(iss >> content_length))
+        throw RequestException(E_BODY_SIZE_OVERFLOW, NULL);
     if (body_size == content_length)
         body_done = true;
     if (counter < 0 || !headers_done || body_done)
@@ -104,10 +110,7 @@ void Request::readBody()
     // cout << "content length is: " << req_headers["Content-Length"] << endl; 
     // cout << "i is: " << body_size << endl;
     if (body_size > content_length)
-    {
-        cout << "done from a" << endl;
-        body_done = true;
-    }
+        throw RequestException(E_BODY_SIZE_OVERFLOW, NULL);
     else if (body_size == content_length)
     {
         cout << "done from b" << endl;
@@ -120,8 +123,6 @@ void Request::read()
     if ((counter = recv(client_sock.getSockid(), req_buffer + headers_size, REQ_BUFFER_SIZE - headers_size, 0)) < 0)
         throw RequestException(E_FAILED_READ, this);
     readHeaders();
-    // debugHeaders();
-
     readBody();
     // cout << "hello i read and it was ============= "  << counter << " bytes" << endl;
     // throw RequestException(E_READING_DONE, NULL);
