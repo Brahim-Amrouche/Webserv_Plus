@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/30 14:06:45 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/01 18:32:04 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/03 17:00:33 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,6 @@ void PH::parseHostString(const string &str, string (&info)[2])
         host = "127.0.0.1";
     info[0] = host;
     info[1] = port;
-    // cout << "info[0]:" << info[0] << " info[1]:" << info[1] << endl;
 }
 
 string PH::parseBodySize(const string &str)
@@ -137,7 +136,8 @@ bool PH::strIsBreakToken(const string &str)
 
 bool PH::strIsPath(const string &str)
 {
-    if (str.size() && str[0] == '/')
+    if (str.size() && str[0] == '/' 
+        && (str.size() == 1 || str[str.size() - 1] != '/'))
         return true;
     return false;
 }

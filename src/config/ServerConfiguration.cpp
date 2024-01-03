@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/28 05:52:51 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/03 16:22:07 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/03 17:20:58 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,6 +129,20 @@ deque<string> *ServerConfiguration::operator*()
     return config_values;
 }
 
+ServerConfiguration *ServerConfiguration::operator[](Path &location_path)
+{
+    if (!subdirective)
+        return NULL;
+    while (*location_path != "")
+    {
+        map<string, ServerConfiguration>::iterator found = subdirective->find(*location_path);
+        if (found != subdirective->end())
+            return &(found->second);
+        --location_path;
+    }
+    return this;
+}
+
 ServerConfiguration *ServerConfiguration::operator[](string dir_name)
 {
     if (!subdirective)
@@ -136,7 +150,6 @@ ServerConfiguration *ServerConfiguration::operator[](string dir_name)
     map<string, ServerConfiguration>::iterator found = subdirective->find(dir_name);
     if (found == subdirective->end())
         return NULL;
-    
     return &(found->second);
 }
 

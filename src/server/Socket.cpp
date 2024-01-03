@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/25 12:36:29 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/02 17:12:36 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/03 18:04:58 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -165,6 +165,17 @@ ServerSocket &ServerSocket::operator=(const ServerSocket &eq_srv_sock)
         configs = eq_srv_sock.configs;
     }
     return (*this);
+}
+
+ServerConfiguration *ServerSocket::operator[](Path (&req)[2])
+{
+    ServerConfiguration *res= NULL;
+    for (deque<ServerConfiguration>::iterator it = configs->begin(); it != configs->end(); it++)
+    {
+        if ()
+        if (res)
+            return res;
+    }
 }
 
 void ServerSocket::nullify()

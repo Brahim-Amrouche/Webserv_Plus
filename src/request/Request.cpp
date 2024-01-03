@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 14:48:01 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/03 16:12:18 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/03 17:58:35 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,7 @@ void Request::readHeaders()
         throw RequestException(E_REQ_BUFFER_OVERFLOW, NULL);
     req_id = REQH::generateReqId();
     headers_done = true;
+    server_sock[Path()];
     if (counter < headers_size)
     {
         ssize_t temp = counter;
@@ -86,8 +87,9 @@ void Request::readHeaders()
         headers_size = 0;
         body_size = counter;
     }
-    cout << req_method << endl;
-    debugHeaders();
+    
+    // cout << req_method << endl;
+    // debugHeaders();
     counter = -1;
 
 }
@@ -107,8 +109,6 @@ void Request::readBody()
         *this << req_buffer;
         body_size += counter;
     } 
-    // cout << "content length is: " << req_headers["Content-Length"] << endl; 
-    // cout << "i is: " << body_size << endl;
     if (body_size > content_length)
         throw RequestException(E_BODY_SIZE_OVERFLOW, NULL);
     else if (body_size == content_length)

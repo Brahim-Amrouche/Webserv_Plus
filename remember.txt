@@ -1,4 +1,6 @@
 test 127.0.0.0
 
+// if no server_name given do the IP
+//find the server with the host given , then check if there is a location
 -Generate or Find the Conveniant Request config
 -Check For Body Headers

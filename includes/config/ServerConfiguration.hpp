@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/28 05:50:19 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/03 16:34:11 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/03 17:01:22 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 #include <string>
 #include <exception>
 #include <deque>
+#include "Path.hpp"
 
 using std::exception;
 using std::map;
@@ -51,6 +52,7 @@ class ServerConfiguration
         void    pushSubdirective(const    string &directive, const ServerConfiguration &config);
         void    normalizeLocations();
         deque<string> *operator*();
+        ServerConfiguration *operator[](Path &location_path);
         ServerConfiguration *operator[](string dir_name);
         void    debug_print_directives();
         ~ServerConfiguration();
