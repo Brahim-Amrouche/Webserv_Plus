@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 14:48:01 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/03 22:56:21 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/04 17:57:28 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,9 @@ Request::RequestException::RequestException(const request_err &err, Request *cln
             break;
         case E_REQUEST_LINE:
             msg += "Request Line Error";
+            break;
+        case E_INVALID_METHOD:
+            msg+= "Invalid Request Method";
             break;
         case E_INVALID_HTTP_VERSION:
             msg += "Invalid HTTP Version";
@@ -89,8 +92,9 @@ void Request::parseRequestLine()
     // Checking Method;
     Path path_value(path);
     server_config = (*server_config)[path_value];
-    deque<string>::iterator it = server_config->getConfigValue()->begin() , end = server_config->getConfigValue()->end();
-    if (std::find(++it, end, method) == end)
+    ServerConfiguration *allowed_methods = (*server_config)[directives[ALLOW_METHODS]];
+    deque<string>::iterator it = (**allowed_methods)->begin(), end = (**allowed_methods)->end();
+    if (std::find(it, end, method) == end)
         throw RequestException(E_INVALID_METHOD, NULL);
     req_method = req_method.substr(pos2 + 1);
     size_t pos3 = req_method.find_first_of('\r', pos2 + 1);
@@ -100,6 +104,7 @@ void Request::parseRequestLine()
     string version = req_method.substr(0, pos3);
     if (version != "HTTP/1.1")
         throw RequestException(E_REQUEST_LINE, NULL);
+    throw  RequestException(E_READING_DONE, NULL);
 }
 
 void Request::configureRequest()
@@ -107,10 +112,8 @@ void Request::configureRequest()
     HeadersIt it = req_headers.end();
     if ( (*this)[HOST].size() == 0)
         throw RequestException(E_NO_HOST_HEADER, NULL);
-    cout << "passed the hard test" << endl;
     Path host_value(it->second);
     server_config = server_sock[host_value];
-    server_config->debug_print_directives();
     parseRequestLine();
 }
 
