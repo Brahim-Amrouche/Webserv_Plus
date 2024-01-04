@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/25 12:46:06 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/01 14:44:39 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/04 23:07:19 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,23 @@ void *FT::memcpy(void *dst, const void *src, size_t n)
 		c_dst[i] = c_src[i];
 		i++;
 	}
+	return (dst);
+}
+
+void	*FT::memmove(void *dst, const void *src, size_t len)
+{
+	char	*dest;
+	char	*source;
+
+	if (!dst && !src && len)
+		return (dst);
+	dest = (char *)dst;
+	source = (char *)src;
+	if (dest > source)
+		while (len-- > 0)
+			dest[len] = source[len];
+	else
+		FT::memcpy(dst, src, len);
 	return (dst);
 }
 

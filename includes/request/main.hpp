@@ -6,9 +6,11 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 14:48:31 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/02 14:48:53 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/04 21:03:33 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 #include "Request.hpp"
+#include "Headers.hpp"
+#include "Body.hpp"

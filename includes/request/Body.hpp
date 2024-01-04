@@ -1,29 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   FT.hpp                                             :+:      :+:    :+:   */
+/*   Body.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/12/25 12:43:17 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/04 22:23:27 by bamrouch         ###   ########.fr       */
+/*   Created: 2024/01/04 20:21:15 by bamrouch          #+#    #+#             */
+/*   Updated: 2024/01/04 23:06:45 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
-#include <cstddef>
+#include "Request.hpp"
 
-class FT
+class Body
 {
-    private :
-        FT();
+    private:
+        char   *(&buffer);
+        string  &req_id;
+        ssize_t &read_bytes;
+        ssize_t body_size;
+        bool    body_done;
     public:
-        static void	*memset(void *b, int c, size_t len);
-        static void	*memcpy(void *dst, const void *src, size_t n);
-        static void *memmove(void *dst, const void *src, size_t len);
-        static size_t  strlen(const char *str);
-        static bool    strIsDigit(const string &str);
-        static string  strToLowercase(const string &str);
+        Body(string &req_id);
+        Body(string &req_id, ssize_t &read_bytes);
+        ~Body();
 };
-
-
