@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/30 14:06:45 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/03 20:46:24 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/05 00:11:14 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,8 +62,8 @@ void PH::parseHostString(const string &str, string (&info)[2])
     int port_num = 0;
     if (!FT::strIsDigit(port) || !(ss >> port_num) || port_num < 0)
         throw PHException();
-    if (!host.size() || host == "localhost")
-        host = "127.0.0.1";
+    if (!host.size())
+        host = "localhost";
     info[0] = host;
     info[1] = port;
 }

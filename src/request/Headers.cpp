@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/04 21:02:47 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/04 23:53:44 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/05 00:13:26 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,10 +79,8 @@ void Headers::parseRequestLine()
 void Headers::configureRequest()
 {
     string host_string = (*this)[HOST];
-    if ( host_string.empty())
+    if (host_string.empty())
         throw HeadersException(E_NO_HOST_HEADER, NULL);
-    if (host_string == "localhost")
-        host_string = "127.0.0.1";
     req_config = server_sock[host_string];
     parseRequestLine();
 }

@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 14:48:01 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/04 23:49:33 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/05 00:18:22 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,91 +52,6 @@ Request &Request::operator=(const Request &eq_req)
     }
     return *this;
 }
-// Request &Request::operator=(const Request &eq_req)
-// {
-//     if (this != &eq_req)
-//     {
-//         client_sock = eq_req.client_sock;
-//         server_sock = eq_req.server_sock;
-//         headers_size = eq_req.headers_size;
-//         server_config = eq_req.server_config;
-//         headers_done = eq_req.headers_done;
-//         body_done = eq_req.body_done;
-//     }
-//     return *this;
-// }
-
-// void Request::parseRequestLine()
-// {
-//     size_t pos = req_method.find(' ');
-//     if (pos == string::npos)
-//         throw RequestException(E_REQUEST_LINE, NULL);
-//     string method = req_method.substr(0, pos);
-//     size_t pos2 = req_method.find_first_of(' ', pos + 1);
-//     if (pos == string::npos || pos2 == pos + 1)
-//         throw RequestException(E_REQUEST_LINE, NULL);
-//     string path = req_method.substr(pos + 1, pos2 - (pos + 1));
-//     if (path[path.size() -1] == '/')
-//         path.erase(path.size() - 1 ,1);
-//     // Checking Method;
-//     Path path_value(path);
-//     server_config = (*server_config)[path_value];
-//     ServerConfiguration *allowed_methods = (*server_config)[directives[ALLOW_METHODS]];
-//     deque<string>::iterator it = (**allowed_methods)->begin(), end = (**allowed_methods)->end();
-//     if (std::find(it, end, method) == end)
-//         throw RequestException(E_INVALID_METHOD, NULL);
-//     size_t pos3 = req_method.find_first_of('\r', pos2 + 1);
-//     if (pos3 == string::npos || pos3 == pos2 + 1)
-//         throw RequestException(E_REQUEST_LINE, NULL);
-//     // Checking HTTP Version
-//     string version = req_method.substr(pos2 + 1, pos3 - (pos2 + 1));
-//     if (version != "HTTP/1.1")
-//         throw RequestException(E_REQUEST_LINE, NULL);
-//     req_method = path;
-//     throw  RequestException(E_READING_DONE, NULL);
-// }
-
-// void Request::configureRequest()
-// {
-//     HeadersIt it = req_headers.end();
-//     if ( (*this)[HOST].size() == 0)
-//         throw RequestException(E_NO_HOST_HEADER, NULL);
-//     Path host_value(it->second);
-//     server_config = server_sock[host_value];
-//     parseRequestLine();
-// }
-
-// void Request::readHeaders()
-// {
-//     if (headers_done)
-//         return;
-//     headers_size += counter;
-//     req_buffer[headers_size] = '\0';
-//     try
-//     {
-//         if ((counter = REQH::get_headers(req_buffer , headers_size, req_method, req_headers)) < 0)
-//             return;
-//     }
-//     catch(const REQH::REQHException &e)
-//     {
-//         cout << e.what() << endl;
-//         throw RequestException(E_DUPLICATE_HEADERS, NULL);
-//     }
-//     if (counter >= REQ_BUFFER_SIZE)
-//         throw RequestException(E_REQ_BUFFER_OVERFLOW, NULL);
-//     req_id = REQH::generateReqId();
-//     headers_done = true;
-//     configureRequest();
-//     if (counter < headers_size)
-//     {
-//         ssize_t temp = counter;
-//         counter = headers_size - counter;
-//         *this << (req_buffer + temp);
-//         headers_size = 0;
-//         body_size = counter;
-//     }
-//     counter = -1;
-// }
 
 // void Request::readBody()
 // {

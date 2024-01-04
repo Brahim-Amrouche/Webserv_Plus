@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 15:29:17 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/03 13:57:50 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/05 00:06:12 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ ssize_t REQH::get_headers(const string &req, const ssize_t &headers_size, string
         if (colon_pos != string::npos)
         {
             string key = line.substr(0, colon_pos);
-            string value = line.substr(colon_pos + 2, line.size() - 1);
+            string value = line.substr(colon_pos + 2, line.size() - (colon_pos + 2) - 1);
             if (req_headers.find(key) != req_headers.end())
                 throw REQHException();    
             req_headers.insert(std::pair<string, string>(key, value));   

@@ -6,14 +6,11 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/04 20:34:53 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/04 23:48:43 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/05 00:18:34 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
-// #include "../server/Socket.hpp"
-// #include "../config/ServerConfiguration.hpp"
-// #include "../helpers/TException.hpp"
 #include "Request.hpp"
 
 #define HEADERS_MAX_SIZE 8192
