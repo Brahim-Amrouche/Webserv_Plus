@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 00:23:26 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/05 20:03:55 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/05 23:16:00 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,14 +69,15 @@ void Body::fromHeaders()
         throw BodyException(E_INVALID_BODY_HEADERS, NULL);
     else if (headers[CONTENT_LENGTH] != "")
     {
-        const char *start = headers[CONTENT_LENGTH].c_str();
+        string content_lenght_header = headers[CONTENT_LENGTH];
+        const char *start = content_lenght_header.c_str();
         char *end = NULL;
         content_length = strtol(start, &end, 10);
         if (end == start || *end != '\0' || content_length <= 0 || content_length > max_config_size)
             throw BodyException(E_INVALID_BODY_HEADERS, NULL);
         mode = M_CONTENT_LENGTH;
     }
-    else
+    else if (mode == M_NO_CONF)
         mode = M_NO_BODY;
 }
 
@@ -88,27 +89,37 @@ void Body::configBody()
 
 bool Body::readChunked(ssize_t &buffer_size)
 {
-    // check for bytes count;
     if (body_done)
         return true;
-    char *data_start = buffer;
-    try {
-        if (content_length == 0)
-        {
-            data_start = REQH::find_CRLF(buffer, buffer_size, content_length);
-            if (body_size + content_length > max_config_size)
-                throw BodyException(E_BODY_SIZE_OVERFLOW, NULL);
-        }
+    try
+    {
+        if (content_length == 0 
+            && !REQH::CRLF_found(buffer, buffer_size, &content_length))
+            return false;
+        if (content_length == 0 && REQH::CRLF_found(buffer, buffer_size, NULL))
+            return true;
+        else
+            return false;
     }
-    catch (const REQH::REQHException &e)
+    catch(const REQH::REQHException& e)
     {
         throw BodyException(E_BODY_READING, NULL);
     }
-    if (content_length - buffer_size >= 0)
-        body_file.write(data_start, buffer_size);
-    else if (content_length - buffer_size)
+    if (buffer_size > content_length)
+    {
+        body_file.write(buffer, content_length);
+        FT::memmove(buffer, buffer + content_length, buffer_size - content_length);
+        buffer_size -= content_length;
+        content_length = 0;
+        return readChunked(buffer_size);
+    }
     else
+    { 
+        body_file.write(buffer, buffer_size);
         content_length -= buffer_size;
+        buffer_size = 0;
+        return false;
+    }
 }
 
 bool Body::readIdentity(ssize_t &buffer_size)
@@ -117,6 +128,7 @@ bool Body::readIdentity(ssize_t &buffer_size)
         throw BodyException(E_BODY_SIZE_OVERFLOW, NULL);
     body_file.write(buffer, buffer_size);
     body_size += buffer_size;
+    buffer_size = 0;
     return true;
 }
 
@@ -124,22 +136,26 @@ bool Body::readContentLength(ssize_t &buffer_size)
 {
     if (body_done)
         return true;
-    if (body_size + buffer_size > content_length)
+    if (body_size + buffer_size > content_length 
+        || body_size + buffer_size > max_config_size)
         throw BodyException(E_BODY_SIZE_OVERFLOW, NULL);
     body_file.write(buffer, buffer_size);
     body_size += buffer_size;
+    buffer_size = 0;
     return body_size == content_length;
 }
 
 bool Body::operator<<(ssize_t &buffer_size)
 {
-    if (mode == M_NO_CONF)
-        configBody();
     body_file.open(req_id.c_str(), std::ios::app | std::ios::binary);
     if (!body_file.is_open())
         throw BodyException(E_BODY_READING, NULL);
+    // cout << "the mode is " << mode << endl;
     switch (mode)
     {
+        case M_NO_CONF:
+            configBody();
+            break;
         case M_NO_BODY:
             body_done = true;
             break;
@@ -147,8 +163,10 @@ bool Body::operator<<(ssize_t &buffer_size)
             body_done = readChunked(buffer_size);
             break;
         case M_IDENTITY:
+        {
             body_done = readIdentity(buffer_size);
             break;
+        }
         case M_CONTENT_LENGTH:
             body_done = readContentLength(buffer_size);
             break;
@@ -157,4 +175,9 @@ bool Body::operator<<(ssize_t &buffer_size)
     return body_done;
 }
 
-
+Body::~Body()
+{
+    if (body_file.is_open())
+        body_file.close();
+    remove(req_id.c_str());
+}

@@ -6,12 +6,15 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/04 20:21:15 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/05 19:46:07 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/05 22:44:09 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
+#include <fstream>
 #include "Request.hpp"
+
+using std::ofstream;
 
 typedef enum E_BODY_ERR_CODES
 {

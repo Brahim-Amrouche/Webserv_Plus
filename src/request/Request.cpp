@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 14:48:01 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/05 17:56:15 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/05 23:02:11 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,9 +83,7 @@ Request &Request::operator=(const Request &eq_req)
 void Request::read()
 {
     ssize_t temp = 0;
-    if (headers.headersDone())
-        buffer_size = 0;
-    if ((temp = recv(client_sock.getSockid(), req_buffer + buffer_size, HEADERS_MAX_SIZE - buffer_size, 0)) <= 0)
+    if ((temp = recv(client_sock.getSockid(), req_buffer + buffer_size, HEADERS_MAX_SIZE - buffer_size, 0)) < 0)
         throw RequestException(E_FAILED_READ, NULL);
     buffer_size += temp;
     req_buffer[buffer_size] = '\0';
@@ -94,16 +92,19 @@ void Request::read()
         cout << "buffer size before: "<< buffer_size << endl;
         if ((headers << buffer_size))
         {
-            cout << "buffer size after: "<< buffer_size << endl;
-            headers.debugHeaders();
-            server_config->debug_print_directives();
-            throw RequestException(E_READING_DONE, NULL);
+            body << buffer_size;
+            // throw RequestException(E_READING_DONE, NULL);
         }
     }
     catch (const Headers::HeadersException &e)
     {
         cout << e.what() << endl;
         throw RequestException(E_FAILED_HEADERS_READ, NULL);
+    }
+    catch (const Body::BodyException &e)
+    {
+        cout << e.what() << endl;
+        throw RequestException(E_FAILED_BODY_READ, NULL);
     }
 }
 

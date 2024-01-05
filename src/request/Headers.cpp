@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/04 21:02:47 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/05 00:13:26 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/05 21:43:20 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,7 +103,7 @@ bool Headers::operator<<(ssize_t &buffer_size)
     buffer_size = buffer_size - res;
     headers_done = true;
     configureRequest();
-    FT::memmove(req_buffer, req_buffer + res, buffer_size);    
+    FT::memmove(req_buffer, req_buffer + res, buffer_size);
     return headers_done;
 }
 

@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 14:23:31 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/05 15:22:58 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/05 22:43:38 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,8 @@
 #include "../server/Socket.hpp"
 #include "../config/ServerConfiguration.hpp"
 #include "../helpers/TException.hpp"
-#include <fstream>
 #include "Headers.hpp"
 #include "Body.hpp"
-
-using std::ofstream;
-
 
 typedef enum REQUEST_ERR_CODES
 {

@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 15:05:47 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/05 20:00:34 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/05 21:49:01 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,5 +34,5 @@ class REQH
         };
         static ssize_t get_headers(const string &buffer,const ssize_t &headers_size, string &req_path, map<string, string> &req_headers);
         static string  generateReqId();
-        static char    *find_CRLF(char *buffer, ssize_t &buffer_size, ssize_t *content_length);
+        static bool    CRLF_found(char *buffer, ssize_t &buffer_size, ssize_t *content_length);
 };
