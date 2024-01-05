@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 14:23:31 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/04 23:25:11 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/05 15:22:58 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include "../helpers/TException.hpp"
 #include <fstream>
 #include "Headers.hpp"
+#include "Body.hpp"
 
 using std::ofstream;
 
@@ -38,6 +39,7 @@ class Request
         ServerSocket &server_sock;
         ServerConfiguration *server_config;
         Headers headers;
+        Body body;
     public:
         class RequestException : public TException<request_err, Request>
         {

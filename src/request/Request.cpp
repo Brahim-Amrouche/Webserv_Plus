@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 14:48:01 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/05 00:18:22 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/05 17:56:15 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,10 +34,13 @@ Request::RequestException::RequestException(const request_err &err, Request *cln
 }
 
 Request::Request(Socket &client_sock, ServerSocket &server_sock):req_id(REQH::generateReqId()) , buffer_size(0), client_sock(client_sock), server_sock(server_sock), server_config(NULL)
-    ,headers(req_buffer, server_sock, server_config)
+    ,headers(req_buffer, server_sock, server_config), body(req_id, req_buffer, server_config, headers)
 {}
 
-Request::Request(const Request &cpy_req):req_id(cpy_req.req_id), buffer_size(cpy_req.buffer_size), client_sock(cpy_req.client_sock) ,server_sock(cpy_req.server_sock), server_config(cpy_req.server_config), headers(req_buffer, server_sock, server_config)
+Request::Request(const Request &cpy_req):req_id(cpy_req.req_id), buffer_size(cpy_req.buffer_size)
+    , client_sock(cpy_req.client_sock) ,server_sock(cpy_req.server_sock)
+    , server_config(cpy_req.server_config), headers(req_buffer, server_sock, server_config)
+    , body(req_id, req_buffer, server_config, headers)
 {}
 
 Request &Request::operator=(const Request &eq_req)
