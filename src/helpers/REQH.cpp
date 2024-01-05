@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 15:29:17 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/05 00:06:12 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/05 20:02:07 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,4 +67,21 @@ string REQH::generateReqId()
         num.str("");
     }
     return request_id;
+}
+
+char    *REQH::find_CRLF(char *buffer, ssize_t &buffer_size, ssize_t *content_length)
+{
+    char *CRLF = (char *)FT::memchr(buffer,(void *)"\r\n", buffer_size, 2);
+    if (!CRLF)
+        return NULL;
+    *CRLF = '\0';
+    if (content_length)
+    {
+        char *end = NULL;
+        *content_length = strtol(buffer, &end, 16);
+        if (buffer == end && *content_length <= 0)
+            throw REQHException();
+    }
+    buffer_size -= CRLF - buffer + 2;
+    return CRLF + 2;
 }

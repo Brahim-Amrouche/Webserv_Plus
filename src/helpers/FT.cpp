@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/25 12:46:06 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/04 23:07:19 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/05 19:32:39 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,32 @@ void	*FT::memmove(void *dst, const void *src, size_t len)
 	else
 		FT::memcpy(dst, src, len);
 	return (dst);
+}
+
+void *FT::memchr(const void *src, void *cmp, size_t n, size_t m)
+{
+	if (!src || !cmp || !n || !m)
+		return NULL;
+	unsigned char *str = (unsigned char *)src;
+	unsigned char *c = (unsigned char *)cmp;
+	size_t i = -1;
+	size_t j = -1;
+	while (++i < n)
+	{
+		j = 0;
+		while (j < m)
+		{
+			if (str[i + j] != c[j])
+			{
+				i += j;
+				break;
+			}
+			j++;
+		}
+		if (j == m)
+			return (str + i);
+	}
+	return NULL;
 }
 
 bool	FT::strIsDigit(const string &str)
