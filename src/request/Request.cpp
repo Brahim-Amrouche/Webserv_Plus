@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 14:48:01 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/05 23:02:11 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/06 18:19:03 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,32 +56,10 @@ Request &Request::operator=(const Request &eq_req)
     return *this;
 }
 
-// void Request::readBody()
-// {
-//     std::istringstream iss(req_headers["Content-Length"]);
-//     ssize_t content_length = 0;
-//     if (!(iss >> content_length))
-//         throw RequestException(E_BODY_SIZE_OVERFLOW, NULL);
-//     if (body_size == content_length)
-//         body_done = true;
-//     if (counter < 0 || !headers_done || body_done)
-//         return;
-//     if (counter > 0)
-//     {
-//         *this << req_buffer;
-//         body_size += counter;
-//     } 
-//     // if (body_size > content_length)
-//     //     throw RequestException(E_BODY_SIZE_OVERFLOW, NULL);
-//     if (body_size >= content_length)
-//     {
-//         cout << "done from b" << endl;
-//         body_done = true;
-//     }
-// }
-
 void Request::read()
 {
+    if (headers.headersDone() && body.bodyDone())
+        throw RequestException(E_READING_DONE, NULL);
     ssize_t temp = 0;
     if ((temp = recv(client_sock.getSockid(), req_buffer + buffer_size, HEADERS_MAX_SIZE - buffer_size, 0)) < 0)
         throw RequestException(E_FAILED_READ, NULL);
@@ -89,12 +67,8 @@ void Request::read()
     req_buffer[buffer_size] = '\0';
     try
     {
-        cout << "buffer size before: "<< buffer_size << endl;
-        if ((headers << buffer_size))
-        {
-            body << buffer_size;
-            // throw RequestException(E_READING_DONE, NULL);
-        }
+        if ((headers << buffer_size) && (body << buffer_size))
+            return;
     }
     catch (const Headers::HeadersException &e)
     {
@@ -112,16 +86,6 @@ string Request::operator[](const REQUEST_HEADERS &key)
 {
     return headers[key];
 }
-
-// void Request::operator<<(const char *buffer)
-// {
-//     ofstream file(req_id.c_str(), std::ios::app | std::ios::binary);
-    
-//     if (!file.is_open())
-//         throw RequestException(E_FAILED_BODY_WRITE, this);
-//     file.write(buffer, counter);
-//     file.close();
-// }
 
 Request::~Request()
 {

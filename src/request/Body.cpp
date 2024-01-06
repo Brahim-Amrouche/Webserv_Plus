@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 00:23:26 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/05 23:16:00 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/06 18:13:23 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,10 @@ void Body::fromHeaders()
     if (headers[TRANSFER_ENCODING] != "")
     {
         if (headers[TRANSFER_ENCODING] == "chunked")
+        {
+            content_length = -2;
             mode = M_CHUNKED;
+        }
         else if (headers[TRANSFER_ENCODING] == "identity")
             mode = M_IDENTITY;
         else
@@ -90,36 +93,49 @@ void Body::configBody()
 bool Body::readChunked(ssize_t &buffer_size)
 {
     if (body_done)
-        return true;
+    {
+        cout << "It's done" << endl;
+        return body_done;
+    }
     try
     {
-        if (content_length == 0 
+        if (content_length == -2
             && !REQH::CRLF_found(buffer, buffer_size, &content_length))
             return false;
-        if (content_length == 0 && REQH::CRLF_found(buffer, buffer_size, NULL))
-            return true;
-        else
-            return false;
+        if (content_length + body_size > max_config_size)
+            throw BodyException(E_BODY_SIZE_OVERFLOW, NULL);
     }
     catch(const REQH::REQHException& e)
     {
         throw BodyException(E_BODY_READING, NULL);
     }
-    if (buffer_size > content_length)
+    ssize_t write_bytes = std::min(content_length == -2 ? 0: content_length, buffer_size);
+    body_file.write(buffer, write_bytes);
+    if (write_bytes == content_length)
+        FT::memmove(buffer, buffer + write_bytes, buffer_size - write_bytes);
+    buffer_size -= write_bytes;
+    content_length -= write_bytes;
+    body_size += write_bytes;
+    if (buffer_size == 0)
+        return false;
+    ssize_t temp = buffer_size;
+    if (REQH::CRLF_found(buffer, buffer_size, NULL))
     {
-        body_file.write(buffer, content_length);
-        FT::memmove(buffer, buffer + content_length, buffer_size - content_length);
-        buffer_size -= content_length;
-        content_length = 0;
-        return readChunked(buffer_size);
+        content_length = -2;
+        if (write_bytes == 0 && buffer_size == 0)
+            return true;
+        else if (buffer_size != temp - 2)
+            throw BodyException(E_BODY_READING, NULL);
+        else if (buffer_size > 0)
+            return readChunked(buffer_size);
     }
     else
-    { 
-        body_file.write(buffer, buffer_size);
-        content_length -= buffer_size;
-        buffer_size = 0;
+    {
+        if (buffer_size >= 2)
+            throw BodyException(E_BODY_READING, NULL);
         return false;
     }
+    return false;
 }
 
 bool Body::readIdentity(ssize_t &buffer_size)
@@ -129,7 +145,7 @@ bool Body::readIdentity(ssize_t &buffer_size)
     body_file.write(buffer, buffer_size);
     body_size += buffer_size;
     buffer_size = 0;
-    return true;
+    return false;
 }
 
 bool Body::readContentLength(ssize_t &buffer_size)
@@ -150,11 +166,11 @@ bool Body::operator<<(ssize_t &buffer_size)
     body_file.open(req_id.c_str(), std::ios::app | std::ios::binary);
     if (!body_file.is_open())
         throw BodyException(E_BODY_READING, NULL);
-    // cout << "the mode is " << mode << endl;
+    if (mode == M_NO_CONF)
+        configBody();
     switch (mode)
     {
         case M_NO_CONF:
-            configBody();
             break;
         case M_NO_BODY:
             body_done = true;
@@ -163,15 +179,18 @@ bool Body::operator<<(ssize_t &buffer_size)
             body_done = readChunked(buffer_size);
             break;
         case M_IDENTITY:
-        {
             body_done = readIdentity(buffer_size);
             break;
-        }
         case M_CONTENT_LENGTH:
             body_done = readContentLength(buffer_size);
             break;
     }
     body_file.close();
+    return body_done;
+}
+
+bool Body::bodyDone()
+{
     return body_done;
 }
 
