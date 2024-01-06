@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/26 08:12:04 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/02 16:53:47 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/06 19:18:20 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,6 @@ void    Client::receive()
 
 void    Client::send()
 {
-    cout << "sending" << endl;
 }
 
 Client &Client::operator=(const Client &eq_cl)

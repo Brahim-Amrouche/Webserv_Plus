@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/25 14:24:00 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/02 22:59:26 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/06 19:18:14 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,8 @@ void LoadBalancer::handle_request()
             {
                 if (events[i].events & EPOLLIN)
                     cl_it->receive();
-                // else
+                else if (events[i].events & EPOLLOUT)
+                    cl_it->send();
                 //     cout << "write to me man" << endl;
                 // else if (events[i].events & EPOLLOUT)
                 //     cl_it->send();
