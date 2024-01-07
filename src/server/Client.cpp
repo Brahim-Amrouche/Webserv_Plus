@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/26 08:12:04 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/07 11:47:53 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/07 14:18:00 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,6 @@ void    Client::send()
     // {
     //     throw ClientExceptions(E_CLIENT_SEND, NULL);
     // }
-    
 }
 
 Client &Client::operator=(const Client &eq_cl)

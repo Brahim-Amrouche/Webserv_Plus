@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 14:23:31 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/07 12:53:00 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/07 17:19:39 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,9 +48,12 @@ class Request
         {
             return (headers.getReqPath());
         };
+        string &getReqId()
+        {
+            return (req_id);
+        };
         deque<string> *operator[](const string &server_key);
         string         operator[](const REQUEST_HEADERS &key);
-        
         ~Request();
         
     

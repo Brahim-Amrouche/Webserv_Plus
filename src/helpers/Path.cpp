@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/03 16:28:12 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/04 17:46:05 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/07 17:18:23 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,15 @@ Path::Path()
 Path::Path(const std::string &path)
 {
     value = path;
+}
+
+Path::isDir()
+{
+    struct stat st;
+    if (stat(value.c_str(), &st) == 0)
+        return S_ISDIR(st.st_mode);
+    return false;
+
 }
 
 void Path::operator--()

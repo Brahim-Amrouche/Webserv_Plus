@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/28 06:28:14 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/05 15:52:27 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/07 17:37:48 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,6 @@ void    ConfigParser::parseConfig(TokenIt &start_token)
 {
     while (start_token != tokens->end())
     {
-        // cout << "token: " << *start_token << endl;
         if (*start_token == directives[SERVER])
             parseServerDirective(start_token);
         else if (*start_token == directives[LISTEN])
@@ -149,7 +148,7 @@ void ConfigParser::validateServerConfig()
     if (!server_conf[directives[SERVER_NAME]])
     {
         deque<string> &server_name = *(server_conf[directives[SERVER_NAME]]->getConfigValue());
-        ServerConfiguration temp(server_name[0]);
+        ServerConfiguration temp(server_name[0] + ":" + server_name[1]);
         server_conf.pushSubdirective(directives[SERVER_NAME], temp);
         temp.setToNull();
     }
@@ -160,6 +159,12 @@ void ConfigParser::validateServerConfig()
         temp.pushConfValue("POST");
         temp.pushConfValue("DELETE");
         server_conf.pushSubdirective(directives[ALLOW_METHODS], temp);
+        temp.setToNull();
+    }
+    if (!server_conf[directives[ROOT]])
+    {
+        ServerConfiguration temp(DEFAULT_ROOT);
+        server_conf.pushSubdirective(directives[ROOT], temp);
         temp.setToNull();
     }
     server_conf.normalizeLocations();
@@ -241,6 +246,7 @@ void    ConfigParser::parseLocationDirective(TokenIt &start_token)
     try
     {
         ServerConfiguration temp(directives[LOCATION]);
+        temp.pushConfValue(*start_token);
         config->pushSubdirective(*start_token, temp);
         temp.setToNull();
         config = (*config)[*start_token];

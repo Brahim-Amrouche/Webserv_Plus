@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/04 20:21:15 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/06 18:12:06 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/07 14:39:37 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ typedef enum E_BODY_ERR_CODES
     E_INVALID_BODY_CONFIG,
     E_INVALID_BODY_HEADERS,
     E_BODY_SIZE_OVERFLOW,
+    E_UNABLE_TO_OPEN_TMP_FILE,
     E_BODY_READING,
 } body_err;
 

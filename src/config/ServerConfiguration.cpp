@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/28 05:52:51 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/04 17:46:13 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/07 17:46:48 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,14 +111,14 @@ void ServerConfiguration::normalizeLocations()
         if (!PH::strIsPath(it->first))
             continue;
         ServerConfiguration &location = it->second;
-        for (ConfigIt it = subdirective->begin(); it != subdirective->end(); it++)
+        for (ConfigIt it2 = subdirective->begin(); it2 != subdirective->end(); it2++)
         {
-            if(PH::strIsPath(it->first))
+            if(PH::strIsPath(it2->first))
                 continue;
-            if (location[it->first])
+            if (location[it2->first])
                 continue;
-            ServerConfiguration temp(&it->second);
-            location.pushSubdirective(it->first, temp);
+            ServerConfiguration temp(&it2->second);
+            location.pushSubdirective(it2->first, temp);
             temp.setToNull();
         }
     }

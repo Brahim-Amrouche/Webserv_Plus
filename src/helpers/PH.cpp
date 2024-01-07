@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/30 14:06:45 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/07 13:31:31 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/07 16:46:52 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,7 +140,7 @@ bool PH::strIsPath(string &str)
         return false;
     for (size_t i = 0; i < str.size(); i++)
     {
-        if (str[i] == '/' && i + 1 < str.size() && str[i + 1] == '/' )
+        if (str[i] == '/' && i + 1 < str.size() && (str[i + 1] == '/' || str[i + 1] == '.' ))
             return false;
     }
     if (str.size() != 1 && str[str.size() - 1] == '/')
@@ -154,7 +154,7 @@ bool PH::strIsPath(const string &str)
         return false;
     for (size_t i = 0; i < str.size(); i++)
     {
-        if (str[i] == '/' && i + 1 < str.size() && str[i + 1] == '/' )
+        if (str[i] == '/' && i + 1 < str.size() && (str[i + 1] == '/' || str[i + 1] == '.') )
             return false;
     }
     return true;

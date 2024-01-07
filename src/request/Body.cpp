@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 00:23:26 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/07 12:31:14 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/07 15:46:08 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,9 @@ Body::BodyException::BodyException(const body_err &err, Body *cln): TException("
             break;
         case E_BODY_READING:
             msg += "Body Reading Failed";
+            break;
+        case E_UNABLE_TO_OPEN_TMP_FILE:
+            msg += "Unable to open tmp file";
             break;
         default :
             msg += "Unknown Error";
@@ -56,12 +59,6 @@ void Body::fromConfig()
 
 void Body::fromHeaders()
 {
-    string content_type = headers[CONTENT_TYPE];
-    if (content_type == "")
-        content_type = "application/octet-stream";
-    map<string, string>::iterator it = mimetypes.find(content_type);
-    if (it == mimetypes.end())
-        throw BodyException(E_INVALID_BODY_HEADERS, NULL);
     if (headers[TRANSFER_ENCODING] != "")
     {
         if (headers[TRANSFER_ENCODING] == "chunked")
@@ -173,7 +170,7 @@ bool Body::operator<<(ssize_t &buffer_size)
         return true;
     body_file.open(req_id.c_str(), std::ios::app | std::ios::binary);
     if (!body_file.is_open())
-        throw BodyException(E_BODY_READING, NULL);
+        throw BodyException(E_UNABLE_TO_OPEN_TMP_FILE, NULL);
     if (mode == M_NO_CONF)
         configBody();
     if (mode == M_NO_BODY && buffer_size != 0)

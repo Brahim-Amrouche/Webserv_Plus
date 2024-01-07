@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 15:29:17 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/06 17:37:40 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/07 14:40:55 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ string REQH::generateReqId()
 
     std::srand(std::time(0));
     stringstream ss;
-    ss << "./tmp/";
+    ss << DEFAULT_TMP_FOLDER;
     for (int i = 0; i < uuidLength; ++i) {
         if (i == 8 || i == 13 || i == 18 || i == 23) {
             ss << '-';
