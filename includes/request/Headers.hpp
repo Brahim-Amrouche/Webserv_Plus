@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/04 20:34:53 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/06 17:40:25 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/07 12:53:09 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,8 @@ typedef enum E_HEADERS_ERR_CODES
     E_REQUEST_LINE,
     E_INVALID_METHOD,
     E_INVALID_HTTP_VERSION,
-    E_NO_HOST_HEADER
+    E_NO_HOST_HEADER,
+    E_INVALID_CONTENT_TYPE,
 } headers_err;
 
 enum REQUEST_HEADERS
@@ -32,9 +33,10 @@ enum REQUEST_HEADERS
     HOST,
     CONTENT_LENGTH,
     TRANSFER_ENCODING,
+    CONTENT_TYPE,
 };
 
-extern const char *request_headers[3];
+extern const char *request_headers[4];
 
 class Headers
 {
@@ -55,6 +57,10 @@ class Headers
         Headers(char (&buffer)[HEADERS_MAX_SIZE + 1], ServerSocket &srv_sock, ServerConfiguration *(&conf));
         void parseRequestLine();
         void configureRequest();
+        string &getReqPath()
+        {
+            return (req_path);
+        };
         string operator[](const REQUEST_HEADERS &key);
         bool   operator<<(ssize_t &buffer_size);
         bool   headersDone();

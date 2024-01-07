@@ -6,12 +6,13 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/25 10:12:41 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/01 22:23:30 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/07 12:15:39 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webserv.hpp"
 
+map<string, string> mimetypes;
 t_cleanup cleanup_data = {NULL, NULL};
 
 void sigIntHandler(int sigNum)
@@ -21,6 +22,8 @@ void sigIntHandler(int sigNum)
         delete cleanup_data.cleanup_server_sock;
     if (cleanup_data.cleanup_loadbalancer)
         delete cleanup_data.cleanup_loadbalancer;
+    // if (cleanup_data.cleanup_mimetypes)
+    //     delete cleanup_data.cleanup_mimetypes;
     exit(sigNum);
 }
 

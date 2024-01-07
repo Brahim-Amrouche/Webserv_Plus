@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/26 08:12:04 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/06 19:18:20 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/07 11:47:53 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,12 +27,13 @@ Client::ClientExceptions::ClientExceptions(const client_errors &err, Client *cln
     }
 }
 
-Client::Client(Socket *cl_sock, ServerSocket &server_sock): client_socket(cl_sock), req(*cl_sock, server_sock)
+Client::Client(Socket *cl_sock, ServerSocket &s_sock): client_socket(cl_sock), server_socket(s_sock), req(buffer, *cl_sock, s_sock), res(buffer, req)
 {
     cout << "New Client Created from socket" << endl; 
 }
 
-Client::Client(const Client &cpy_cl): client_socket(cpy_cl.client_socket), req(cpy_cl.req)
+Client::Client(const Client &cpy_cl): client_socket(cpy_cl.client_socket), server_socket(cpy_cl.server_socket)
+    , req(buffer, *cpy_cl.client_socket,  server_socket) , res(buffer, req)
 {}
 
 Socket *Client::getSocket() const
@@ -60,6 +61,16 @@ void    Client::receive()
 
 void    Client::send()
 {
+    // try
+    // {
+    //     // req.send();
+    //     cout << "sending response" << endl;
+    // }
+    // catch(const Request::RequestException &e)
+    // {
+    //     throw ClientExceptions(E_CLIENT_SEND, NULL);
+    // }
+    
 }
 
 Client &Client::operator=(const Client &eq_cl)
@@ -67,7 +78,8 @@ Client &Client::operator=(const Client &eq_cl)
     if (&eq_cl != this)
     {
         client_socket = eq_cl.client_socket;
-        req = eq_cl.req;
+        server_socket = eq_cl.server_socket;
+        // req = eq_cl.req;
     }
     return *this;
 }

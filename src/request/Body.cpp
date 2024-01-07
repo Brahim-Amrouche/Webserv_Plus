@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 00:23:26 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/06 18:13:23 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/07 12:31:14 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,11 +51,17 @@ void Body::fromConfig()
     char *end = NULL;
     max_config_size = strtol(start, &end, 10);
     if (end == start || *end != '\0')
-        throw BodyException(E_INVALID_BODY_HEADERS, NULL);
+        throw BodyException(E_INVALID_BODY_CONFIG, NULL);
 }
 
 void Body::fromHeaders()
 {
+    string content_type = headers[CONTENT_TYPE];
+    if (content_type == "")
+        content_type = "application/octet-stream";
+    map<string, string>::iterator it = mimetypes.find(content_type);
+    if (it == mimetypes.end())
+        throw BodyException(E_INVALID_BODY_HEADERS, NULL);
     if (headers[TRANSFER_ENCODING] != "")
     {
         if (headers[TRANSFER_ENCODING] == "chunked")
@@ -163,11 +169,15 @@ bool Body::readContentLength(ssize_t &buffer_size)
 
 bool Body::operator<<(ssize_t &buffer_size)
 {
+    if (buffer_size == 0)
+        return true;
     body_file.open(req_id.c_str(), std::ios::app | std::ios::binary);
     if (!body_file.is_open())
         throw BodyException(E_BODY_READING, NULL);
     if (mode == M_NO_CONF)
         configBody();
+    if (mode == M_NO_BODY && buffer_size != 0)
+        throw BodyException(E_INVALID_BODY_HEADERS, NULL);
     switch (mode)
     {
         case M_NO_CONF:

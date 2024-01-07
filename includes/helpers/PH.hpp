@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/30 13:54:13 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/01 14:50:14 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/07 13:23:24 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,7 @@ class PH
         static string parseBodySize(const string &str);
         static http_code_type getHttpCodeType(const string &code);
         static bool strIsBreakToken(const string &str);
+        static bool strIsPath(string &str);
         static bool strIsPath(const string &str);
         static void parseErrorPage(list<string>::iterator &start, list<string>::iterator &end, deque<string> *error_list);
         static void getHostString(const string &str, string &host, string &port, size_t colons_pos);

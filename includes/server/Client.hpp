@@ -6,13 +6,14 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/26 08:12:13 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/02 16:25:09 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/07 11:27:11 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 #include "Socket.hpp"
 #include "Request.hpp"
+#include "Response.hpp"
 
 typedef enum CLIENT_ERR_CODES
 {
@@ -23,8 +24,11 @@ typedef enum CLIENT_ERR_CODES
 class Client
 {
     private :
+        char   buffer[HEADERS_MAX_SIZE + 1];
         Socket *client_socket;
+        ServerSocket &server_socket;
         Request req;
+        Response res;
     public :
         class ClientExceptions: public TException<client_errors, Client>
         {
@@ -42,7 +46,6 @@ class Client
         Client(const Client &cpy_cl);
         Socket    *getSocket() const;
         SOCKET_ID getSocketId() const;
-        void      setSocket(Socket *new_sock);
         void      receive();
         void      send();
         void      nullify();

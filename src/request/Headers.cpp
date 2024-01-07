@@ -6,16 +6,17 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/04 21:02:47 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/05 21:43:20 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/07 13:32:37 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webserv.hpp"
 
-const char *request_headers[3] = {
+const char *request_headers[4] = {
     "Host",
     "Content-Length",
     "Transfer-Encoding",
+    "Content-Type",
 };
 
 Headers::HeadersException::HeadersException(const headers_err &err, Headers *cln):TException("Headers Error: ", err, cln)
@@ -60,8 +61,9 @@ void Headers::parseRequestLine()
     if (pos == string::npos || pos2 == pos + 1)
         throw HeadersException(E_REQUEST_LINE, NULL);
     req_path = req_line.substr(pos + 1, pos2 - pos - 1);
-    if (req_path[req_path.size() - 1]  == '/')
-        req_path.erase(req_path.size() - 1, 1);
+    if (!PH::strIsPath(req_path))
+        throw HeadersException(E_REQUEST_LINE, NULL);
+    cout << req_path << endl;
     Path path_obj(req_path);
     req_config = (*req_config)[path_obj];
     ServerConfiguration *allowed_methods = (*req_config)[directives[ALLOW_METHODS]];
@@ -81,7 +83,7 @@ void Headers::configureRequest()
     string host_string = (*this)[HOST];
     if (host_string.empty())
         throw HeadersException(E_NO_HOST_HEADER, NULL);
-    req_config = server_sock[host_string];
+    req_config = server_sock[host_string];   
     parseRequestLine();
 }
 

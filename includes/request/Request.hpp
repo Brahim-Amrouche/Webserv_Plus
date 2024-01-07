@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 14:23:31 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/05 22:43:38 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/07 12:53:00 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ class Request
 {
     private:
         string  req_id;
-        char      req_buffer[HEADERS_MAX_SIZE + 1];
+        char  (&req_buffer)[HEADERS_MAX_SIZE + 1];
         ssize_t   buffer_size;
         Socket  &client_sock;
         ServerSocket &server_sock;
@@ -42,12 +42,15 @@ class Request
             public:
                 RequestException(const request_err &err, Request *cln);
         };
-        Request();
-        Request(Socket &sock_id, ServerSocket &sock);
-        Request(const Request &cpy_req);
-        Request &operator=(const Request &eq_req);
+        Request(char (&buffer)[HEADERS_MAX_SIZE + 1], Socket &sock_id, ServerSocket &sock);
         void read();
-        string operator[](const REQUEST_HEADERS &key);
+        string &getReqPath()
+        {
+            return (headers.getReqPath());
+        };
+        deque<string> *operator[](const string &server_key);
+        string         operator[](const REQUEST_HEADERS &key);
+        
         ~Request();
         
     
