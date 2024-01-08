@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/28 00:44:06 by bamrouch          #+#    #+#             */
-/*   Updated: 2023/12/28 04:14:28 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/08 18:04:53 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,8 @@ void    TokenizeInput::insertTokens()
     {
         if (line[i] == ' ' || line[i] == '\t')
             continue;
+        else if (line[i] == '#')
+            break;
         else if (line[i] == '{')
         {
             ++brackets_count;
@@ -68,7 +70,6 @@ void    TokenizeInput::insertTokens()
         else
             tokens->push_back(getToken(i,i));
     }
-
 }
 
 list<string> *TokenizeInput::getTokensList() 

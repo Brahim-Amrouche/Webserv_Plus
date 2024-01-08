@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/28 06:28:14 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/07 17:37:48 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/08 15:42:33 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -147,7 +147,7 @@ void ConfigParser::validateServerConfig()
         throw ConfigParserException(E_LISTEN_DIRECTIVE_MISSING, this);
     if (!server_conf[directives[SERVER_NAME]])
     {
-        deque<string> &server_name = *(server_conf[directives[SERVER_NAME]]->getConfigValue());
+        deque<string> &server_name = *(server_conf[directives[LISTEN]]->getConfigValue());
         ServerConfiguration temp(server_name[0] + ":" + server_name[1]);
         server_conf.pushSubdirective(directives[SERVER_NAME], temp);
         temp.setToNull();
@@ -167,6 +167,8 @@ void ConfigParser::validateServerConfig()
         server_conf.pushSubdirective(directives[ROOT], temp);
         temp.setToNull();
     }
+    deque<string> &server_name = *(server_conf[directives[SERVER_NAME]]->getConfigValue());
+    server_conf.pushConfValue(server_name[0]);
     server_conf.normalizeLocations();
 }
 

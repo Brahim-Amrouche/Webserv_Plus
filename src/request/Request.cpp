@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 14:48:01 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/07 11:22:55 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/08 15:43:45 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,6 +81,12 @@ void Request::read()
         cout << e.what() << endl;
         throw RequestException(E_FAILED_BODY_READ, NULL);
     }
+}
+
+string &Request::operator*()
+{
+    deque<string> &location_name = ***server_config;
+    return location_name[1];
 }
 
 deque<string> *Request::operator[](const string &server_key)

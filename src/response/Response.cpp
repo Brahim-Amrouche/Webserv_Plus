@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/06 19:49:43 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/07 17:36:11 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/08 18:03:19 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,16 +29,63 @@ Response::ResponseException::ResponseException(const response_err &err, Response
 Response::Response(char (&buffer)[HEADERS_MAX_SIZE + 1], Request &r): res_buf(buffer), req(r), code(NONE), buffer_size(0)
 {}
 
-void 
-
 void Response::findResponseFile(const Path &index_page)
 {
-    deque<string> *index = req[directives[INDEX]];
+    string &server_path = *req;
     deque<string> *root = req[directives[ROOT]];
-    deque<string> *autoindex = req[directives[AUTOINDEX]];
-    deque<string> *cgi = req[directives[CGI]];
+    deque<string> *cgi_active = req[directives[CGI]];
     deque<string> *redirection = req[directives[REDIRECTION]];
+    if (redirection)
+    {
+        w
+    }
+    if (cgi_active)
+    {
+        Path cgi_path(server_path + req.getReqPath());
+        cgi << cgi_path;
+        return;
+    }
     Path req_path((*root)[0] + req.getReqPath());
+    if (req_path.isFile())
+    {
+        response_path = *req_path;
+        return;
+    }
+    else if (req_path.isDir())
+    {
+        deque<string> *autoindex = req[directives[AUTOINDEX]];
+        deque<string> *index_page = req[directives[INDEX]];
+        if (autoindex && (*autoindex)[0] == "on")
+        {
+            listDirectory();
+            return;
+        }
+        else if (index_page && )
+        {
+            Path index_path(req_path 
+            + (*index_page)[0]);
+            if (index_path.isFile())
+            {
+                response_path = *index_path;
+                return;
+            }
+        }
+        else if (redirection)
+        {
+            Path redirection_path((*redirection)[0]);
+            if (redirection_path.isFile())
+            {
+                response_path = *redirection_path;
+                return;
+            }
+        }
+        return;
+    }
+    else
+    {
+        code = RES_NOT_FOUND;
+        return;
+    }
     
 }
 

@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/06 19:28:49 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/07 17:22:21 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/08 17:58:50 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ typedef enum RESPONSE_CODE
     RES_OK = 200,
     RES_BAD_REQUEST = 400,
     RES_FORBIDDEN = 403,
+    RES_NOT_FOUND = 404,
     RES_INTERNAL_SERVER_ERROR = 500,
     RES_NOT_IMPLEMENTED = 501,
     RES_SERVICE_UNAVAILABLE = 503,
@@ -36,6 +37,7 @@ class Response
     private:
         char (&res_buf)[HEADERS_MAX_SIZE + 1];
         Request &req;
+        Cgi &cgi;
         response_code code;
         ssize_t buffer_size;
         string  response_path;
