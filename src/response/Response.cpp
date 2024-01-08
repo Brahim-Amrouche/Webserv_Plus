@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/06 19:49:43 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/08 18:03:19 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/08 21:16:46 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,25 +26,25 @@ Response::ResponseException::ResponseException(const response_err &err, Response
     }
 }
 
-Response::Response(char (&buffer)[HEADERS_MAX_SIZE + 1], Request &r): res_buf(buffer), req(r), code(NONE), buffer_size(0)
+Response::Response(char (&buffer)[HEADERS_MAX_SIZE + 1], Request &r): res_buf(buffer), req(r), cgi(buffer, req) ,code(NONE), buffer_size(0)
 {}
 
 void Response::findResponseFile(const Path &index_page)
 {
-    string &server_path = *req;
-    deque<string> *root = req[directives[ROOT]];
     deque<string> *cgi_active = req[directives[CGI]];
     deque<string> *redirection = req[directives[REDIRECTION]];
     if (redirection)
     {
-        w
+        
     }
     if (cgi_active)
     {
-        Path cgi_path(server_path + req.getReqPath());
+        string &server_url = *req;
+        Path cgi_path(req.getReqPath());
         cgi << cgi_path;
         return;
     }
+    deque<string> *root = req[directives[ROOT]];
     Path req_path((*root)[0] + req.getReqPath());
     if (req_path.isFile())
     {
@@ -62,20 +62,10 @@ void Response::findResponseFile(const Path &index_page)
         }
         else if (index_page && )
         {
-            Path index_path(req_path 
-            + (*index_page)[0]);
+            Path index_path(*req_path + (*index_page)[0]);
             if (index_path.isFile())
             {
                 response_path = *index_path;
-                return;
-            }
-        }
-        else if (redirection)
-        {
-            Path redirection_path((*redirection)[0]);
-            if (redirection_path.isFile())
-            {
-                response_path = *redirection_path;
                 return;
             }
         }

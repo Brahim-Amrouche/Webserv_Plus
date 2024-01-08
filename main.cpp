@@ -6,13 +6,14 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/25 10:12:41 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/07 12:15:39 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/08 20:17:29 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webserv.hpp"
 
 map<string, string> mimetypes;
+map<response_code, string> response_handle;
 t_cleanup cleanup_data = {NULL, NULL};
 
 void sigIntHandler(int sigNum)

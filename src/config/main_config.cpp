@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/28 03:16:57 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/07 15:02:16 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/08 20:43:55 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,6 +93,67 @@ void configureMimetypes()
     mimetypes.insert(std::pair<string, string>(".7z", "application/x-7z-compressed"));
 }
 
+void configureResponseCodes()
+{
+    response_handle.insert(std::pair<response_code, string>(RES_OK, "OK"));
+    response_handle.insert(std::pair<response_code, string>(RES_CREATED, "Created"));
+    response_handle.insert(std::pair<response_code, string>(RES_ACCEPTED, "Accepted"));
+    response_handle.insert(std::pair<response_code, string>(RES_NON_AUTHORITATIVE_INFORMATION, "Non-Authoritative Information"));
+    response_handle.insert(std::pair<response_code, string>(RES_NO_CONTENT, "No Content"));
+    response_handle.insert(std::pair<response_code, string>(RES_RESET_CONTENT, "Reset Content"));
+    response_handle.insert(std::pair<response_code, string>(RES_PARTIAL_CONTENT, "Partial Content"));
+    response_handle.insert(std::pair<response_code, string>(RES_MULTI_STATUS, "Multi-Status"));
+    response_handle.insert(std::pair<response_code, string>(RES_ALREADY_REPORTED, "Already Reported"));
+    response_handle.insert(std::pair<response_code, string>(RES_IM_USED, "IM Used"));
+    response_handle.insert(std::pair<response_code, string>(RES_MULTIPLE_CHOICES, "Multiple Choices"));
+    response_handle.insert(std::pair<response_code, string>(RES_MOVE_PERMANENTLY, "Moved Permanently"));
+    response_handle.insert(std::pair<response_code, string>(RES_FOUND, "Found"));
+    response_handle.insert(std::pair<response_code, string>(RES_SEE_OTHER, "See Other"));
+    response_handle.insert(std::pair<response_code, string>(RES_NOT_MODIFIED, "Not Modified"));
+    response_handle.insert(std::pair<response_code, string>(RES_USE_PROXY, "Use Proxy"));
+    response_handle.insert(std::pair<response_code, string>(RES_SWITCH_PROXY, "Switch Proxy"));
+    response_handle.insert(std::pair<response_code, string>(RES_TEMPORARY_REDIRECT, "Temporary Redirect"));
+    response_handle.insert(std::pair<response_code, string>(RES_PERMANENT_REDIRECT, "Permanent Redirect"));
+    response_handle.insert(std::pair<response_code, string>(RES_BAD_REQUEST, "Bad Request"));
+    response_handle.insert(std::pair<response_code, string>(RES_UNAUTHORIZED, "Unauthorized"));
+    response_handle.insert(std::pair<response_code, string>(RES_PAYMENT_REQUIRED, "Payment Required"));
+    response_handle.insert(std::pair<response_code, string>(RES_FORBIDDEN, "Forbidden"));
+    response_handle.insert(std::pair<response_code, string>(RES_NOT_FOUND, "Not Found"));
+    response_handle.insert(std::pair<response_code, string>(RES_METHOD_NOT_ALLOWED, "Method Not Allowed"));
+    response_handle.insert(std::pair<response_code, string>(RES_NOT_ACCEPTABLE, "Not Acceptable"));
+    response_handle.insert(std::pair<response_code, string>(RES_PROXY_AUTHENTICATION_REQUIRED, "Proxy Authentication Required"));
+    response_handle.insert(std::pair<response_code, string>(RES_REQUEST_TIMEOUT, "Request Timeout"));
+    response_handle.insert(std::pair<response_code, string>(RES_CONFLICT, "Conflict"));
+    response_handle.insert(std::pair<response_code, string>(RES_GONE, "Gone"));
+    response_handle.insert(std::pair<response_code, string>(RES_LENGTH_REQUIRED, "Length Required"));
+    response_handle.insert(std::pair<response_code, string>(RES_PRECONDITION_FAILED, "Precondition Failed"));
+    response_handle.insert(std::pair<response_code, string>(RES_PAYLOAD_TOO_LARGE, "Payload Too Large"));
+    response_handle.insert(std::pair<response_code, string>(RES_URI_TOO_LONG, "URI Too Long"));
+    response_handle.insert(std::pair<response_code, string>(RES_UNSUPPORTED_MEDIA_TYPE, "Unsupported Media Type"));
+    response_handle.insert(std::pair<response_code, string>(RES_RANGE_NOT_SATISFIABLE, "Range Not Satisfiable"));
+    response_handle.insert(std::pair<response_code, string>(RES_EXPECTATION_FAILED, "Expectation Failed"));
+    response_handle.insert(std::pair<response_code, string>(RES_IM_A_TEAPOT, "I'm a teapot"));
+    response_handle.insert(std::pair<response_code, string>(RES_MISDIRECTED_REQUEST, "Misdirected Request"));
+    response_handle.insert(std::pair<response_code, string>(RES_UNPROCESSABLE_ENTITY, "Unprocessable Entity"));
+    response_handle.insert(std::pair<response_code, string>(RES_LOCKED, "Locked"));
+    response_handle.insert(std::pair<response_code, string>(RES_FAILED_DEPENDENCY, "Failed Dependency"));
+    response_handle.insert(std::pair<response_code, string>(RES_UPGRADE_REQUIRED, "Upgrade Required"));
+    response_handle.insert(std::pair<response_code, string>(RES_PRECONDITION_REQUIRED, "Precondition Required"));
+    response_handle.insert(std::pair<response_code, string>(RES_TOO_MANY_REQUESTS, "Too Many Requests"));
+    response_handle.insert(std::pair<response_code, string>(RES_REQUEST_HEADER_FIELDS_TOO_LARGE, "Request Header Fields Too Large"));
+    response_handle.insert(std::pair<response_code, string>(RES_UNAVAILABLE_FOR_LEGAL_REASONS, "Unavailable For Legal Reasons"));
+    response_handle.insert(std::pair<response_code, string>(RES_INTERNAL_SERVER_ERROR, "Internal Server Error"));
+    response_handle.insert(std::pair<response_code, string>(RES_NOT_IMPLEMENTED, "Not Implemented"));
+    response_handle.insert(std::pair<response_code, string>(RES_BAD_GATEWAY, "Bad Gateway"));
+    response_handle.insert(std::pair<response_code, string>(RES_SERVICE_UNAVAILABLE, "Service Unavailable"));
+    response_handle.insert(std::pair<response_code, string>(RES_GATEWAY_TIMEOUT, "Gateway Timeout"));
+    response_handle.insert(std::pair<response_code, string>(RES_HTTP_VERSION_NOT_SUPPORTED, "HTTP Version Not Supported"));
+    response_handle.insert(std::pair<response_code, string>(RES_VARIANT_ALSO_NEGOTIATES, "Variant Also Negotiates"));
+    response_handle.insert(std::pair<response_code, string>(RES_INSUFFICIENT_STORAGE, "Insufficient Storage"));
+    response_handle.insert(std::pair<response_code, string>(RES_LOOP_DETECTED, "Loop Detected"));
+    response_handle.insert(std::pair<response_code, string>(RES_NOT_EXTENDED, "Not Extended"));
+    response_handle.insert(std::pair<response_code, string>(RES_NETWORK_AUTHENTICATION_REQUIRED, "Network Authentication Required"));
+}
 
 deque<ServerSocket>   *configure(const char *path)
 {

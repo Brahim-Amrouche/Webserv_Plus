@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/30 13:54:13 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/07 13:23:24 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/08 21:19:50 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,23 @@ using std::exception;
 using std::ostringstream;
 using std::list;
 using std::deque;
+
+
+#define SUCCESSFULL_CODE(CODE) (
+    switch(CODE)
+    {
+        case 200:
+        case 201:
+        case 202:
+        case 203:
+        case 204:
+        case 205:
+        case 206:
+            return (true);
+        default:
+            return (false);
+    }
+)
 
 typedef enum HTTP_CODE_TYPE
 {
