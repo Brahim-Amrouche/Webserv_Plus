@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/04 20:21:15 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/07 14:39:37 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/09 18:04:11 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,10 @@ class Body
         bool readIdentity(ssize_t &buffer_size);
         bool readContentLength(ssize_t &buffer_size);
         bool operator<<(ssize_t &buffer_size);
+        BODY_MODE getMode()
+        {
+            return (mode);
+        };
         bool bodyDone();
         ~Body();
 };

@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 14:23:31 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/08 15:24:58 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/09 18:09:07 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,9 +48,17 @@ class Request
         {
             return (headers.getReqPath());
         };
+        REQUEST_METHOD getReqMethod()
+        {
+            return (headers.getReqMethod());
+        };
         string &getReqId()
         {
             return (req_id);
+        };
+        BODY_MODE getBodyMode()
+        {
+            return (body.getMode());
         };
         string &operator*();
         deque<string> *operator[](const string &server_key);

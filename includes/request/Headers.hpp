@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/04 20:34:53 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/07 12:53:09 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/09 18:37:13 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,9 +34,18 @@ enum REQUEST_HEADERS
     CONTENT_LENGTH,
     TRANSFER_ENCODING,
     CONTENT_TYPE,
+    UPLOAD_FILE,
 };
 
-extern const char *request_headers[4];
+enum REQUEST_METHOD
+{
+    METHOD_NONE,
+    METHOD_GET,
+    METHOD_POST,
+    METHOD_DELETE,
+};
+
+extern const char *request_headers[5];
 
 class Headers
 {
@@ -47,6 +56,7 @@ class Headers
         map<string, string> headers;
         string  req_line;
         string  req_path;
+        REQUEST_METHOD req_method;
         bool    headers_done;
     public:
         class HeadersException: public TException< headers_err, Headers>
@@ -60,6 +70,10 @@ class Headers
         string &getReqPath()
         {
             return (req_path);
+        };
+        REQUEST_METHOD getReqMethod()
+        {
+            return (req_method);
         };
         string operator[](const REQUEST_HEADERS &key);
         bool   operator<<(ssize_t &buffer_size);

@@ -6,17 +6,18 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/04 21:02:47 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/07 13:32:37 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/09 18:36:37 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webserv.hpp"
 
-const char *request_headers[4] = {
+const char *request_headers[5] = {
     "Host",
     "Content-Length",
     "Transfer-Encoding",
     "Content-Type",
+    "Upload-File",
 };
 
 Headers::HeadersException::HeadersException(const headers_err &err, Headers *cln):TException("Headers Error: ", err, cln)
@@ -48,7 +49,7 @@ Headers::HeadersException::HeadersException(const headers_err &err, Headers *cln
 }
 
 Headers::Headers(char (&buffer)[HEADERS_MAX_SIZE + 1], ServerSocket &srv_sock ,ServerConfiguration *(&conf)):req_buffer(buffer), server_sock(srv_sock), 
-    req_config(conf), headers_done(false)
+    req_config(conf),req_method (METHOD_NONE) ,headers_done(false)
 {}
 
 void Headers::parseRequestLine()

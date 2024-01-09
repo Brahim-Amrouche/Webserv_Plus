@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/08 20:54:03 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/09 15:46:37 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/09 19:10:44 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,19 @@ string RESH::getDateHeader()
     time(&rawtime);
     strftime(buffer, 100, "Date: %a, %d %b %Y %H:%M:%S GMT\r\n", gmtime(&rawtime));
     return (string(buffer));
+}
+
+string RESH::getContentLengthHeader(Path &file_path)
+{
+    ifstream file;
+    string path = *file_path;
+    file.open((*file_path).c_str(), std::ios::binary | std::ios::ate);
+    if (!file.is_open())
+        throw RESH::RESHException();
+    ssize_t size = file.tellg();
+    stringstream ss;
+    ss << size;
+    return ("Content-Length: " + ss.str() + "\r\n");
 }
 
 string RESH::getContentTypeHeader(Path &content)
