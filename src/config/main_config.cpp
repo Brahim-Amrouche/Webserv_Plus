@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/28 03:16:57 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/08 20:43:55 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/09 13:07:07 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,6 +95,10 @@ void configureMimetypes()
 
 void configureResponseCodes()
 {
+    response_handle.insert(std::pair<response_code, string>(RES_CONTINUE, "Continue"));
+    response_handle.insert(std::pair<response_code, string>(RES_SWITCHING_PROTOCOLS, "Switching Protocols"));
+    response_handle.insert(std::pair<response_code, string>(RES_PROCESSING, "Processing"));
+    response_handle.insert(std::pair<response_code, string>(RES_EARLY_HINTS, "Early Hints"));
     response_handle.insert(std::pair<response_code, string>(RES_OK, "OK"));
     response_handle.insert(std::pair<response_code, string>(RES_CREATED, "Created"));
     response_handle.insert(std::pair<response_code, string>(RES_ACCEPTED, "Accepted"));

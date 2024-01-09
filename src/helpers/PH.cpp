@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/30 14:06:45 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/07 16:46:52 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/09 13:29:52 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,6 +105,125 @@ void PH::strIsAllowedMethod(list<string>::iterator &start, list<string>::iterato
         throw PHException();
 }
 
+response_code PH::isInformational_code(int &code)
+{
+    if (code < 1  || code > 99)
+        return RES_NONE;
+    switch(code)
+    {
+        case 100:
+        case 101:
+        case 102:
+        case 103:
+            return static_cast<response_code>(code);
+        default:
+            return RES_NONE;
+    }
+}
+
+response_code PH::isSuccessful_code(int &code)
+{
+    if (code < 100  || code > 299)
+        return RES_NONE;
+    switch (code)
+    {
+        case 200:
+        case 201:
+        case 202:
+        case 203:
+        case 204:
+        case 205:
+        case 206:
+        case 207:
+        case 226:
+            return static_cast<response_code>(code);
+        default:
+            return RES_NONE;
+    }
+}
+
+response_code PH::isRedirection_code(int &code)
+{
+    if (code < 300  || code > 399)
+        return RES_NONE;
+    switch (code)
+    {
+        case 300:
+        case 301:
+        case 302:
+        case 303:
+        case 304:
+        case 305:
+        case 307:
+        case 308:
+            return static_cast<response_code>(code);
+        default:
+            return RES_NONE;
+    }
+}
+
+response_code PH::isClientError_code(int &code)
+{
+    if (code < 400  || code > 499)
+        return RES_NONE;
+    switch(code)
+    {
+        case 400:
+        case 401:
+        case 402:
+        case 403:
+        case 404:
+        case 405:
+        case 406:
+        case 407:
+        case 408:
+        case 409:
+        case 410:
+        case 411:
+        case 412:
+        case 413:
+        case 414:
+        case 415:
+        case 416:
+        case 417:
+        case 418:
+        case 422:
+        case 423:
+        case 424:
+        case 426:
+        case 428:
+        case 429:
+        case 431:
+        case 451:
+            return static_cast<response_code>(code);
+        default:
+            return RES_NONE;
+    }
+}
+
+response_code PH::isServerError_code(int &code)
+{
+    if (code < 500  || code > 599)
+        return RES_NONE;
+    switch(code)
+    {
+        case 500:
+        case 501:
+        case 502:
+        case 503:
+        case 504:
+        case 505:
+        case 506:
+        case 507:
+        case 508:
+        case 510:
+        case 511:
+            return static_cast<response_code>(code);
+        default:
+            return RES_NONE;
+    }
+}
+
 http_code_type PH::getHttpCodeType(const string &code)
 {
     if (!FT::strIsDigit(code) || code.size() != 3)
@@ -113,15 +232,15 @@ http_code_type PH::getHttpCodeType(const string &code)
     int val = 0;
     if (!(ss >> val) || val < 100 || val > 599)
         return UNVALID_CODE;
-    if (val >= 100 && val < 200)
+    if (isInformational_code(val) != RES_NONE)
         return INFORMATIONAL_CODE;
-    else if (val >= 200 && val < 300)
+    else if (isSuccessful_code(val) != RES_NONE)
         return SUCCESSFULL_CODE;
-    else if (val >= 300 && val < 400)
+    else if (isRedirection_code(val) != RES_NONE)
         return REDIRECTION_CODE;
-    else if (val >= 400 && val < 500)
+    else if (isClientError_code(val) != RES_NONE)
         return CLIENT_ERROR_CODE;
-    else if (code[0] == '5')
+    else if (isServerError_code(val) != RES_NONE)
         return SERVER_ERROR_CODE;
     else
         return UNVALID_CODE;
