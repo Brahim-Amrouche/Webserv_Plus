@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/06 19:28:49 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/09 19:31:17 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/09 22:41:34 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,9 @@
 
 typedef enum RESPONSE_ERR_CODES
 {
-    E_FAILED_WRITE,
+    E_FAILED_SEND,
+    E_CLOSE_CONNECTION,
 } response_err;
-
-
 
 
 class Response
@@ -31,8 +30,10 @@ class Response
         response_code code;
         ssize_t buffer_size;
         string  response_body;
-        size_t  response_body_read;
-        bool   response_done;
+        size_t res_header_sent;
+        size_t  res_body_sent;
+        bool   res_headers_done;
+        bool   res_body_done;
     public:
         class ResponseException : TException<response_err, Response>
         {

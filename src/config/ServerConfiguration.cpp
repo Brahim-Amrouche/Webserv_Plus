@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/28 05:52:51 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/08 15:50:12 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/09 22:38:52 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -156,9 +156,9 @@ void ServerConfiguration::debug_print_directives()
 {
     if (config_values)
     {
-        cout << "config_values-> ";
+        cout << "config_values====> ";
         for (deque<string>::iterator it = config_values->begin(); it != config_values->end(); it++)
-            cout << *it << " ";
+            cout << *it << ";;";
         cout << std::endl;
     }
     if (subdirective)

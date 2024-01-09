@@ -1,17 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   config.hpp                                         :+:      :+:    :+:   */
+/*   Cgi.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/12/27 17:31:00 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/09 22:48:12 by bamrouch         ###   ########.fr       */
+/*   Created: 2024/01/09 21:48:20 by bamrouch          #+#    #+#             */
+/*   Updated: 2024/01/09 21:51:19 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#pragma once
-#include "TokenizeInput.hpp"
-#include "ConfigParser.hpp"
+#include "webserv.hpp"
 
-deque<ServerSocket> *configure(const char *path);
+void Cgi::operator<<(Path &path)
+{
+    (void)path;
+    (void) buffer;
+    (void)req;
+    (void)mode;
+    return;
+}
+
+
+Cgi::~Cgi()
+{
+    // if (mode == CGI_EXEC)
+    //     remove(req.getUploadFile().c_str());
+}

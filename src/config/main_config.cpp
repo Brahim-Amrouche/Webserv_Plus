@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/28 03:16:57 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/09 13:07:07 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/09 22:36:56 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -181,7 +181,6 @@ deque<ServerSocket>   *configure(const char *path)
     {
         ConfigParser::TokenIt it = parser->getTokenStart();
         parser->parseConfig(it);
-        parser->normalizeServerConfigs();
         parser->generateServerSockets();
         server_sockets = parser->getServerSockets();
         delete parser;

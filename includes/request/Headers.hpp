@@ -6,11 +6,12 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/04 20:34:53 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/09 18:37:13 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/09 21:25:06 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
+#include "../server/Socket.hpp"
 #include "Request.hpp"
 
 #define HEADERS_MAX_SIZE 8192
@@ -46,6 +47,9 @@ enum REQUEST_METHOD
 };
 
 extern const char *request_headers[5];
+
+class ServerSocket;
+class Socket;
 
 class Headers
 {

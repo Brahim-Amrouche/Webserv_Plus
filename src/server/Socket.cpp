@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/25 12:36:29 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/05 00:15:50 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/09 22:34:58 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,8 +46,6 @@ Socket::Socket():sock_id(-1), sock_addr_len(0)
 
 Socket::Socket(const char *host, const char *port)
 {
-    cout << "host is " << host << endl;
-    cout << "port is " << port << endl;
     ADDRESS_INFO hints;
     FT::memset(&hints, 0, sizeof(ADDRESS_INFO));
     hints.ai_family = IPV4_AND_6;

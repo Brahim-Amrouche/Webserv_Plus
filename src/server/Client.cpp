@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/26 08:12:04 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/07 14:18:00 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/09 22:51:18 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,15 +61,15 @@ void    Client::receive()
 
 void    Client::send()
 {
-    // try
-    // {
-    //     // req.send();
-    //     cout << "sending response" << endl;
-    // }
-    // catch(const Request::RequestException &e)
-    // {
-    //     throw ClientExceptions(E_CLIENT_SEND, NULL);
-    // }
+    try
+    {
+        // if (req.getServerConfig())
+        res >> *client_socket;
+    }
+    catch(const Response::ResponseException &e)
+    {
+        throw ClientExceptions(E_CLIENT_SEND, NULL);
+    }
 }
 
 Client &Client::operator=(const Client &eq_cl)

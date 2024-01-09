@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/28 06:28:14 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/08 19:48:40 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/09 22:38:24 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -461,7 +461,7 @@ void    ConfigParser::parseRedirectionDirective(TokenIt &start_token)
         deque<string> *redirection_list = temp.getConfigValue();
         temp.setToNull();
         std::advance(start_token, 1);
-        if (start_token == tokens->end() || !PH::strIsPath(*start_token))
+        if (start_token == tokens->end() || PH::strIsBreakToken(*start_token))
             throw PH::PHException();
         redirection_list->push_back(*start_token);
     }
@@ -504,12 +504,6 @@ void ConfigParser::generateServerSockets()
         new_server->nullify();
         delete new_server;
     } 
-}
-
-void ConfigParser::normalizeServerConfigs()
-{
-    for (deque<ServerConfiguration>::iterator it = servers.begin(); it != servers.end(); it++)
-        it->normalizeLocations();
 }
 
 deque<ServerSocket> *ConfigParser::getServerSockets()

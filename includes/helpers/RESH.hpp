@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/08 20:48:49 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/09 15:46:23 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/09 21:32:01 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 #include <string>
 #include <exception>
 #include "Response.hpp"
+#include <ctime>
+// #include "Headers.hpp"
 
 using std::string;
 using std::exception;

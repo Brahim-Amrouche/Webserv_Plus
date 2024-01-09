@@ -6,14 +6,14 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 14:23:31 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/09 18:09:07 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/09 22:08:01 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
-#include "../server/Socket.hpp"
-#include "../config/ServerConfiguration.hpp"
-#include "../helpers/TException.hpp"
+#include "Socket.hpp"
+#include "ServerConfiguration.hpp"
+#include "TException.hpp"
 #include "Headers.hpp"
 #include "Body.hpp"
 
@@ -59,6 +59,10 @@ class Request
         BODY_MODE getBodyMode()
         {
             return (body.getMode());
+        };
+        ServerConfiguration *getServerConfig()
+        {
+            return (server_config);
         };
         string &operator*();
         deque<string> *operator[](const string &server_key);

@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/04 21:02:47 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/09 18:36:37 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/09 22:29:10 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,9 +64,11 @@ void Headers::parseRequestLine()
     req_path = req_line.substr(pos + 1, pos2 - pos - 1);
     if (!PH::strIsPath(req_path))
         throw HeadersException(E_REQUEST_LINE, NULL);
-    cout << req_path << endl;
     Path path_obj(req_path);
     req_config = (*req_config)[path_obj];
+    // cout << "In Headers::parseRequestLine() : " << endl;
+    // req_config->debug_print_directives();
+    // cout << "==================================" << endl;
     ServerConfiguration *allowed_methods = (*req_config)[directives[ALLOW_METHODS]];
     deque<string>::iterator it = (**allowed_methods)->begin(), end = (**allowed_methods)->end();
     if (std::find(it, end, method) == end)
