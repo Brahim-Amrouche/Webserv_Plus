@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/25 12:46:06 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/05 19:32:39 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/10 16:17:45 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,4 +109,11 @@ string FT::strToLowercase(const string &str)
 		new_str.push_back(std::tolower(str[i]));
 	}
 	return new_str;
+}
+
+string &FT::discardLastSlash(string &str)
+{
+	if (str[str.size() - 1] == '/')
+		str.erase(str.size() - 1);
+	return str;
 }

@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/08 20:48:49 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/09 21:32:01 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/10 14:13:49 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,6 @@ class RESH
         static string getStatusLine(const response_code &code);
         static string getCloseConnectionHeader();
         static string getDateHeader();
-        static string getContentLengthHeader(Path &path);
+        static string getContentLengthHeader(Path &path, ssize_t &res_body_size);
         static string getContentTypeHeader(Path &path);
 };

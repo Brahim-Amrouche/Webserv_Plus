@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/25 12:43:17 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/05 19:28:00 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/10 16:18:03 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ class FT
         static size_t  strlen(const char *str);
         static bool    strIsDigit(const string &str);
         static string  strToLowercase(const string &str);
+        static string &discardLastSlash(string &str);
 };
 
 

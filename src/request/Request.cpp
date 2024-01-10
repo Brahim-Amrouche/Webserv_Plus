@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 14:48:01 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/09 22:11:38 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/10 12:38:59 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,9 +70,9 @@ void Request::read()
     {
         if ((headers << buffer_size) && (body << buffer_size))
         {
-            cout << " this is the server configuration: ===============================" << endl;
-            server_config->debug_print_directives();
-            cout << "====================================================================" << endl;
+            // cout << " this is the server configuration: ===============================" << endl;
+            // server_config->debug_print_directives();
+            // cout << "====================================================================" << endl;
             return;
         }
     }

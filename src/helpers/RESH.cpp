@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/08 20:54:03 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/09 21:34:12 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/10 15:17:04 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ string RESH::getDateHeader()
     return (string(buffer));
 }
 
-string RESH::getContentLengthHeader(Path &file_path)
+string RESH::getContentLengthHeader(Path &file_path, ssize_t &res_body_size)
 {
     ifstream file;
     string path = *file_path;
@@ -49,7 +49,9 @@ string RESH::getContentLengthHeader(Path &file_path)
         throw RESH::RESHException();
     ssize_t size = file.tellg();
     stringstream ss;
-    ss << size;
+    if (!(ss << size) || size < 0)
+        throw RESH::RESHException();
+    res_body_size = size;
     return ("Content-Length: " + ss.str() + "\r\n");
 }
 
@@ -57,10 +59,10 @@ string RESH::getContentTypeHeader(Path &content)
 {
     string file = *content;
     size_t pos = file.find_last_of(".");
-    string result = "Content-Type: " + mimetypes["default"] + "\r\n";
+    string result = "Content-Type: ";
     if (pos == string::npos)
         return (result + mimetypes["default"] + "\r\n");
-    string ext = file.substr(pos + 1);
+    string ext = file.substr(pos);
     if (mimetypes.find(ext) != mimetypes.end())
         return (result + mimetypes[ext] + "\r\n");
     return (result + mimetypes["default"] + "\r\n");

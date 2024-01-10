@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/26 08:12:04 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/09 22:51:18 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/10 15:25:42 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,11 +63,12 @@ void    Client::send()
 {
     try
     {
-        // if (req.getServerConfig())
-        res >> *client_socket;
+        if (req.getServerConfig())
+            res >> *client_socket;
     }
     catch(const Response::ResponseException &e)
     {
+        cout << e.what() << endl;
         throw ClientExceptions(E_CLIENT_SEND, NULL);
     }
 }
