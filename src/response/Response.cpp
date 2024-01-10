@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/06 19:49:43 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/10 16:22:39 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/10 23:55:01 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ Response::ResponseException::ResponseException(const response_err &err, Response
 }
 
 Response::Response(char (&buffer)[HEADERS_MAX_SIZE + 1], Request &r): res_buf(buffer), req(r), cgi(buffer, req), 
-    code(RES_NONE), buffer_size(0), res_header_left(0)  , res_headers_done(false), file(buffer_size)
+    buffer_size(0), res_headers_done(false), error_served(RES_NONE) ,file(buffer_size)
 {}
 
 void Response::pushDefaultHeaders()
@@ -47,27 +47,32 @@ void Response::pushDefaultHeaders()
     RESH::pushHeaders(res_buf, "\r\n", buffer_size);
 }
 
-void Response::redirect(const deque<string> &redi_conf)
+void Response::redirect(Path &redi_conf, const response_code &code)
 {
-    stringstream ss;
-    int i_code = 0;
-    ss << redi_conf[0];
-    ss >> i_code;
-    code = PH::isRedirection_code(i_code);
+
     string status_line = RESH::getStatusLine(code);
     RESH::pushHeaders(res_buf, status_line, buffer_size);
-    string redirect_location = "Location: " + redi_conf[1] + "\r\n";
+    string redirect_location = "Location: " + *redi_conf + "\r\n";
     RESH::pushHeaders(res_buf, redirect_location, buffer_size);
     pushDefaultHeaders();
     file.setFileDone(true);
     res_headers_done= true;
 }
 
-void Response::serveFile(Path &path_dir)
+void Response::serveErrorHeaders(const response_code &err_code)
+{
+    string status_line = RESH::getStatusLine(err_code);
+    RESH::pushHeaders(res_buf, status_line, buffer_size);
+    pushDefaultHeaders();
+    file.setFileDone(true);
+    res_headers_done = true;
+}
+
+void Response::serveFile(Path &path_dir, const response_code &res_code)
 {
     try
     {
-        string status_line = RESH::getStatusLine(RES_OK);
+        string status_line = RESH::getStatusLine(res_code);
         RESH::pushHeaders(res_buf, status_line, buffer_size);
         string content_type = RESH::getContentTypeHeader(path_dir);
         RESH::pushHeaders(res_buf, content_type, buffer_size);
@@ -79,8 +84,7 @@ void Response::serveFile(Path &path_dir)
     }
     catch (const RESH::RESHException &e)
     {
-        code = RES_UNAUTHORIZED;
-        return;
+        return serveError(RES_UNAUTHORIZED);
     }
 }
 
@@ -98,11 +102,14 @@ void Response::serveDirectory(Path &path_dir)
     else if (index_page)
     {
         string &index = (*index_page)[0];
-        string root_path = *path_dir;
-        Path index_path(FT::discardLastSlash(root_path) + "/" + index);
-        cout << "The path to index_page is :|" << *index_path << "|" << endl;
-        if (index_path.isFile())
-            return serveFile(index_path);
+        string root_index_path = *path_dir;
+        Path index_file_path(FT::discardLastSlash(root_index_path) + "/" + index);
+        if (index_file_path.isFile())
+        {
+            Path index_route(req.getReqPath() + "/" + index);
+            cout << "it reached here *:|" << *index_route << "|" << endl;
+            return redirect(index_route, RES_FOUND);
+        }
     }
     else if (req[UPLOAD_FILE] != "" && upload_dir && req.getReqMethod() == METHOD_POST 
         && req.getBodyMode() != M_NO_BODY)
@@ -112,18 +119,25 @@ void Response::serveDirectory(Path &path_dir)
         cgi << upload_file;
         return;
     }
-    code = RES_NOT_FOUND;
-    return;
+    return serveError(RES_NOT_FOUND);
 }
 
 void Response::generateResponse()
 {
     if (res_headers_done == true)
-        return ;
+        return serveErrorHeaders(RES_INTERNAL_SERVER_ERROR);
     deque<string> *cgi_active = req[directives[CGI]];
     deque<string> *redirection = req[directives[REDIRECTION]];
     if (redirection)
-       return redirect(*redirection);
+    {
+        stringstream ss;
+        int i_code = 0;
+        ss << (*redirection)[0];
+        ss >> i_code;
+        response_code code = PH::isRedirection_code(i_code);
+        Path redi_path((*redirection)[1]);
+        return redirect(redi_path, code);
+    }
     if (cgi_active)
     {
         string &server_url = *req;
@@ -132,48 +146,66 @@ void Response::generateResponse()
         cgi << cgi_path;
         return;
     }
-    deque<string> *root = req[directives[ROOT]];
-    Path req_path((*root)[0] + req.getReqPath());
+    root_directory = (*(req[directives[ROOT]]))[0];
+    Path req_path(root_directory + req.getReqPath());
     if (req_path.isFile())
-    {
-        cout << "This is about the file" << endl;
-        return serveFile(req_path);
-    }
+        return serveFile(req_path, RES_OK);
     else if (req_path.isDir())
-    {
-        cout << "this is about the directory" << endl;
         return serveDirectory(req_path);
-    }
     else
-    {
-        cout << "this is the not found" << endl;
-        code = RES_NOT_FOUND;
-        throw ResponseException(E_CLOSE_CONNECTION, NULL);
-        return;
-    }   
+        return serveError(RES_NOT_FOUND);
 }
 
-// void Response::operator<<(const ssize_t &read_size)
-// {
-//     int i_code = static_cast<int>(code);
-//     cout << "i_code: " << i_code << endl;
-//     if (res_body_done || PH::isRedirection_code(i_code) != RES_NONE)
-//     {
-//         res_body_done = true;
-//         return ;
-//     }
-//     ifstream file;
-//     ssize_t &bytes_to_read = std::min(read_size,res_body_sent);
-//     file.open(response_body.c_str(), std::ios::binary);
-//     if (!file.is_open())
-//         throw ResponseException(E_FAILED_RESPONSE_BODY_READ, NULL);
-//     file.seekg(res_body_sent);
-//     file.read(res_buf + buffer_size, read_size);
-//     buffer_size += read_size;
-//     if (file.eof())
-//         res_body_done = true;
-//     file.close();
-// }
+
+void Response::serveError(const response_code &err_code)
+{
+    if (error_served)
+        return ;
+    buffer_size = 0;
+    deque<string> *err_page = req[directives[ERROR_PAGE]];
+    if (err_page)
+    {
+        int i_code = static_cast<int>(err_code);
+        stringstream ss;
+        ss << i_code;
+        deque<string>::iterator result = std::find(err_page->begin(), err_page->end(), ss.str());
+        if (result != err_page->end())
+        {
+            while (!PH::strIsPath(*(++result)))
+                ;
+            Path err_redir(*result);
+            return redirect(err_redir , RES_FOUND);
+        }
+    }
+    Path root_err_path(DEFAULT_ERROR_PAGES);
+    root_err_path += "/";
+    buffer_size = 0;
+    switch (err_code)
+    {
+        case RES_BAD_REQUEST:
+            error_served = RES_BAD_REQUEST;
+            serveFile(root_err_path + "400.html", error_served);
+            break;
+        case RES_UNAUTHORIZED:
+            error_served = RES_UNAUTHORIZED;
+            serveFile(root_err_path + "401.html", error_served);
+            break;
+        case RES_FORBIDDEN:
+            error_served = RES_FORBIDDEN;
+            serveFile(root_err_path + "403.html", RES_FORBIDDEN);
+            break;
+        case RES_NOT_FOUND:
+            error_served = RES_NOT_FOUND;
+            serveFile(root_err_path + "404.html", error_served);
+            break;
+        case RES_METHOD_NOT_ALLOWED:
+            error_served = RES_METHOD_NOT_ALLOWED;
+            serveFile(root_err_path + "405.html", error_served);
+            break;
+        default:
+            serveFile(root_err_path + "500.html", RES_INTERNAL_SERVER_ERROR);
+    }
+}
 
 void Response::operator>>(Socket &client_sock)
 {
@@ -181,13 +213,13 @@ void Response::operator>>(Socket &client_sock)
     if (!res_headers_done)
         return ;
     ssize_t sent_size = 0;
-    int i_code = static_cast<int>(code);
-    if (!(*file) || PH::isRedirection_code(i_code))
+    if (!(*file))
         file >> res_buf;
     if ((sent_size = send(client_sock.getSockid(), res_buf, buffer_size, 0)) < 0)
         throw ResponseException(E_FAILED_SEND, NULL);
     FT::memmove(res_buf, res_buf + sent_size, buffer_size - sent_size);
     buffer_size -= sent_size;
+    cout << "the buffer size after send is: " << buffer_size << endl; 
     if (buffer_size == 0 && *file)
         throw ResponseException(E_CLOSE_CONNECTION, NULL);
 }

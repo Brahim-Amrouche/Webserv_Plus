@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/03 16:28:12 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/10 15:43:55 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/10 18:42:18 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,17 @@ Path::Path()
 Path::Path(const std::string &path)
 {
     value = path;
+}
+
+Path &Path::operator+(const string &path)
+{
+    value += path;
+    return (*this);
+}
+
+Path &Path::operator+=(const string &path)
+{
+    return ((*this) + path);
 }
 
 bool Path::isFile()

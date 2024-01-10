@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/06 19:28:49 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/10 15:28:48 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/10 23:45:24 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,10 +28,10 @@ class Response
         char (&res_buf)[HEADERS_MAX_SIZE + 1];
         Request &req;
         Cgi cgi;
-        response_code code;
         ssize_t buffer_size;
-        ssize_t res_header_left;
+        string root_directory;
         bool   res_headers_done;
+        response_code error_served;
         File file;
     public:
         class ResponseException : public TException<response_err, Response>
@@ -42,10 +42,12 @@ class Response
         Response(char (&buffer)[HEADERS_MAX_SIZE + 1], Request &r);
         void pushDefaultHeaders();
         
-        void redirect(const deque<string> &redi_conf);
-        void serveFile(Path &path_dir);
+        void serveErrorHeaders(const response_code &err_code);
+        void redirect(Path &redi_conf, const response_code &code);
+        void serveFile(Path &path_dir, const response_code &res_code);
         void serveDirectory(Path &path_dir);
-        
+        void serveError(const response_code &err_code);
+
         void findResponseFile(const Path &index_page);
         void generateResponse();
         void operator>>(Socket &clien_sock);

@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/08 20:48:49 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/10 14:13:49 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/10 23:30:28 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ class RESH
         };
         static void   pushHeaders(char (&buffer)[HEADERS_MAX_SIZE + 1],const string &header, ssize_t &buffer_size);
         static string getStatusLine(const response_code &code);
+        static string getStatusRedi(const response_code &code);
         static string getCloseConnectionHeader();
         static string getDateHeader();
         static string getContentLengthHeader(Path &path, ssize_t &res_body_size);

@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/03 16:25:01 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/08 17:53:15 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/10 18:42:27 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,8 @@ class Path
         Path();
         Path(const string &path);
         void operator--();
+        Path &operator+(const string &path);
+        Path &operator+=(const string &path);
         string operator*();
         bool operator==(const string &path) const;
         bool operator==(const Path &path) const;

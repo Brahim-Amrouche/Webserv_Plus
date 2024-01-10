@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/30 14:06:45 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/09 13:29:52 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/10 19:12:46 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -262,8 +262,7 @@ bool PH::strIsPath(string &str)
         if (str[i] == '/' && i + 1 < str.size() && (str[i + 1] == '/' || str[i + 1] == '.' ))
             return false;
     }
-    if (str.size() != 1 && str[str.size() - 1] == '/')
-        str.erase(str.size() - 1, 1);
+    FT::discardLastSlash(str);
     return true;
 }
 

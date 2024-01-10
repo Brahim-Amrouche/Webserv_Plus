@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/08 20:54:03 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/10 15:17:04 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/10 23:43:16 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,14 @@ string RESH::getStatusLine(const response_code &code)
 {
     ostringstream oss;
     oss << "HTTP/1.1 " << code << " " << response_handle[code] << "\r\n";
+    return (string(oss.str()));
+}
+
+string RESH::getStatusRedi(const response_code &code)
+{
+    ostringstream oss;
+    
+    oss << "Status: " << code << "\r\n";
     return (string(oss.str()));
 }
 
