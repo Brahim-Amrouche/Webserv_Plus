@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/25 14:24:00 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/06 19:18:14 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/11 18:50:05 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,9 @@ void LoadBalancer::handle_request()
         {
             try
             {
-                if (events[i].events & EPOLLIN)
+                if (events[i].events & EPOLLHUP)
+                    throw Client::ClientExceptions(E_CLIENT_CLOSED, NULL);
+                else if (events[i].events & EPOLLIN)
                     cl_it->receive();
                 else if (events[i].events & EPOLLOUT)
                     cl_it->send();
@@ -125,7 +127,7 @@ void LoadBalancer::add_client(int event_id, SrvSockDeqIt &server)
     clients.push_back(tmp_client);
     tmp_client.nullify();
     FT::memset(&(events[event_id]), 0, sizeof(EPOLL_EVENT));
-    new_client_sock->fill_epoll_event(&(events[event_id]), EPOLLIN | EPOLLOUT);
+    new_client_sock->fill_epoll_event(&(events[event_id]), EPOLLIN | EPOLLOUT | EPOLLHUP);
     if (epoll_ctl(epoll_fd, EPOLL_CTL_ADD, new_client_sock->getSockid(), &(events[event_id])) == -1)
         throw LoadBalancer::LoadBalancerExceptions(E_EPOLLCTL, this);
     ++load;

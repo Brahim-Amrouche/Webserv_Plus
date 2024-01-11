@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/26 08:12:13 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/07 11:27:11 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/11 18:49:22 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ typedef enum CLIENT_ERR_CODES
 {
     E_CLIENT_RECEIVE,
     E_CLIENT_SEND,
+    E_CLIENT_CLOSED,
 }   client_errors;
 
 class Client

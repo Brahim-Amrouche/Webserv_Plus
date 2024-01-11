@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/03 16:28:12 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/11 15:04:54 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/11 17:18:11 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,12 @@ Path::Path()
 Path::Path(const std::string &path)
 {
     value = path;
+}
+
+Path &Path::operator=(const string &new_path)
+{
+    value = new_path;
+    return (*this);
 }
 
 Path &Path::operator+(const string &path)
@@ -60,6 +66,7 @@ bool Path::isSubPath(Path subpath) const
     }
     return false;
 }
+
 
 bool Path::operator==(const string &path) const
 {

@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/06 19:28:49 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/11 15:23:56 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/11 16:37:57 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ typedef enum RESPONSE_ERR_CODES
 {
     E_FAILED_SEND,
     E_FAILED_RESPONSE_BODY_READ,
+    E_FAILED_UPLOADING_FILE,
     E_CLOSE_CONNECTION,
 } response_err;
 

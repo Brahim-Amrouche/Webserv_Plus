@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/26 08:12:04 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/10 15:25:42 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/11 18:48:57 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,9 @@ Client::ClientExceptions::ClientExceptions(const client_errors &err, Client *cln
             break;
         case E_CLIENT_SEND:
             msg += "Client Send Failed";
+            break;
+        case E_CLIENT_CLOSED:
+            msg += "Client Closed Socket";
             break;
         default :
             msg += "Unknown Error";
@@ -63,7 +66,7 @@ void    Client::send()
 {
     try
     {
-        if (req.getServerConfig())
+        if (req.getServerConfig() && req.getBodyDone())
             res >> *client_socket;
     }
     catch(const Response::ResponseException &e)

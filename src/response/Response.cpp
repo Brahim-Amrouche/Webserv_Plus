@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/06 19:49:43 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/11 15:36:15 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/11 19:29:52 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,9 @@ Response::ResponseException::ResponseException(const response_err &err, Response
             break;
         case E_FAILED_RESPONSE_BODY_READ:
             msg += "Failed to read response body";
+            break;
+        case E_FAILED_UPLOADING_FILE:
+            msg += "Failed Uploading File";
             break;
         case E_CLOSE_CONNECTION:
             msg += "Closing connection";
@@ -93,13 +96,17 @@ void Response::serveDirectory(Path &path_dir)
     deque<string> *autoindex = req[directives[AUTOINDEX]];
     deque<string> *index_page = req[directives[INDEX]];
     deque<string> *upload_dir = req[directives[UPLOAD_DIR]];
-    if (autoindex && (*autoindex)[0] == "on")
+    Path upload_path;
+    if (upload_dir)
+        upload_path = (*upload_dir)[0];
+    cout << "DIrectory ===========================>:|"<< *upload_path << "|" << endl;
+    if (req.getReqMethod() == METHOD_GET && autoindex && (*autoindex)[0] == "on")
     {
         cgi.setCgiMode(CGI_LIST_DIR);
         cgi << path_dir;
         return;
     }
-    else if (index_page)
+    else if (req.getReqMethod() == METHOD_GET && index_page)
     {
         string &index = (*index_page)[0];
         string root_index_path = *path_dir;
@@ -111,34 +118,43 @@ void Response::serveDirectory(Path &path_dir)
             return redirect(index_route, RES_FOUND);
         }
     }
-    else if (req[UPLOAD_FILE] && upload_dir && req.getReqMethod() == METHOD_POST 
-        && req.getBodyMode() != M_NO_BODY)
+    else if (upload_path.isSubPath(req.getReqPath()))
     {
-        Path upload_path((*upload_dir)[0]);
-        if (!upload_path.isSubPath(req.getReqPath()))
-            return serveError(RES_NOT_FOUND);
-        return uploadFile();
+        Path delete_file(root_directory + req.getReqPath());
+        cout << "did it even check this" << endl;
+        if (req.getReqMethod() == METHOD_POST && req.getBodyMode() != M_NO_BODY)
+            return uploadFile();
+        else if (req.getReqMethod() == METHOD_DELETE && delete_file.isFile())
+        {
+            remove((*delete_file).c_str());
+            Path delete_res(DEFAULT_ROOT);
+            delete_res += "/200.html";
+            return serveFile(delete_res, RES_OK);
+        }
     }
     return serveError(RES_NOT_FOUND);
 }
 
 void Response::uploadFile()
 {
-    string req_file(DEFAULT_TMP_FOLDER);
+    string req_file(req.getReqId());
     string upload_dir(root_directory + req.getReqPath() + "/" + req[UPLOAD_FILE]);
-    req_file += "/";
-    req_file += req.getReqId();
     const char *tmp_file_path = req_file.c_str();
     const char *upload_file_path = upload_dir.c_str();
+    cout << "the upload path is :|" << upload_dir << "|" << endl;
+    cout << "the tmp file path is:|" << req_file << "|" << endl;
     if (rename(tmp_file_path, upload_file_path) != 0)
-        ;
+        return serveError(RES_UNAUTHORIZED);
+    Path upload_res(DEFAULT_ROOT);
+    upload_res += "/201.html";
+    return serveFile(upload_res, RES_CREATED);
     
 }
 
 void Response::generateResponse()
 {
     if (res_headers_done == true)
-        return serveErrorHeaders(RES_INTERNAL_SERVER_ERROR);
+        return ;
     deque<string> *cgi_active = req[directives[CGI]];
     deque<string> *redirection = req[directives[REDIRECTION]];
     if (redirection)
@@ -163,8 +179,8 @@ void Response::generateResponse()
     Path req_path(root_directory + req.getReqPath());
     cout << "the request path:|" << req.getReqPath()<< "|" << endl;
     cout << "with the whole thing being:|" << *req_path << "|" << endl;
-    cout << "the path to upload in location:|" << (*(req[directives[UPLOAD_DIR]]))[0] << "|" << endl;
-    if ( req_path.isFile())
+    // cout << "the path to upload in location:|" << (*(req[directives[UPLOAD_DIR]]))[0] << "|" << endl;
+    if (req.getReqMethod() == METHOD_GET && req_path.isFile())
         return serveFile(req_path, RES_OK);
     else if (req_path.isDir())
         return serveDirectory(req_path);
@@ -208,7 +224,7 @@ void Response::serveError(const response_code &err_code)
             break;
         case RES_FORBIDDEN:
             error_served = RES_FORBIDDEN;
-            serveFile(root_err_path + "403.html", RES_FORBIDDEN);
+            serveFile(root_err_path + "403.html", error_served);
             break;
         case RES_NOT_FOUND:
             error_served = RES_NOT_FOUND;
@@ -235,7 +251,6 @@ void Response::operator>>(Socket &client_sock)
         throw ResponseException(E_FAILED_SEND, NULL);
     FT::memmove(res_buf, res_buf + sent_size, buffer_size - sent_size);
     buffer_size -= sent_size;
-    cout << "the buffer size after send is: " << buffer_size << endl; 
     if (buffer_size == 0 && *file)
         throw ResponseException(E_CLOSE_CONNECTION, NULL);
 }

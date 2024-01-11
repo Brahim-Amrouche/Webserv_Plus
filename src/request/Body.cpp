@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 00:23:26 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/07 15:46:08 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/11 18:32:01 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -167,7 +167,7 @@ bool Body::readContentLength(ssize_t &buffer_size)
 bool Body::operator<<(ssize_t &buffer_size)
 {
     if (buffer_size == 0)
-        return true;
+        return (body_done = true);
     body_file.open(req_id.c_str(), std::ios::app | std::ios::binary);
     if (!body_file.is_open())
         throw BodyException(E_UNABLE_TO_OPEN_TMP_FILE, NULL);
@@ -193,6 +193,7 @@ bool Body::operator<<(ssize_t &buffer_size)
             break;
     }
     body_file.close();
+    cout << "from the body this is body state: " << body_done << endl;
     return body_done;
 }
 

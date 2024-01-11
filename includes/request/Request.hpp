@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 14:23:31 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/09 22:08:01 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/11 17:51:05 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,10 @@ class Request
         BODY_MODE getBodyMode()
         {
             return (body.getMode());
+        };
+        bool getBodyDone()
+        {
+            return (body.getBodyDone());
         };
         ServerConfiguration *getServerConfig()
         {

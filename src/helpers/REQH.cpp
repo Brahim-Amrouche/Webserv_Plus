@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 15:29:17 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/08 17:51:45 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/11 17:56:50 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,19 @@ ssize_t REQH::get_headers(const string &req, const ssize_t &headers_size, string
     }
     return pos;
 }
+
+REQUEST_METHOD REQH::getReqMethod(const string &method)
+{
+    if(method == "GET")
+        return METHOD_GET;
+    else if (method == "POST")
+        return METHOD_POST;
+    else if (method == "DELETE")
+        return METHOD_DELETE;
+    else
+        return METHOD_NONE;
+}
+
 
 string REQH::generateReqId()
 {

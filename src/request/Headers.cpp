@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/04 21:02:47 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/11 14:50:40 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/11 17:57:57 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,7 @@ void Headers::parseRequestLine()
     deque<string>::iterator it = (**allowed_methods)->begin(), end = (**allowed_methods)->end();
     if (std::find(it, end, method) == end)
         throw HeadersException(E_INVALID_METHOD, NULL);
+    req_method = REQH::getReqMethod(method);
     size_t pos3 = req_line.find_first_of('\r', pos2 + 1);
     if (pos3 == string::npos || pos3 == pos2 + 1)
         throw HeadersException(E_REQUEST_LINE, NULL);

@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/25 14:12:51 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/10 21:48:13 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/11 18:07:12 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 #define DEFAULT_CONFIG "./config/default_config.conf"
 #define DEFAULT_ROOT "./content"
 #define DEFAULT_ERROR_PAGES "./content/error_pages"
-#define DEFAULT_TMP_FOLDER "/tmp"
+#define DEFAULT_TMP_FOLDER "./tmp"
 #define DEFAULT_INDEX "index.html"
 
 extern map<string, string> mimetypes;

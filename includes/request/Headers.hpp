@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/04 20:34:53 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/09 21:25:06 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/11 18:14:19 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include "../server/Socket.hpp"
 #include "Request.hpp"
 
-#define HEADERS_MAX_SIZE 8192
+#define HEADERS_MAX_SIZE 65536
 
 typedef map<string, string>::iterator HeadersIt;
 
@@ -36,14 +36,6 @@ enum REQUEST_HEADERS
     TRANSFER_ENCODING,
     CONTENT_TYPE,
     UPLOAD_FILE,
-};
-
-enum REQUEST_METHOD
-{
-    METHOD_NONE,
-    METHOD_GET,
-    METHOD_POST,
-    METHOD_DELETE,
 };
 
 extern const char *request_headers[5];
