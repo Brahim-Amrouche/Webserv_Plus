@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/08 20:54:03 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/11 19:00:49 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/11 21:55:06 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,13 @@ void RESH::pushHeaders(char (&buffer)[HEADERS_MAX_SIZE + 1],const string &header
 {
     FT::memmove(buffer + buffer_size, header.c_str(), header.length());
     buffer_size += header.length();
+}
+
+string RESH::getHtmlListTag(const string &path, const string &name)
+{
+    ostringstream oss;
+    oss << "<li><a href=\"" << path << "\">" << name << "</a></li>\r\n";
+    return (string(oss.str()));
 }
 
 string RESH::getStatusLine(const response_code &code)

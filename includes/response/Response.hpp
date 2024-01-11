@@ -6,11 +6,13 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/06 19:28:49 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/11 16:37:57 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/11 21:36:45 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
+#include <sys/types.h>
+#include <dirent.h>
 #include "Request.hpp"
 #include "Cgi.hpp"
 #include "File.hpp"
@@ -43,6 +45,7 @@ class Response
         Response(char (&buffer)[HEADERS_MAX_SIZE + 1], Request &r);
         void pushDefaultHeaders();
         
+        void listDirectory(Path &path_dir);
         void uploadFile();
         void serveErrorHeaders(const response_code &err_code);
         void redirect(Path &redi_conf, const response_code &code);

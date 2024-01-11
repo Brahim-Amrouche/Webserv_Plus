@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/25 14:12:51 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/11 18:07:12 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/11 22:06:23 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,8 @@
 #define DEFAULT_ERROR_PAGES "./content/error_pages"
 #define DEFAULT_TMP_FOLDER "./tmp"
 #define DEFAULT_INDEX "index.html"
+
+#define DEFAULT_LIST_HTML "<!DOCTYPE html><html lang='en'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>Listing of "
 
 extern map<string, string> mimetypes;
 extern map<response_code, string> response_handle;

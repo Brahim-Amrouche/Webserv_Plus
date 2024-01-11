@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/06 19:49:43 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/11 20:37:48 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/11 22:26:11 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,9 +64,17 @@ void Response::redirect(Path &redi_conf, const response_code &code)
 
 void Response::serveErrorHeaders(const response_code &err_code)
 {
+    buffer_size = 0;
     string status_line = RESH::getStatusLine(err_code);
     RESH::pushHeaders(res_buf, status_line, buffer_size);
+    Path content_ext(".txt");
+    string content_type = RESH::getContentTypeHeader(content_ext);
+    RESH::pushHeaders(res_buf, content_type, buffer_size);
+    string content_length("Content-Length: 5\r\n");
+    RESH::pushHeaders(res_buf, content_length, buffer_size);
     pushDefaultHeaders();
+    string content("Error");
+    FT::memmove(res_buf + buffer_size, content.c_str(), content.length());
     file.setFileDone(true);
     res_headers_done = true;
 }
@@ -91,6 +99,45 @@ void Response::serveFile(Path &path_dir, const response_code &res_code)
     }
 }
 
+void Response::listDirectory(Path &path_dir)
+{
+    string req_path = req.getReqPath() == "" ? "/" : req.getReqPath();
+    DIR *dir = opendir((*path_dir).c_str());
+    if (!dir)
+        return serveError(RES_UNAUTHORIZED);
+    string status_line = RESH::getStatusLine(RES_OK);
+    RESH::pushHeaders(res_buf, status_line, buffer_size);
+    Path content_ext(".html");
+    string content_type = RESH::getContentTypeHeader(content_ext);
+    RESH::pushHeaders(res_buf, content_type, buffer_size);
+    string html_page(DEFAULT_LIST_HTML);
+    html_page += req_path;
+    html_page += "</title></head><body><h1>Listing of ";
+    html_page += req_path;
+    html_page += "</h1><ul>";
+    dirent *entry;
+    while ((entry = readdir(dir)))
+    {
+        if (entry->d_name[0] == '.')
+            continue ;
+        html_page += RESH::getHtmlListTag(req.getReqPath() + "/" + entry->d_name, entry->d_name);
+    }
+    html_page += "</ul></body></html>";
+    closedir(dir);
+    ostringstream oss;
+    oss << html_page.length();
+    string content_length("Content-Length: ");
+    content_length += oss.str() + "\r\n";
+    RESH::pushHeaders(res_buf, content_length, buffer_size);
+    pushDefaultHeaders();
+    if (buffer_size + html_page.length() > HEADERS_MAX_SIZE)
+        return serveError(RES_INTERNAL_SERVER_ERROR);
+    FT::memmove(res_buf + buffer_size, html_page.c_str(), html_page.length());
+    file.setFileDone(true);
+    res_headers_done = true;
+    buffer_size += html_page.length();
+}
+
 void Response::serveDirectory(Path &path_dir)
 {
     deque<string> *autoindex = req[directives[AUTOINDEX]];
@@ -99,13 +146,8 @@ void Response::serveDirectory(Path &path_dir)
     Path upload_path;
     if (upload_dir)
         upload_path = (*upload_dir)[0];
-    cout << "DIrectory ===========================>:|"<< *upload_path << "|" << endl;
     if (req.getReqMethod() == METHOD_GET && path_dir.isDir() && autoindex && (*autoindex)[0] == "on")
-    {
-        cgi.setCgiMode(CGI_LIST_DIR);
-        cgi << path_dir;
-        return;
-    }
+        return listDirectory(path_dir);
     else if (req.getReqMethod() == METHOD_GET && path_dir.isDir() && index_page)
     {
         string &index = (*index_page)[0];
@@ -120,8 +162,9 @@ void Response::serveDirectory(Path &path_dir)
     }
     else if (upload_path.isSubPath(req.getReqPath()))
     {
+        // cout << "the upload Path is:|" << *upload_path << "|" << endl;
+        // cout << "the req path is:|" << req.getReqPath() << "|" << endl;
         Path delete_file(root_directory + req.getReqPath());
-        cout << "did it even check this: " << *delete_file << endl;
         if (req.getReqMethod() == METHOD_POST && req.getBodyMode() != M_NO_BODY)
             return uploadFile();
         else if (req.getReqMethod() == METHOD_DELETE && delete_file.isFile())
@@ -141,6 +184,8 @@ void Response::uploadFile()
     string upload_dir(root_directory + req.getReqPath() + "/" + req[UPLOAD_FILE]);
     const char *tmp_file_path = req_file.c_str();
     const char *upload_file_path = upload_dir.c_str();
+    // cout << "the tmpfile path is:|" << tmp_file_path << "|" << endl;
+    // cout << "the upload file path is:|" << upload_file_path << "|" << endl;
     if (rename(tmp_file_path, upload_file_path) != 0)
         return serveError(RES_UNAUTHORIZED);
     Path upload_res(DEFAULT_ROOT);
@@ -169,7 +214,6 @@ void Response::generateResponse()
     {
         string &server_url = *req;
         Path cgi_path(server_url + req.getReqPath());
-        cgi.setCgiMode(CGI_EXEC);
         cgi << cgi_path;
         return;
     }
@@ -230,7 +274,8 @@ void Response::serveError(const response_code &err_code)
             serveFile(root_err_path + "405.html", error_served);
             break;
         default:
-            serveFile(root_err_path + "500.html", RES_INTERNAL_SERVER_ERROR);
+            error_served = RES_INTERNAL_SERVER_ERROR;
+            serveFile(root_err_path + "500.html", error_served);
     }
 }
 
