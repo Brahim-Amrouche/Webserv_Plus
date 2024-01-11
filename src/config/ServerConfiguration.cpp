@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/28 05:52:51 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/09 22:38:52 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/11 14:26:41 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,7 +117,7 @@ void ServerConfiguration::normalizeLocations()
         (*location.config_values).push_back(server_name + location_path);
         for (ConfigIt it2 = subdirective->begin(); it2 != subdirective->end(); it2++)
         {
-            if(PH::strIsPath(it2->first))
+            if(PH::strIsPath(it2->first) || it2->first == directives[INDEX])
                 continue;
             if (location[it2->first])
                 continue;

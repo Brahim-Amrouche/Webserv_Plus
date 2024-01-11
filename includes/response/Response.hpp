@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/06 19:28:49 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/10 23:45:24 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/11 15:23:56 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,13 +42,13 @@ class Response
         Response(char (&buffer)[HEADERS_MAX_SIZE + 1], Request &r);
         void pushDefaultHeaders();
         
+        void uploadFile();
         void serveErrorHeaders(const response_code &err_code);
         void redirect(Path &redi_conf, const response_code &code);
         void serveFile(Path &path_dir, const response_code &res_code);
         void serveDirectory(Path &path_dir);
         void serveError(const response_code &err_code);
 
-        void findResponseFile(const Path &index_page);
         void generateResponse();
         void operator>>(Socket &clien_sock);
         ~Response();

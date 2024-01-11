@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/07 16:03:03 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/09 18:45:35 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/11 13:32:31 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ class Cgi
         {
             mode = m;
         };
+        
         void operator<<(Path &path);
         ~Cgi();
 };

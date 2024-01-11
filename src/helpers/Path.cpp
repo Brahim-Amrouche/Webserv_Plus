@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/03 16:28:12 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/10 18:42:18 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/11 15:04:54 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,17 @@ bool Path::isDir()
         return S_ISDIR(st.st_mode);
     return false;
 
+}
+
+bool Path::isSubPath(Path subpath) const
+{
+    while (subpath.value != "")
+    {
+        if (subpath.value == this->value)
+            return true;
+        --subpath;
+    }
+    return false;
 }
 
 bool Path::operator==(const string &path) const

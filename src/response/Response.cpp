@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/06 19:49:43 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/10 23:55:01 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/11 15:36:15 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,15 +111,28 @@ void Response::serveDirectory(Path &path_dir)
             return redirect(index_route, RES_FOUND);
         }
     }
-    else if (req[UPLOAD_FILE] != "" && upload_dir && req.getReqMethod() == METHOD_POST 
+    else if (req[UPLOAD_FILE] && upload_dir && req.getReqMethod() == METHOD_POST 
         && req.getBodyMode() != M_NO_BODY)
     {
-        Path upload_file(*path_dir + req[UPLOAD_FILE]);
-        cgi.setCgiMode(CGI_UPLOAD);
-        cgi << upload_file;
-        return;
+        Path upload_path((*upload_dir)[0]);
+        if (!upload_path.isSubPath(req.getReqPath()))
+            return serveError(RES_NOT_FOUND);
+        return uploadFile();
     }
     return serveError(RES_NOT_FOUND);
+}
+
+void Response::uploadFile()
+{
+    string req_file(DEFAULT_TMP_FOLDER);
+    string upload_dir(root_directory + req.getReqPath() + "/" + req[UPLOAD_FILE]);
+    req_file += "/";
+    req_file += req.getReqId();
+    const char *tmp_file_path = req_file.c_str();
+    const char *upload_file_path = upload_dir.c_str();
+    if (rename(tmp_file_path, upload_file_path) != 0)
+        ;
+    
 }
 
 void Response::generateResponse()
@@ -148,7 +161,10 @@ void Response::generateResponse()
     }
     root_directory = (*(req[directives[ROOT]]))[0];
     Path req_path(root_directory + req.getReqPath());
-    if (req_path.isFile())
+    cout << "the request path:|" << req.getReqPath()<< "|" << endl;
+    cout << "with the whole thing being:|" << *req_path << "|" << endl;
+    cout << "the path to upload in location:|" << (*(req[directives[UPLOAD_DIR]]))[0] << "|" << endl;
+    if ( req_path.isFile())
         return serveFile(req_path, RES_OK);
     else if (req_path.isDir())
         return serveDirectory(req_path);
@@ -160,7 +176,7 @@ void Response::generateResponse()
 void Response::serveError(const response_code &err_code)
 {
     if (error_served)
-        return ;
+        return serveErrorHeaders(error_served);
     buffer_size = 0;
     deque<string> *err_page = req[directives[ERROR_PAGE]];
     if (err_page)
