@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 00:23:26 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/11 18:32:01 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/11 20:15:50 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -193,7 +193,6 @@ bool Body::operator<<(ssize_t &buffer_size)
             break;
     }
     body_file.close();
-    cout << "from the body this is body state: " << body_done << endl;
     return body_done;
 }
 

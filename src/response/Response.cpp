@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/06 19:49:43 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/11 19:29:52 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/11 20:37:48 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,13 +100,13 @@ void Response::serveDirectory(Path &path_dir)
     if (upload_dir)
         upload_path = (*upload_dir)[0];
     cout << "DIrectory ===========================>:|"<< *upload_path << "|" << endl;
-    if (req.getReqMethod() == METHOD_GET && autoindex && (*autoindex)[0] == "on")
+    if (req.getReqMethod() == METHOD_GET && path_dir.isDir() && autoindex && (*autoindex)[0] == "on")
     {
         cgi.setCgiMode(CGI_LIST_DIR);
         cgi << path_dir;
         return;
     }
-    else if (req.getReqMethod() == METHOD_GET && index_page)
+    else if (req.getReqMethod() == METHOD_GET && path_dir.isDir() && index_page)
     {
         string &index = (*index_page)[0];
         string root_index_path = *path_dir;
@@ -121,7 +121,7 @@ void Response::serveDirectory(Path &path_dir)
     else if (upload_path.isSubPath(req.getReqPath()))
     {
         Path delete_file(root_directory + req.getReqPath());
-        cout << "did it even check this" << endl;
+        cout << "did it even check this: " << *delete_file << endl;
         if (req.getReqMethod() == METHOD_POST && req.getBodyMode() != M_NO_BODY)
             return uploadFile();
         else if (req.getReqMethod() == METHOD_DELETE && delete_file.isFile())
@@ -141,8 +141,6 @@ void Response::uploadFile()
     string upload_dir(root_directory + req.getReqPath() + "/" + req[UPLOAD_FILE]);
     const char *tmp_file_path = req_file.c_str();
     const char *upload_file_path = upload_dir.c_str();
-    cout << "the upload path is :|" << upload_dir << "|" << endl;
-    cout << "the tmp file path is:|" << req_file << "|" << endl;
     if (rename(tmp_file_path, upload_file_path) != 0)
         return serveError(RES_UNAUTHORIZED);
     Path upload_res(DEFAULT_ROOT);
@@ -179,13 +177,10 @@ void Response::generateResponse()
     Path req_path(root_directory + req.getReqPath());
     cout << "the request path:|" << req.getReqPath()<< "|" << endl;
     cout << "with the whole thing being:|" << *req_path << "|" << endl;
-    // cout << "the path to upload in location:|" << (*(req[directives[UPLOAD_DIR]]))[0] << "|" << endl;
     if (req.getReqMethod() == METHOD_GET && req_path.isFile())
         return serveFile(req_path, RES_OK);
-    else if (req_path.isDir())
+    else 
         return serveDirectory(req_path);
-    else
-        return serveError(RES_NOT_FOUND);
 }
 
 

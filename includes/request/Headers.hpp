@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/04 20:34:53 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/11 18:14:19 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/11 20:27:09 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include "../server/Socket.hpp"
 #include "Request.hpp"
 
-#define HEADERS_MAX_SIZE 65536
+#define HEADERS_MAX_SIZE 32768
 
 typedef map<string, string>::iterator HeadersIt;
 
