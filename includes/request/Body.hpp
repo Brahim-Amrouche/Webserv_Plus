@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/04 20:21:15 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/11 17:50:31 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/12 15:44:48 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,10 @@ class Body
         bool getBodyDone()
         {
             return (body_done);
+        };
+        bool getBodySize()
+        {
+            return (body_size);
         };
         bool bodyDone();
         ~Body();

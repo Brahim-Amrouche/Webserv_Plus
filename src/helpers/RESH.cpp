@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/08 20:54:03 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/11 21:55:06 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/12 15:37:39 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,24 @@ void RESH::pushHeaders(char (&buffer)[HEADERS_MAX_SIZE + 1],const string &header
 {
     FT::memmove(buffer + buffer_size, header.c_str(), header.length());
     buffer_size += header.length();
+}
+
+string RESH::getMethodString(const REQUEST_METHOD &method)
+{
+    switch (method)
+    {
+        case METHOD_GET:
+            return "GET";
+            break;
+        case METHOD_POST:
+            return "POST";
+            break;
+        case METHOD_DELETE:
+            return "DELETE";
+            break;
+        default:
+            break;
+    }
 }
 
 string RESH::getHtmlListTag(const string &path, const string &name)

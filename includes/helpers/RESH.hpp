@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/08 20:48:49 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/11 21:52:35 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/12 15:37:48 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ class RESH
                     return ("RESH Exception");
                 }
         };
+        static string getMethodString(const REQUEST_METHOD &method);
         static void   pushHeaders(char (&buffer)[HEADERS_MAX_SIZE + 1],const string &header, ssize_t &buffer_size);
         static string getHtmlListTag(const string &path, const string &name);
         static string getStatusLine(const response_code &code);

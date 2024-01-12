@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 00:23:26 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/11 20:15:50 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/12 15:51:38 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,6 +91,10 @@ void Body::configBody()
 {
     fromConfig();
     fromHeaders();
+    if (mode != M_NO_BODY && headers[CONTENT_TYPE] == "")
+        throw BodyException(E_INVALID_BODY_HEADERS, NULL);
+    else if (mode == M_NO_BODY && headers[CONTENT_TYPE] != "")
+        throw BodyException(E_INVALID_BODY_HEADERS, NULL);
 }
 
 bool Body::readChunked(ssize_t &buffer_size)

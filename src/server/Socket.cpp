@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/25 12:36:29 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/09 22:34:58 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/12 16:26:28 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,8 @@ Socket::Socket(const char *host, const char *port)
     int opt = 1;
     if (setsockopt(sock_id, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) == -1)
         throw Socket::SocketExceptions(E_SOCKET_OPEN, NULL);
-    cout << "Socket successfully opened" << endl;
+    setSockInfo();
+    cout << "Socket successfully opened at:" << ip << ":" << port << endl;
 }
 
 Socket::Socket(const Socket &cpy_sock)
@@ -114,8 +115,9 @@ Socket *Socket::sockAccept()
         &(client_socket->sock_addr), &(client_socket->sock_addr_len));
     if (!ISVALIDSOCKET(client_socket->sock_id))
         throw Socket::SocketExceptions(E_SOCKET_ACCEPT, client_socket);
-    cout << "Client socket accepted" << endl;
-    return client_socket;   
+    client_socket->setSockInfo();
+    cout << "Client socket accepted at:" << client_socket->ip << ":" << client_socket->port << endl;
+    return client_socket;
 }
 
 void Socket::fill_epoll_event(EPOLL_EVENT *e_event, uint32_t mode)
@@ -127,6 +129,15 @@ void Socket::fill_epoll_event(EPOLL_EVENT *e_event, uint32_t mode)
 SOCKET_ID Socket::getSockid()
 {
     return sock_id;
+}
+
+void Socket::setSockInfo()
+{
+    char addr_info[100];
+    char port_info[100];
+    getnameinfo(&sock_addr, sock_addr_len, addr_info, sizeof(addr_info), port_info, sizeof(port_info), NI_NUMERICHOST | NI_NUMERICSERV);
+    ip = addr_info;
+    port = port_info;
 }
 
 void Socket::nullify()

@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/06 19:49:43 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/11 22:26:11 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/12 17:30:01 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ Response::ResponseException::ResponseException(const response_err &err, Response
     }
 }
 
-Response::Response(char (&buffer)[HEADERS_MAX_SIZE + 1], Request &r): res_buf(buffer), req(r), cgi(buffer, req), 
+Response::Response(char (&buffer)[HEADERS_MAX_SIZE + 1], Request &r): res_buf(buffer), req(r), cgi(buffer, req, root_directory), 
     buffer_size(0), res_headers_done(false), error_served(RES_NONE) ,file(buffer_size)
 {}
 
@@ -200,6 +200,7 @@ void Response::generateResponse()
         return ;
     deque<string> *cgi_active = req[directives[CGI]];
     deque<string> *redirection = req[directives[REDIRECTION]];
+    root_directory = (*(req[directives[ROOT]]))[0];
     if (redirection)
     {
         stringstream ss;
@@ -217,7 +218,6 @@ void Response::generateResponse()
         cgi << cgi_path;
         return;
     }
-    root_directory = (*(req[directives[ROOT]]))[0];
     Path req_path(root_directory + req.getReqPath());
     cout << "the request path:|" << req.getReqPath()<< "|" << endl;
     cout << "with the whole thing being:|" << *req_path << "|" << endl;

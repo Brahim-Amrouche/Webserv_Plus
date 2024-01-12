@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/25 14:12:51 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/11 22:06:23 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/12 18:50:32 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,10 @@
 #define DEFAULT_INDEX "index.html"
 
 #define DEFAULT_LIST_HTML "<!DOCTYPE html><html lang='en'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>Listing of "
+
+#define PHP_CGI_PATH "/usr/bin/php-cgi"
+#define PYTHON_CGI_PATH "/usr/bin/python3"
+
 
 extern map<string, string> mimetypes;
 extern map<response_code, string> response_handle;

@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/06 19:28:49 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/11 21:36:45 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/12 18:05:04 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@ typedef enum RESPONSE_ERR_CODES
     E_FAILED_SEND,
     E_FAILED_RESPONSE_BODY_READ,
     E_FAILED_UPLOADING_FILE,
+    E_FAILED_CGI_EXEC,
     E_CLOSE_CONNECTION,
 } response_err;
 
@@ -30,9 +31,9 @@ class Response
     private:
         char (&res_buf)[HEADERS_MAX_SIZE + 1];
         Request &req;
+        string root_directory;
         Cgi cgi;
         ssize_t buffer_size;
-        string root_directory;
         bool   res_headers_done;
         response_code error_served;
         File file;

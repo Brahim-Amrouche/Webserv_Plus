@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/03 16:28:12 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/11 17:18:11 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/12 17:04:46 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,12 @@ Path::Path(const std::string &path)
 Path &Path::operator=(const string &new_path)
 {
     value = new_path;
+    return (*this);
+}
+
+Path &Path::operator=(const Path &new_path)
+{
+    value = new_path.value;
     return (*this);
 }
 

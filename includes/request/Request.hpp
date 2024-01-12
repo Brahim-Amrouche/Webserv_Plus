@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 14:23:31 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/11 17:51:05 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/12 16:30:54 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,9 +64,21 @@ class Request
         {
             return (body.getBodyDone());
         };
+        ssize_t getBodySize()
+        {
+            return (body.getBodySize());
+        };
         ServerConfiguration *getServerConfig()
         {
             return (server_config);
+        };
+        Socket &getClientSock()
+        {
+            return (client_sock);
+        };
+        ServerSocket &getServerSock()
+        {
+            return (server_sock);
         };
         string &operator*();
         deque<string> *operator[](const string &server_key);
