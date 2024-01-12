@@ -6,13 +6,28 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/09 21:48:20 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/12 19:45:49 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/12 21:28:56 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webserv.hpp"
 
-void Cgi::setEnv()
+void Cgi::setQueryParams(Path &req_path)
+{
+    size_t slash_pos = (*req_path).find_last_of('/');
+    if (slash_pos == string::npos)
+        return;
+    string last_path = (*req_path).substr(slash_pos + 1);
+    size_t qmark_pos = last_path.find('?');
+    if (qmark_pos == string::npos)
+        return;
+    string query_params = "QUERY_STRING=";
+    query_params += last_path.substr(qmark_pos + 1);
+    string path_info = (*req_path).substr(0, slash_pos + 1) + last_path.substr(0, qmark_pos);
+    req_path = path_info;
+}
+
+void Cgi::setEnv(Path &script, Path &req_path)
 {
     // defaulted env
     env.push_back("SERVER_PROTOCOL=HTTP/1.1");
@@ -33,16 +48,14 @@ void Cgi::setEnv()
     temp_env += req.getServerSock().getPort();
     env.push_back(temp_env);
     temp_env = "SCRIPT_NAME=";
-    temp_env += *cgi_req_path;
+    temp_env += *script;
     env.push_back(temp_env);
+    setQueryParams(req_path);
     temp_env = "PATH_INFO=";
-    temp_env += *cgi_req_path;
+    temp_env += *req_path;
     env.push_back(temp_env);
     temp_env = "PATH_TRANSLATED=";
-    temp_env += fs_root + "/" + *cgi_req_path;
-    env.push_back(temp_env);
-    temp_env = "QUERY_STRING=";
-    temp_env += "";
+    temp_env += *req + "/" + *req_path;
     env.push_back(temp_env);
     if (req.getBodySize() > 0)
     {
@@ -63,7 +76,7 @@ void Cgi::setEnv()
 const char *php_execution_args[4] = {PHP_CGI_PATH, "-f" , NULL, NULL};
 const char *py_execution_args[3] = {PYTHON_CGI_PATH, NULL , NULL};
 
-void Cgi::exec()
+void Cgi::exec(Path &script_path)
 {
     const char **p_env = new char*[this->env.size() + 1];
     for (size_t i = 0; i < env.size(); i++)
@@ -78,16 +91,18 @@ void Cgi::exec()
         exit(1);
     dup2(body_file, 0);
     dup2(res_file, 1);
-    if (chdir((*cgi_req_path).c_str()) != 0)
+    string script_route = script_path.getFileRoute();
+    --script_path;
+    if (chdir((*script_path).c_str()) != 0)
         exit(1);
     if (lang == L_PHP)
     {
-        php_execution_args[2] = (*cgi_req_path).c_str();
+        php_execution_args[2] = script_route.c_str();
         execve(php_execution_args[0], (char * const *)php_execution_args, (char * const *)p_env);
     }
     else if (lang == L_PYTHON)
     {
-        py_execution_args[1] = (*cgi_req_path).c_str();
+        py_execution_args[1] = script_route.c_str();
         execve(py_execution_args[0], (char * const *)py_execution_args, (char * const *)p_env);
     }
     exit(1);
@@ -95,9 +110,9 @@ void Cgi::exec()
 
 
 
-bool Cgi::init(Path &path)
+bool Cgi::init(Path &script_path, Path &req_path)
 {
-    cgi_req_path = path;
+    
     proc_id = fork();
     switch (proc_id)
     {
@@ -122,8 +137,7 @@ bool Cgi::isDone()
     return cgi_done;
 }
 
-
-
-
 Cgi::~Cgi()
-{}
+{
+    // remove(cgi_output.c_str());
+}

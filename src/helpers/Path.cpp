@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/03 16:28:12 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/12 17:04:46 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/12 21:27:27 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,22 @@ bool Path::isSubPath(Path subpath) const
     return false;
 }
 
+bool Path::isPythonFile()
+{
+    size_t pos = value.find_last_of('.');
+    if (pos != string::npos && value.substr(pos) == ".py")
+        return true;
+    return false;
+}
+
+bool Path::isPhpFile()
+{
+    size_t pos = value.find_last_of('.');
+    if (pos != string::npos && value.substr(pos) == ".php")
+        return true;
+    return false;
+}
+
 
 bool Path::operator==(const string &path) const
 {
@@ -96,6 +112,14 @@ void Path::operator--()
 string Path::operator*()
 {
     return value;
+}
+
+string Path::getFileRoute()
+{
+    size_t pos = value.find_last_of('/');
+    if (pos == string::npos)
+        return value;
+    return value.substr(pos + 1);
 }
 
 Path::~Path()

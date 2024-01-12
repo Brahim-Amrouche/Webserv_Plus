@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/06 19:49:43 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/12 17:30:01 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/12 20:40:50 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -215,7 +215,8 @@ void Response::generateResponse()
     {
         string &server_url = *req;
         Path cgi_path(server_url + req.getReqPath());
-        cgi << cgi_path;
+        cout << "the cgi path is:|" << *cgi_path << "|" << endl;
+        cgi.init(cgi_path);
         return;
     }
     Path req_path(root_directory + req.getReqPath());
