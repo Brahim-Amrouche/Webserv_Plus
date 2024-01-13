@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 14:23:31 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/12 16:30:54 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/13 23:00:31 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,9 @@ typedef enum REQUEST_ERR_CODES
     E_FAILED_READ,
     E_FAILED_HEADERS_READ,
     E_FAILED_BODY_READ,
+    E_REQUEST_ERROR_400,
+    E_REQUEST_ERROR_405,
+    E_REQUEST_ERROR_500,
     E_READING_DONE,
 } request_err;
 

@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/09 21:48:20 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/13 18:05:40 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/13 22:35:22 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ void Cgi::setEnv(Path &script, Path &req_path)
     }
 }
 
-const char *php_execution_args[4] = {PHP_CGI_PATH, "-f" , NULL, NULL};
+const char *php_execution_args[3] = {PHP_CGI_PATH, NULL, NULL};
 const char *py_execution_args[3] = {PYTHON_CGI_PATH, NULL , NULL};
 
 void Cgi::exec(Path &script_path)
@@ -104,7 +104,7 @@ void Cgi::exec(Path &script_path)
         exit(1);
     if (lang == L_PHP)
     {
-        php_execution_args[2] = script_name.c_str();
+        php_execution_args[1] = script_name.c_str();
         execve(php_execution_args[0], (char * const *)php_execution_args, (char * const *)p_env);
     }
     else if (lang == L_PYTHON)
@@ -112,6 +112,7 @@ void Cgi::exec(Path &script_path)
         py_execution_args[1] = script_name.c_str();
         execve(py_execution_args[0], (char * const *)py_execution_args, (char * const *)p_env);
     }
+    cout << "did it execute ?????" << endl;
     exit(1);
 }
 
@@ -121,6 +122,7 @@ void Cgi::init(Path &script_path, Path &req_path)
     cgi_done = false;
     setEnv(script_path, req_path);
     cgi_output = req.getReqId() + ".res";
+    cout << "Initiating the script <<<<<<<<<<<<<<<<" << endl;
     proc_id = fork();
     switch (proc_id)
     {
@@ -216,9 +218,6 @@ void Cgi::parseHeaders()
     }
     res_file.close();
     validateHeaders(read_size);
-    cout << "the hard part is finished " << endl;
-    for(map<string,string>::iterator it = headers.begin(); it != headers.end(); it++)
-        cout << it->first << ": " << it->second << endl;
     pushHeaders();
 }
 
@@ -234,7 +233,7 @@ bool Cgi::isDone()
         throw Response::ResponseException(E_FAILED_CGI_EXEC, NULL);
     if (pid != 0)
     {
-        cout << "It executed perfectly||||||||||" << endl;
+        cout << "It executed perfectly ||||||||||||" << endl;
         proc_id = 0;
         parseHeaders();
         cgi_done = true;
@@ -245,7 +244,9 @@ bool Cgi::isDone()
 Cgi::~Cgi()
 {
     if (proc_id > 0)
+    {
         kill(proc_id, SIGKILL);
+        waitpid(proc_id, &status, 0);
+    }
     remove(cgi_output.c_str());
-    // remove(cgi_output.c_str());
 }

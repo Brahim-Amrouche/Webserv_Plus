@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 14:48:01 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/13 01:53:50 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/13 23:02:54 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,13 +59,33 @@ void Request::read()
     }
     catch (const Headers::HeadersException &e)
     {
-        cout << e.what() << endl;
-        throw RequestException(E_FAILED_HEADERS_READ, NULL);
+        switch (e.err_c)
+        {
+            case E_HEADERS_OVERFLOW:
+            case E_DUPLICATE_HEADERS:
+            case E_NO_HOST_HEADER:
+            case E_INVALID_HTTP_VERSION:
+            case E_REQUEST_LINE:
+               throw RequestException(E_REQUEST_ERROR_400, NULL);
+            case E_INVALID_METHOD:
+                throw RequestException(E_REQUEST_ERROR_405, NULL);    
+            default:
+                throw RequestException(E_FAILED_HEADERS_READ, NULL);
+        }
     }
     catch (const Body::BodyException &e)
     {
-        cout << e.what() << endl;
-        throw RequestException(E_FAILED_BODY_READ, NULL);
+        switch (e.err_c)
+        {
+            case E_INVALID_BODY_CONFIG:
+            case E_INVALID_BODY_HEADERS:
+            case E_BODY_SIZE_OVERFLOW:
+                throw RequestException(E_REQUEST_ERROR_400, NULL);
+            case E_BODY_READING:
+                throw RequestException(E_REQUEST_ERROR_500, NULL);
+            default:
+                throw RequestException(E_FAILED_BODY_READ, NULL);
+        }
     }
 }
 

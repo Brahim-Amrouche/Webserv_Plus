@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/26 08:12:04 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/11 18:48:57 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/13 23:08:56 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,13 +30,16 @@ Client::ClientExceptions::ClientExceptions(const client_errors &err, Client *cln
     }
 }
 
-Client::Client(Socket *cl_sock, ServerSocket &s_sock): client_socket(cl_sock), server_socket(s_sock), req(buffer, *cl_sock, s_sock), res(buffer, req)
+Client::Client(Socket *cl_sock, ServerSocket &s_sock): client_socket(cl_sock), 
+    server_socket(s_sock), req(buffer, *cl_sock, s_sock), res(buffer, req), err_code(RES_NONE)
 {
+    setLastActivity();
     cout << "New Client Created from socket" << endl; 
 }
 
 Client::Client(const Client &cpy_cl): client_socket(cpy_cl.client_socket), server_socket(cpy_cl.server_socket)
     , req(buffer, *cpy_cl.client_socket,  server_socket) , res(buffer, req)
+    , last_activity(cpy_cl.last_activity) , err_code(cpy_cl.err_code)
 {}
 
 Socket *Client::getSocket() const
@@ -53,12 +56,26 @@ void    Client::receive()
 {
     try
     {
+        setLastActivity();
         req.read();
     }
     catch(const Request::RequestException &e)
     {
-        cout << e.what() << endl;
-        throw ClientExceptions(E_CLIENT_RECEIVE, NULL);
+        switch (e.err_c)
+        {
+            case E_REQUEST_ERROR_400:
+                err_code = RES_BAD_REQUEST;
+                break;
+            case E_REQUEST_ERROR_405:
+                err_code = RES_METHOD_NOT_ALLOWED;
+                break;
+            case E_REQUEST_ERROR_500:
+                err_code = RES_INTERNAL_SERVER_ERROR;
+                break;
+            default:
+                err_code = RES_BAD_REQUEST;   
+                break;
+        }  
     }
 }
 
@@ -66,6 +83,12 @@ void    Client::send()
 {
     try
     {
+        if (err_code != RES_NONE)
+        {
+            res.serveError(err_code);
+            res >> *client_socket;
+        }
+        setLastActivity();
         if (req.getServerConfig() && req.getBodyDone())
             res >> *client_socket;
     }
@@ -97,6 +120,18 @@ bool    Client::operator==(SOCKET_ID &sock_id)
 void Client::nullify()
 {
     client_socket = NULL;
+}
+
+void Client::setLastActivity()
+{
+    last_activity = std::time(NULL);
+}
+
+bool Client::checkTimeout()
+{
+    if (std::time(NULL) - last_activity >= MAX_TIMEOUT)
+        return true;
+    return false;
 }
 
 Client::~Client()

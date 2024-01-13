@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/26 08:12:13 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/11 18:49:22 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/13 22:48:28 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,8 @@ class Client
         ServerSocket &server_socket;
         Request req;
         Response res;
+        std::time_t last_activity;
+        response_code err_code;
     public :
         class ClientExceptions: public TException<client_errors, Client>
         {
@@ -50,6 +52,9 @@ class Client
         void      receive();
         void      send();
         void      nullify();
+        void      setLastActivity();
+        bool      checkTimeout();
+        
         Client    &operator=(const Client &eq_cl);
         bool      operator==(SOCKET_ID &sock_id);
         ~Client();

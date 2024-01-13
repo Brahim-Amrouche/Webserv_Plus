@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/25 14:24:24 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/01 21:08:22 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/13 22:07:58 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,5 +59,6 @@ class LoadBalancer
         ClientDeqIt find_client(SOCKET_ID &sock_id);
         SrvSockDeqIt find_server(SOCKET_ID &sock_id);
         void remove_client(ClientDeqIt &rm_cl);
+        void check_timeouts();
         ~LoadBalancer();
 };

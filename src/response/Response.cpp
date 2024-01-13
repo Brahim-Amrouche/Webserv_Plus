@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/06 19:49:43 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/13 16:53:36 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/13 22:52:37 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -227,7 +227,7 @@ void Response::generateResponse()
         else if ((*cgi_active)[0] == "py" && lang != L_PYTHON)
             return serveError(RES_FORBIDDEN);
         Path full_path(req.getReqPath());
-        cout << "the cgi path is:|" << *full_path << "|" << endl;
+        cout << "the cgi path is:|" << *full_path << "| with lang is:" << lang << endl;
         cgi.setLang(lang);
         cgi.init(cgi_script, full_path);
         cgi.isDone();
@@ -243,9 +243,9 @@ void Response::generateResponse()
 
 void Response::serveError(const response_code &err_code)
 {
+    buffer_size = 0;
     if (error_served)
         return serveErrorHeaders(error_served);
-    buffer_size = 0;
     deque<string> *err_page = req[directives[ERROR_PAGE]];
     if (err_page)
     {
@@ -286,11 +286,17 @@ void Response::serveError(const response_code &err_code)
             error_served = RES_METHOD_NOT_ALLOWED;
             serveFile(root_err_path + "405.html", error_served);
             break;
+        case RES_REQUEST_TIMEOUT:
+            error_served = RES_REQUEST_TIMEOUT;
+            serveFile(root_err_path + "408.html", error_served);
+            break;
         default:
             error_served = RES_INTERNAL_SERVER_ERROR;
             serveFile(root_err_path + "500.html", error_served);
     }
 }
+
+
 
 void Response::operator>>(Socket &client_sock)
 {

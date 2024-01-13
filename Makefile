@@ -16,14 +16,14 @@ OBJECT_FILES = $(patsubst %.cpp,%.o,$(SRCS))
 all : $(NAME)
 
 $(NAME) : $(OBJECT_FILES)
-	$(CC) $(FLAGS) $^ -o $(NAME)
+	@$(CC) $(FLAGS) $^ -o $(NAME)
 
 clean :
-	rm -rf ${OBJECT_FILES}
+	@rm -rf ${OBJECT_FILES}
 
 fclean : clean
-	rm -rf $(NAME)
-	rm -rf ${wildcard ./tmp/*.tmp}
+	@rm -rf $(NAME)
+	rm -rf ${wildcard ./tmp/*.tmp} ${wildcard ./tmp/*.res}
 
 re : fclean all
 

@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/25 14:12:51 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/12 18:50:32 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/13 22:07:25 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,8 @@
 #define PHP_CGI_PATH "/usr/bin/php-cgi"
 #define PYTHON_CGI_PATH "/usr/bin/python3"
 
+#define LOADBALANCER_CHECK_DELAY 1000 // in milliseconds
+#define MAX_TIMEOUT 60 // in seconds
 
 extern map<string, string> mimetypes;
 extern map<response_code, string> response_handle;

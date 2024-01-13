@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/25 14:24:00 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/11 18:50:05 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/13 22:17:21 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,13 +60,26 @@ void LoadBalancer::loop()
     while (true)
     {   
         FT::memset(events, 0, sizeof(EPOLL_EVENT) * load);
-        events_trigered = epoll_wait(epoll_fd, events, load, -1);
+        events_trigered = epoll_wait(epoll_fd, events, load, LOADBALANCER_CHECK_DELAY);
         if (events_trigered < 0)
             throw LoadBalancer::LoadBalancerExceptions(E_EPOLLWAIT, this);
         else if (events_trigered > 0)
             handle_request();
         else
             cout << "listening..." << endl;
+        check_timeouts();
+    }
+}
+
+void LoadBalancer::check_timeouts()
+{
+    for (ClientDeqIt it = clients.begin(); it != clients.end(); it++)
+    {
+        if (it->checkTimeout())
+        {
+            remove_client(it);
+            --load;
+        }
     }
 }
 
@@ -106,9 +119,6 @@ void LoadBalancer::handle_request()
                     cl_it->receive();
                 else if (events[i].events & EPOLLOUT)
                     cl_it->send();
-                //     cout << "write to me man" << endl;
-                // else if (events[i].events & EPOLLOUT)
-                //     cl_it->send();
             }
             catch (const Client::ClientExceptions &e)
             {
@@ -146,17 +156,16 @@ ClientDeqIt LoadBalancer::find_client(SOCKET_ID &sock_id)
 
 void    LoadBalancer::remove_client(ClientDeqIt &rm_cl)
 {
-    SOCKET_ID rm_id = rm_cl->getSocketId();
-    clients.erase(rm_cl);
     try
     {
-        if (epoll_ctl(epoll_fd, EPOLL_CTL_DEL, rm_id, NULL) == -1)
+        if (epoll_ctl(epoll_fd, EPOLL_CTL_DEL, rm_cl->getSocketId(), NULL) == -1)
             throw LoadBalancer::LoadBalancerExceptions(E_EPOLLCTL, NULL);
     }
     catch (const LoadBalancer::LoadBalancerExceptions &e)
     {
         cout << "Couldn't Remove Client From epoll_ctl" << endl;
     }
+    clients.erase(rm_cl);
 }
 
 LoadBalancer::~LoadBalancer()
