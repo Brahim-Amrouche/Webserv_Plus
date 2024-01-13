@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/06 19:49:43 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/13 15:24:36 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/13 16:53:36 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ Response::ResponseException::ResponseException(const response_err &err, Response
 }
 
 Response::Response(char (&buffer)[HEADERS_MAX_SIZE + 1], Request &r): res_buf(buffer), req(r) 
-    ,buffer_size(0), file(buffer_size) ,cgi(buffer, req, root_directory, file)
+    ,buffer_size(0), file(buffer_size) ,cgi(buffer, req, root_directory, file, buffer_size)
     ,res_headers_done(false), error_served(RES_NONE) 
 {}
 

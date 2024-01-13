@@ -11,7 +11,7 @@ CC = c++
 OBJECT_FILES = $(patsubst %.cpp,%.o,$(SRCS))
 
 %.o : %.cpp
-	$(CC) $(FLAGS) -c $^ -o $@
+	@$(CC) $(FLAGS) -c $^ -o $@
 
 all : $(NAME)
 
@@ -28,6 +28,7 @@ fclean : clean
 re : fclean all
 
 run : re
+	clear
 	./webserv
 
 .PHONY : all clean fclean re

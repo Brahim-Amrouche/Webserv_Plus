@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/09 21:48:20 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/13 15:42:36 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/13 18:05:40 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,13 +133,65 @@ void Cgi::init(Path &script_path, Path &req_path)
     }
 }
 
+void Cgi::validateHeaders(size_t &read_size)
+{
+    ifstream ifs(cgi_output.c_str(), std::ios::binary | std::ios::ate);
+    ssize_t end_pos = ifs.tellg();
+    file.getFileSize() = end_pos;
+    if (headers.find("Content-Length") == headers.end())
+    {
+        stringstream ss;
+        ss << (end_pos - read_size);
+        cout << "the size of result is:" << ss.str() << endl;
+        headers.insert(std::pair<string, string>("Content-Length", ss.str()));
+    }
+    ifs.close();
+    if (headers.find("Content-Type") == headers.end())
+        headers.insert(std::pair<string, string>("Content-Type", "application/octet-stream"));
+    if (headers.find("Status") == headers.end())
+        headers.insert(std::pair<string, string>("Status", "200 OK"));
+    else
+    {
+        string status = headers["Status"];
+        size_t space_pos = status.find_first_of(' ');
+        string code = status.substr(0, space_pos);
+        response_code status_code = RES_NONE;
+        if (!(status_code = PH::getHttpCode(code)))
+            throw Response::ResponseException(E_FAILED_CGI_EXEC, NULL);
+        string status_handle = status.substr(space_pos + 1);
+        if (!status_handle.size())
+            status_handle = response_handle[status_code];
+        else if (status_handle !=  response_handle[status_code])
+            status_handle = response_handle[status_code];
+        headers["Status"] = code + " " + status_handle;
+    }
+}
+
+void Cgi::pushHeaders()
+{
+    string status_line("HTTP/1.1 ");
+    status_line += headers["Status"] + "\r\n";
+    RESH::pushHeaders(buffer, status_line, buffer_size);
+    for (map<string, string>::iterator it = headers.begin(); it != headers.end(); it++)
+    {
+        string header = it->first + ": " + it->second + "\r\n";
+        RESH::pushHeaders(buffer, header, buffer_size);
+    }
+    string date = RESH::getDateHeader();
+    RESH::pushHeaders(buffer, date, buffer_size);
+    string server = "Server: webserv/1.0\r\n";
+    RESH::pushHeaders(buffer, server, buffer_size);
+    string close_connection = RESH::getCloseConnectionHeader();
+    RESH::pushHeaders(buffer, close_connection, buffer_size);
+    RESH::pushHeaders(buffer, "\r\n", buffer_size);
+}
+
 void Cgi::parseHeaders()
 {
     ifstream res_file (cgi_output.c_str(), std::ios::in | std::ios::binary);
     if (!res_file.is_open())
         throw Response::ResponseException(E_FAILED_CGI_EXEC, NULL);
     res_file.read(buffer, HEADERS_MAX_SIZE);
-    map<string, string> headers;
     string keyval;
     size_t read_size = 0;
     for (size_t i = 0; i < HEADERS_MAX_SIZE; i++)
@@ -162,19 +214,12 @@ void Cgi::parseHeaders()
             throw Response::ResponseException(E_FAILED_CGI_EXEC, NULL);
         headers.insert(std::pair<string, string>(keyval.substr(0, Pos), keyval.substr(Pos + 2)));
     }
-    
-    if (headers.find("Content-Length") == headers.end())
-    {
-        res_file.seekg(0, std::ios::end);
-        size_t end_pos = res_file.tellg();
-        stringstream ss;
-        ss << end_pos - read_size;
-        headers.insert(std::pair<string, string>("Content-Length", ss.str()));
-    }
-    if (headers.find("Content-Type") == headers.end())
-        headers.insert(std::pair<string, string>("Content-Type", "application/octet-stream"));
-    if (headers.find("Status") == headers.end())
-        headers.insert(std::pair<string, string>("Status", "200 OK"));
+    res_file.close();
+    validateHeaders(read_size);
+    cout << "the hard part is finished " << endl;
+    for(map<string,string>::iterator it = headers.begin(); it != headers.end(); it++)
+        cout << it->first << ": " << it->second << endl;
+    pushHeaders();
 }
 
 bool Cgi::isDone()
@@ -189,6 +234,7 @@ bool Cgi::isDone()
         throw Response::ResponseException(E_FAILED_CGI_EXEC, NULL);
     if (pid != 0)
     {
+        cout << "It executed perfectly||||||||||" << endl;
         proc_id = 0;
         parseHeaders();
         cgi_done = true;

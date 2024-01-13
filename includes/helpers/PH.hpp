@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/30 13:54:13 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/09 13:27:23 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/13 16:22:19 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,6 +122,7 @@ class PH
         static response_code isRedirection_code(int &code);
         static response_code isClientError_code(int &code);
         static response_code isServerError_code(int &code);
+        static response_code getHttpCode(const string &code);
         static http_code_type getHttpCodeType(const string &code);
         static bool strIsBreakToken(const string &str);
         static bool strIsPath(string &str);

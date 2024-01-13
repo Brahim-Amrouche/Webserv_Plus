@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/30 14:06:45 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/10 19:12:46 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/13 16:50:41 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -224,6 +224,29 @@ response_code PH::isServerError_code(int &code)
     }
 }
 
+response_code PH::getHttpCode(const string &code)
+{
+    response_code res = RES_NONE;
+    if (!FT::strIsDigit(code) || code.size() != 3)
+        return res;
+    stringstream ss(code);
+    int val = 0;
+    if (!(ss >> val) || val < 100 || val > 599)
+        return res;
+    if ((res = isInformational_code(val)))
+        return res;
+    else if ((res = isSuccessful_code(val)))
+        return res;
+    else if ((res = isRedirection_code(val)))
+        return res;
+    else if ((res = isClientError_code(val)))
+        return res;
+    else if ((res = isServerError_code(val)))
+        return res;
+    else
+        return res;
+}
+
 http_code_type PH::getHttpCodeType(const string &code)
 {
     if (!FT::strIsDigit(code) || code.size() != 3)
@@ -245,6 +268,7 @@ http_code_type PH::getHttpCodeType(const string &code)
     else
         return UNVALID_CODE;
 }
+
 
 bool PH::strIsBreakToken(const string &str)
 {

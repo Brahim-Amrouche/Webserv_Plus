@@ -6,17 +6,18 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/07 16:03:03 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/13 15:22:14 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/13 17:59:15 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
+class File;
 #include "Response.hpp"
 #include <fcntl.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 
-
+using std::ifstream;
 
 class Cgi
 {
@@ -25,15 +26,17 @@ class Cgi
         Request &req;
         string &root_path;
         File &file;
+        ssize_t &buffer_size;
         int   proc_id;
         int   status;
         CGI_LANG lang;
         deque<string> env;
+        map<string, string> headers;
         bool    cgi_done;
         string  cgi_output;
     public:
-        Cgi(char (&b)[HEADERS_MAX_SIZE + 1], Request &r, string &root, File &f):buffer(b) ,req(r), root_path(root), file(f)
-            , proc_id(-1), status(0) , cgi_done(true){};
+        Cgi(char (&buf)[HEADERS_MAX_SIZE + 1], Request &r, string &root, File &f, ssize_t &b):buffer(buf) ,req(r), root_path(root)
+            , file(f), buffer_size(b), proc_id(-1), status(0) , cgi_done(true){};
         void setLang(const CGI_LANG &l)
         {
             lang = l;
@@ -42,6 +45,8 @@ class Cgi
         void setQueryParams(Path &req_path);
         void setEnv(Path &script, Path &req_path);
         void exec(Path &script_path);
+        void validateHeaders(size_t &read_size);
+        void pushHeaders();
         void parseHeaders();
         bool isDone();
         void init(Path &script_path, Path &req_path);
