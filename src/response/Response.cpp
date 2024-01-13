@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/06 19:49:43 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/12 20:40:50 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/13 01:34:13 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,9 @@ Response::ResponseException::ResponseException(const response_err &err, Response
             break;
         case E_CLOSE_CONNECTION:
             msg += "Closing connection";
+            break;
+        case E_FAILED_CGI_EXEC:
+            msg += "Cgi Execution";
             break;
         default:
             msg += "Unknown error";
@@ -201,6 +204,11 @@ void Response::generateResponse()
     deque<string> *cgi_active = req[directives[CGI]];
     deque<string> *redirection = req[directives[REDIRECTION]];
     root_directory = (*(req[directives[ROOT]]))[0];
+    Path req_path(root_directory + req.getReqPath());
+    CGI_LANG lang = L_UNKNOWN;
+    Path cgi_script;
+    cout << "the request path:|" << req.getReqPath()<< "|" << endl;
+    cout << "with the whole thing being:|" << *req_path << "|" << endl;
     if (redirection)
     {
         stringstream ss;
@@ -211,18 +219,21 @@ void Response::generateResponse()
         Path redi_path((*redirection)[1]);
         return redirect(redi_path, code);
     }
-    if (cgi_active)
+    else if (cgi_active && (lang = req_path.isCgiPath(req.getReqPath(), cgi_script) ))
     {
-        string &server_url = *req;
-        Path cgi_path(server_url + req.getReqPath());
-        cout << "the cgi path is:|" << *cgi_path << "|" << endl;
-        cgi.init(cgi_path);
+        if ((*cgi_active)[0] == "php" && lang != L_PHP)
+            return serveError(RES_FORBIDDEN);
+        else if ((*cgi_active)[0] == "py" && lang != L_PYTHON)
+            return serveError(RES_FORBIDDEN);
+        Path full_path(req.getReqPath());
+        cout << "the cgi path is:|" << *full_path << "|" << endl;
+        cgi.setLang(lang);
+        cgi.init(cgi_script, full_path);
+        cgi.isDone();
+        res_headers_done = true;
         return;
     }
-    Path req_path(root_directory + req.getReqPath());
-    cout << "the request path:|" << req.getReqPath()<< "|" << endl;
-    cout << "with the whole thing being:|" << *req_path << "|" << endl;
-    if (req.getReqMethod() == METHOD_GET && req_path.isFile())
+    else if (req.getReqMethod() == METHOD_GET && req_path.isFile())
         return serveFile(req_path, RES_OK);
     else 
         return serveDirectory(req_path);
@@ -283,7 +294,7 @@ void Response::serveError(const response_code &err_code)
 void Response::operator>>(Socket &client_sock)
 {
     generateResponse();
-    if (!res_headers_done)
+    if (!res_headers_done || !cgi.isDone())
         return ;
     ssize_t sent_size = 0;
     if (!(*file))

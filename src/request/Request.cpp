@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 14:48:01 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/10 12:38:59 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/13 01:53:50 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,25 +37,6 @@ Request::Request(char (&buffer)[HEADERS_MAX_SIZE + 1], Socket &c_sock, ServerSoc
     , buffer_size(0), client_sock(c_sock), server_sock(s_sock), server_config(NULL)
     , headers(req_buffer, server_sock, server_config), body(req_id, req_buffer, server_config, headers)
 {}
-
-// Request::Request(const Request &cpy_req):req_id(cpy_req.req_id), buffer_size(cpy_req.buffer_size)
-//     , client_sock(cpy_req.client_sock) ,server_sock(cpy_req.server_sock)
-//     , server_config(cpy_req.server_config), headers(req_buffer, server_sock, server_config)
-//     , body(req_id, req_buffer, server_config, headers)
-// {}
-
-// Request &Request::operator=(const Request &eq_req)
-// {
-//     if (this != &eq_req)
-//     {
-//         req_id = eq_req.req_id;
-//         buffer_size = eq_req.buffer_size;
-//         client_sock = eq_req.client_sock;
-//         server_sock = eq_req.server_sock;
-//         server_config = eq_req.server_config;
-//     }
-//     return *this;
-// }
 
 void Request::read()
 {
@@ -111,6 +92,5 @@ string Request::operator[](const REQUEST_HEADERS &key)
 
 Request::~Request()
 {
-    if (req_id.size() > 0)
-        remove(req_id.c_str());
+    remove(req_id.c_str());
 }

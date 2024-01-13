@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 15:29:17 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/11 17:56:50 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/13 02:03:28 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,6 +79,8 @@ string REQH::generateReqId()
         request_id.insert(last_dot, num.str());
         num.str("");
     }
+    int i = open(request_id.c_str(), O_CREAT, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+    close(i);
     return request_id;
 }
 

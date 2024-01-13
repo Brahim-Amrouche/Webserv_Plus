@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 00:23:26 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/12 15:51:38 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/13 01:55:05 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -209,5 +209,4 @@ Body::~Body()
 {
     if (body_file.is_open())
         body_file.close();
-    remove(req_id.c_str());
 }

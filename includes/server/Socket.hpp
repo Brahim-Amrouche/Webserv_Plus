@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/25 10:10:24 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/12 16:29:05 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/12 23:43:45 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,8 +62,6 @@ class Socket
         SOCKET_ID sock_id;
         SOCK_ADDR_STORAGE sock_addr;
         SOCK_ADDR_LEN   sock_addr_len;
-        string ip;
-        string port;
     public :
         class SocketExceptions : public TException<socket_errors, Socket>
         {
@@ -86,15 +84,6 @@ class Socket
         virtual Socket *sockAccept();
         virtual void    fill_epoll_event(EPOLL_EVENT *e_event, uint32_t mode);
         virtual SOCKET_ID getSockid();
-        virtual void setSockInfo();
-        virtual string &getIp()
-        {
-            return ip;
-        };
-        virtual string &getPort()
-        {
-            return port;
-        };
         virtual void nullify();
         virtual ~Socket();
 };

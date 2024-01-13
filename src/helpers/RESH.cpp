@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/08 20:54:03 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/12 15:37:39 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/12 22:33:17 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ string RESH::getMethodString(const REQUEST_METHOD &method)
             return "DELETE";
             break;
         default:
+            return "";
             break;
     }
 }

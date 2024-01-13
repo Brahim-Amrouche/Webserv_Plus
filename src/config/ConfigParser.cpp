@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/28 06:28:14 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/11 14:48:59 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/13 02:15:56 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -406,7 +406,7 @@ void    ConfigParser::parseAllowMethodsDirective(TokenIt &start_token)
 
 void    ConfigParser::parseCgiDirective(TokenIt &start_token)
 {
-    if (depth != 2)
+    if (depth < 1)
         throw ConfigParserException(E_CGI_DIRECTIVE, this);
     std::advance(start_token, 1);
     if (start_token == tokens->end() || (*start_token != "php" && *start_token != "py"))
