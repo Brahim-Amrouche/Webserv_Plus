@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 14:25:55 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/10 15:08:59 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/13 15:28:12 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ class File
         File(ssize_t &buf_size);
         void setFilePath(const string &p);
         void setFileDone(const bool &done);
+        void setReadSize(const ssize_t &size);
         ssize_t &getFileSize();
         bool operator*();
         void operator>>(char (&buf)[HEADERS_MAX_SIZE + 1]);

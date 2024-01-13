@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 14:36:31 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/11 20:31:41 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/13 15:34:25 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,11 @@ void File::setFilePath(const string &p)
 void File::setFileDone(const bool &done)
 {
     this->file_done = done;
+};
+
+void File::setReadSize(const ssize_t &size)
+{
+    this->read_size = size;
 };
 
 ssize_t &File::getFileSize()

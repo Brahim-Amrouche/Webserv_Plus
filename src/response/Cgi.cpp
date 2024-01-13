@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/09 21:48:20 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/13 02:45:42 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/13 15:42:36 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,8 +92,7 @@ void Cgi::exec(Path &script_path)
     int body_file = open(req.getReqId().c_str(), O_RDONLY);
     if (body_file < 0)
         exit(1);
-    string res_file_path = req.getReqId() + ".res";
-    int res_file = open(res_file_path.c_str(), O_RDWR | O_CREAT, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+    int res_file = open(cgi_output.c_str(), O_RDWR | O_CREAT, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
     if (res_file < 0)
         exit(1);
     if (dup2(body_file, 0) == -1  || dup2(res_file, 1) == -1 )
@@ -121,6 +120,7 @@ void Cgi::init(Path &script_path, Path &req_path)
     (void) buffer;
     cgi_done = false;
     setEnv(script_path, req_path);
+    cgi_output = req.getReqId() + ".res";
     proc_id = fork();
     switch (proc_id)
     {
@@ -133,18 +133,64 @@ void Cgi::init(Path &script_path, Path &req_path)
     }
 }
 
+void Cgi::parseHeaders()
+{
+    ifstream res_file (cgi_output.c_str(), std::ios::in | std::ios::binary);
+    if (!res_file.is_open())
+        throw Response::ResponseException(E_FAILED_CGI_EXEC, NULL);
+    res_file.read(buffer, HEADERS_MAX_SIZE);
+    map<string, string> headers;
+    string keyval;
+    size_t read_size = 0;
+    for (size_t i = 0; i < HEADERS_MAX_SIZE; i++)
+    {
+        size_t start = i;
+        while (i < HEADERS_MAX_SIZE && buffer[i] != '\n')
+            i++;
+        if (i == HEADERS_MAX_SIZE)
+            throw Response::ResponseException(E_FAILED_CGI_EXEC, NULL);
+        if ( i == start && buffer[i] == '\n')
+        {
+            file.setFilePath(cgi_output);
+            file.setReadSize(i + 1);
+            read_size = i + 1;
+            break;
+        }
+        keyval = string(buffer + start, i - start);
+        size_t Pos = keyval.find(": ");
+        if (Pos == string::npos)
+            throw Response::ResponseException(E_FAILED_CGI_EXEC, NULL);
+        headers.insert(std::pair<string, string>(keyval.substr(0, Pos), keyval.substr(Pos + 2)));
+    }
+    
+    if (headers.find("Content-Length") == headers.end())
+    {
+        res_file.seekg(0, std::ios::end);
+        size_t end_pos = res_file.tellg();
+        stringstream ss;
+        ss << end_pos - read_size;
+        headers.insert(std::pair<string, string>("Content-Length", ss.str()));
+    }
+    if (headers.find("Content-Type") == headers.end())
+        headers.insert(std::pair<string, string>("Content-Type", "application/octet-stream"));
+    if (headers.find("Status") == headers.end())
+        headers.insert(std::pair<string, string>("Status", "200 OK"));
+}
+
 bool Cgi::isDone()
 {
     if (cgi_done)
         return true;
-    proc_id = waitpid(proc_id, &status, WNOHANG);
-    if (proc_id == -1)
+    int pid;
+    pid = waitpid(proc_id, &status, WNOHANG);
+    if (pid == -1)
         throw Response::ResponseException(E_FAILED_CGI_EXEC, NULL);
     if (WIFEXITED(status) && WEXITSTATUS(status) != 0)
         throw Response::ResponseException(E_FAILED_CGI_EXEC, NULL);
-    if (proc_id != 0)
+    if (pid != 0)
     {
         proc_id = 0;
+        parseHeaders();
         cgi_done = true;
     }
     return cgi_done;
@@ -154,8 +200,6 @@ Cgi::~Cgi()
 {
     if (proc_id > 0)
         kill(proc_id, SIGKILL);
-    string res_file(req.getReqId());
-    res_file +=".res";
-    remove(res_file.c_str());
+    remove(cgi_output.c_str());
     // remove(cgi_output.c_str());
 }

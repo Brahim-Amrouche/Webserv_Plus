@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/06 19:28:49 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/13 01:03:21 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/13 15:23:17 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,12 +31,12 @@ class Response
     private:
         char (&res_buf)[HEADERS_MAX_SIZE + 1];
         Request &req;
-        string root_directory;
-        Cgi cgi;
         ssize_t buffer_size;
+        File file;
+        Cgi cgi;
         bool   res_headers_done;
         response_code error_served;
-        File file;
+        string root_directory;
     public:
         class ResponseException : public TException<response_err, Response>
         {

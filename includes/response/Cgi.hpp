@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/07 16:03:03 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/13 00:21:03 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/13 15:22:14 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,16 +22,17 @@ class Cgi
 {
     private:
         char (&buffer)[HEADERS_MAX_SIZE + 1];
-        deque<string> env;
         Request &req;
         string &root_path;
+        File &file;
         int   proc_id;
         int   status;
         CGI_LANG lang;
+        deque<string> env;
         bool    cgi_done;
         string  cgi_output;
     public:
-        Cgi(char (&b)[HEADERS_MAX_SIZE + 1], Request &r, string &root):buffer(b) ,req(r), root_path(root)
+        Cgi(char (&b)[HEADERS_MAX_SIZE + 1], Request &r, string &root, File &f):buffer(b) ,req(r), root_path(root), file(f)
             , proc_id(-1), status(0) , cgi_done(true){};
         void setLang(const CGI_LANG &l)
         {
@@ -41,6 +42,7 @@ class Cgi
         void setQueryParams(Path &req_path);
         void setEnv(Path &script, Path &req_path);
         void exec(Path &script_path);
+        void parseHeaders();
         bool isDone();
         void init(Path &script_path, Path &req_path);
         ~Cgi();
