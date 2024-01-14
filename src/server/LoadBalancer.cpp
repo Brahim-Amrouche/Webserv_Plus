@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/25 14:24:00 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/14 19:44:56 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/14 20:29:30 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ LoadBalancer::LoadBalancer(deque<ServerSocket> *sockets):listeners(sockets), epo
     for (size_t i = 0; i < listeners->size() ; i++)
     {
         FT::memset(events, 0, sizeof(EPOLL_EVENT));
-        (*listeners)[i].fill_epoll_event(events, EPOLLIN);
+        (*listeners)[i].fill_epoll_event(events, EPOLLIN | EPOLLET);
         if (epoll_ctl(epoll_fd, EPOLL_CTL_ADD, (*listeners)[i].getSockid(), events) == -1)
         {
             close(epoll_fd);
@@ -100,6 +100,7 @@ void LoadBalancer::handle_request()
         event_fd =  events[i].data.fd;
         if ((srv_sock = find_server(event_fd)) != listeners->end())
         {
+            cout << "the fd of event done :" << event_fd << endl;
             if (events[i].events & EPOLLIN)
                 add_client(i, srv_sock);
         }
@@ -141,6 +142,7 @@ void LoadBalancer::add_client(int event_id, SrvSockDeqIt &server)
     if (epoll_ctl(epoll_fd, EPOLL_CTL_ADD, new_client_sock->getSockid(), &(events[event_id])) == -1)
         throw LoadBalancer::LoadBalancerExceptions(E_EPOLLCTL, this);
     ++load;
+    cout << "New Client Added: "<< new_client_sock->getSockid()  << endl;
 }
 
 void    LoadBalancer::remove_client(ClientMapIt &rm_cl)

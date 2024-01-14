@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/06 19:49:43 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/14 20:12:18 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/14 20:20:12 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,6 @@ void Response::serveFile(Path &path_dir, const response_code &res_code)
 {
     try
     {
-        cout << "Going through here once" << endl;
         string status_line = RESH::getStatusLine(res_code);
         RESH::pushHeaders(res_buf, status_line, buffer_size);
         string content_type = RESH::getContentTypeHeader(path_dir);

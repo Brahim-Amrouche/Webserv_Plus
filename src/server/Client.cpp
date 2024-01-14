@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/26 08:12:04 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/14 20:08:57 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/14 20:24:26 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,6 @@ Client::Client(Socket *cl_sock, ServerSocket &s_sock): client_socket(cl_sock),
     server_socket(s_sock), req(buffer, *cl_sock, s_sock, *this), res(buffer, req, *this), err_code(RES_NONE), close_socket(false)
 {
     setLastActivity();
-    cout << "New Client Created from socket" << endl; 
 }
 
 Client::Client(const Client &cpy_cl): client_socket(cpy_cl.client_socket), server_socket(cpy_cl.server_socket)
@@ -131,7 +130,10 @@ void Client::setLastActivity()
 void Client::checkTimeout()
 {
     if (!err_code && std::time(NULL) - last_activity >= MAX_TIMEOUT)
-        err_code = RES_NOT_FOUND;
+    {
+        cout << "something timed out: " << this->getSocketId() << endl;
+        err_code = RES_REQUEST_TIMEOUT;
+    }
 }
 
 Client::~Client()
