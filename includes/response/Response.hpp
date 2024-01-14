@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/06 19:28:49 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/13 15:23:17 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/14 18:47:59 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@
 #include "Request.hpp"
 #include "Cgi.hpp"
 #include "File.hpp"
+
+class Client;
 
 typedef enum RESPONSE_ERR_CODES
 {
@@ -31,6 +33,7 @@ class Response
     private:
         char (&res_buf)[HEADERS_MAX_SIZE + 1];
         Request &req;
+        Client &client;
         ssize_t buffer_size;
         File file;
         Cgi cgi;
@@ -43,7 +46,7 @@ class Response
             public:
                 ResponseException(const response_err &err, Response *cln);
         };
-        Response(char (&buffer)[HEADERS_MAX_SIZE + 1], Request &r);
+        Response(char (&buffer)[HEADERS_MAX_SIZE + 1], Request &r, Client &cl);
         void pushDefaultHeaders();
         
         void listDirectory(Path &path_dir);

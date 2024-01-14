@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 14:36:31 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/13 16:54:43 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/14 19:53:38 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,10 @@ bool File::operator*()
 void File::operator>>(char (&buf)[HEADERS_MAX_SIZE + 1])
 {
     file.open(path.c_str(), std::ios::in | std::ios::binary);
+    cout << "the file is done ::|" << file_done << "|::" << endl;
     if (!file.is_open())
         throw Response::ResponseException(E_FAILED_RESPONSE_BODY_READ, NULL);
+    cout << "reading the file with read size ||||||||||||||||||" << read_size << "|||||||||||||||||||||||\\" << endl;
     file.seekg(read_size);
     ssize_t size_to_read = std::min(HEADERS_MAX_SIZE - buffer_size, file_size - read_size);
     read_size += size_to_read;

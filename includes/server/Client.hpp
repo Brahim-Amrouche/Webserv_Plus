@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/26 08:12:13 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/13 22:48:28 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/14 18:49:12 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ class Client
         Response res;
         std::time_t last_activity;
         response_code err_code;
+        bool        close_socket;
     public :
         class ClientExceptions: public TException<client_errors, Client>
         {
@@ -53,7 +54,11 @@ class Client
         void      send();
         void      nullify();
         void      setLastActivity();
-        bool      checkTimeout();
+        void      checkTimeout();
+        void      setCloseSocket(const bool &c)
+        {
+            close_socket = c;
+        };
         
         Client    &operator=(const Client &eq_cl);
         bool      operator==(SOCKET_ID &sock_id);

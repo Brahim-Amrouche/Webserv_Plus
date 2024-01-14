@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 14:48:01 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/13 23:02:54 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/14 18:44:54 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,8 +33,8 @@ Request::RequestException::RequestException(const request_err &err, Request *cln
     }
 }
 
-Request::Request(char (&buffer)[HEADERS_MAX_SIZE + 1], Socket &c_sock, ServerSocket &s_sock):req_id(REQH::generateReqId()), req_buffer(buffer)
-    , buffer_size(0), client_sock(c_sock), server_sock(s_sock), server_config(NULL)
+Request::Request(char (&buffer)[HEADERS_MAX_SIZE + 1], Socket &c_sock, ServerSocket &s_sock, Client &cl):req_id(REQH::generateReqId()), req_buffer(buffer)
+    , buffer_size(0), client_sock(c_sock), server_sock(s_sock), client(cl) ,server_config(NULL)
     , headers(req_buffer, server_sock, server_config), body(req_id, req_buffer, server_config, headers)
 {}
 
@@ -45,17 +45,13 @@ void Request::read()
     ssize_t temp = 0;
     if ((temp = recv(client_sock.getSockid(), req_buffer + buffer_size, HEADERS_MAX_SIZE - buffer_size, 0)) < 0)
         throw RequestException(E_FAILED_READ, NULL);
+    client.setLastActivity();
     buffer_size += temp;
     req_buffer[buffer_size] = '\0';
     try
     {
         if ((headers << buffer_size) && (body << buffer_size))
-        {
-            // cout << " this is the server configuration: ===============================" << endl;
-            // server_config->debug_print_directives();
-            // cout << "====================================================================" << endl;
             return;
-        }
     }
     catch (const Headers::HeadersException &e)
     {

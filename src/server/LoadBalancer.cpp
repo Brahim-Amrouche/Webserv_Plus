@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/25 14:24:00 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/13 22:17:21 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/14 19:44:56 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,22 +65,16 @@ void LoadBalancer::loop()
             throw LoadBalancer::LoadBalancerExceptions(E_EPOLLWAIT, this);
         else if (events_trigered > 0)
             handle_request();
-        else
-            cout << "listening..." << endl;
+        // else
+        //     cout << "listening..." << endl;
         check_timeouts();
     }
 }
 
 void LoadBalancer::check_timeouts()
 {
-    for (ClientDeqIt it = clients.begin(); it != clients.end(); it++)
-    {
-        if (it->checkTimeout())
-        {
-            remove_client(it);
-            --load;
-        }
-    }
+    for (ClientMapIt it = clients.begin(); it != clients.end(); it++)
+        it->second.checkTimeout();
 }
 
 SrvSockDeqIt LoadBalancer::find_server(SOCKET_ID &sock_id)
@@ -96,7 +90,7 @@ SrvSockDeqIt LoadBalancer::find_server(SOCKET_ID &sock_id)
 void LoadBalancer::handle_request()
 {
     int i = -1;
-    ClientDeqIt cl_it = clients.end();
+    ClientMapIt cl_it = clients.end();
     SrvSockDeqIt srv_sock = listeners->end();
     int event_fd = -1;
     while (++i < events_trigered)
@@ -109,16 +103,16 @@ void LoadBalancer::handle_request()
             if (events[i].events & EPOLLIN)
                 add_client(i, srv_sock);
         }
-        else if ((cl_it = find_client(event_fd)) != clients.end())
+        else if ((cl_it = clients.find(event_fd)) != clients.end())
         {
             try
             {
                 if (events[i].events & EPOLLHUP)
                     throw Client::ClientExceptions(E_CLIENT_CLOSED, NULL);
                 else if (events[i].events & EPOLLIN)
-                    cl_it->receive();
+                    cl_it->second.receive();
                 else if (events[i].events & EPOLLOUT)
-                    cl_it->send();
+                    cl_it->second.send();
             }
             catch (const Client::ClientExceptions &e)
             {
@@ -134,31 +128,26 @@ void LoadBalancer::add_client(int event_id, SrvSockDeqIt &server)
 {
     Socket *new_client_sock = server->sockAccept();
     Client tmp_client(new_client_sock, *server);
-    clients.push_back(tmp_client);
+    std::pair<ClientMapIt, bool> res = clients.insert(std::make_pair(new_client_sock->getSockid(), tmp_client));
+    if (!res.second)
+    {
+        delete new_client_sock;
+        return;
+    }
+    res.first->second.setCloseSocket(true);
     tmp_client.nullify();
     FT::memset(&(events[event_id]), 0, sizeof(EPOLL_EVENT));
     new_client_sock->fill_epoll_event(&(events[event_id]), EPOLLIN | EPOLLOUT | EPOLLHUP);
     if (epoll_ctl(epoll_fd, EPOLL_CTL_ADD, new_client_sock->getSockid(), &(events[event_id])) == -1)
         throw LoadBalancer::LoadBalancerExceptions(E_EPOLLCTL, this);
     ++load;
-    cout << "New Client Added" << endl;
 }
 
-ClientDeqIt LoadBalancer::find_client(SOCKET_ID &sock_id)
-{
-    for (ClientDeqIt it = clients.begin(); it != clients.end(); it++)
-    {
-        if (it->getSocketId() == sock_id)
-            return it;
-    }
-    return clients.end();
-}
-
-void    LoadBalancer::remove_client(ClientDeqIt &rm_cl)
+void    LoadBalancer::remove_client(ClientMapIt &rm_cl)
 {
     try
     {
-        if (epoll_ctl(epoll_fd, EPOLL_CTL_DEL, rm_cl->getSocketId(), NULL) == -1)
+        if (epoll_ctl(epoll_fd, EPOLL_CTL_DEL, rm_cl->second.getSocketId(), NULL) == -1)
             throw LoadBalancer::LoadBalancerExceptions(E_EPOLLCTL, NULL);
     }
     catch (const LoadBalancer::LoadBalancerExceptions &e)
@@ -174,4 +163,5 @@ LoadBalancer::~LoadBalancer()
         delete listeners;
     if (epoll_fd >= 0)
         close(epoll_fd);
+    
 }

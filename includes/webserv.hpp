@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/25 14:12:51 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/13 22:07:25 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/14 18:55:28 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@
 #define PYTHON_CGI_PATH "/usr/bin/python3"
 
 #define LOADBALANCER_CHECK_DELAY 1000 // in milliseconds
-#define MAX_TIMEOUT 60 // in seconds
+#define MAX_TIMEOUT 10 // in seconds
 
 extern map<string, string> mimetypes;
 extern map<response_code, string> response_handle;

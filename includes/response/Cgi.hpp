@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/07 16:03:03 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/13 17:59:15 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/14 19:31:17 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,10 @@ class Cgi
         void pushHeaders();
         void parseHeaders();
         bool isDone();
+        void setCgiDone(const bool &b)
+        {
+            cgi_done = b;
+        };
         void init(Path &script_path, Path &req_path);
         ~Cgi();
 };

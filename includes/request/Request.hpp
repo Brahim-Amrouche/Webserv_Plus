@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 14:23:31 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/13 23:00:31 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/14 18:48:16 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@
 #include "TException.hpp"
 #include "Headers.hpp"
 #include "Body.hpp"
+
+class Client;
 
 typedef enum REQUEST_ERR_CODES
 {
@@ -36,6 +38,7 @@ class Request
         ssize_t   buffer_size;
         Socket  &client_sock;
         ServerSocket &server_sock;
+        Client &client;
         ServerConfiguration *server_config;
         Headers headers;
         Body body;
@@ -45,7 +48,7 @@ class Request
             public:
                 RequestException(const request_err &err, Request *cln);
         };
-        Request(char (&buffer)[HEADERS_MAX_SIZE + 1], Socket &sock_id, ServerSocket &sock);
+        Request(char (&buffer)[HEADERS_MAX_SIZE + 1], Socket &sock_id, ServerSocket &sock, Client &cl);
         void read();
         string &getReqPath()
         {

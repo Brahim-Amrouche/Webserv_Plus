@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/06 19:49:43 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/13 22:52:37 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/14 20:12:18 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,9 +38,9 @@ Response::ResponseException::ResponseException(const response_err &err, Response
     }
 }
 
-Response::Response(char (&buffer)[HEADERS_MAX_SIZE + 1], Request &r): res_buf(buffer), req(r) 
+Response::Response(char (&buffer)[HEADERS_MAX_SIZE + 1], Request &r, Client &cl): res_buf(buffer), req(r), client(cl)
     ,buffer_size(0), file(buffer_size) ,cgi(buffer, req, root_directory, file, buffer_size)
-    ,res_headers_done(false), error_served(RES_NONE) 
+    ,res_headers_done(false), error_served(RES_NONE)
 {}
 
 void Response::pushDefaultHeaders()
@@ -68,6 +68,7 @@ void Response::redirect(Path &redi_conf, const response_code &code)
 
 void Response::serveErrorHeaders(const response_code &err_code)
 {
+    cout << "Some type of error led us here|||||||||||||||" << endl;
     buffer_size = 0;
     string status_line = RESH::getStatusLine(err_code);
     RESH::pushHeaders(res_buf, status_line, buffer_size);
@@ -87,6 +88,7 @@ void Response::serveFile(Path &path_dir, const response_code &res_code)
 {
     try
     {
+        cout << "Going through here once" << endl;
         string status_line = RESH::getStatusLine(res_code);
         RESH::pushHeaders(res_buf, status_line, buffer_size);
         string content_type = RESH::getContentTypeHeader(path_dir);
@@ -94,8 +96,13 @@ void Response::serveFile(Path &path_dir, const response_code &res_code)
         string content_length = RESH::getContentLengthHeader(path_dir, file.getFileSize());
         RESH::pushHeaders(res_buf, content_length, buffer_size);
         file.setFilePath(*path_dir);
+        file.setFileDone(false);
         pushDefaultHeaders();
         res_headers_done = true;
+        cgi.setCgiDone(true);
+        // res_buf[buffer_size] = '\0';
+        // cout << "the file is here :|" << *path_dir << "|" << endl;
+        // cout << "the buffer is:|" << res_buf << "|" << endl;
     }
     catch (const RESH::RESHException &e)
     {
@@ -122,7 +129,7 @@ void Response::listDirectory(Path &path_dir)
     dirent *entry;
     while ((entry = readdir(dir)))
     {
-        if (entry->d_name[0] == '.')
+        if (entry->d_name[0] == '.' && entry->d_name[1] == '\0')
             continue ;
         html_page += RESH::getHtmlListTag(req.getReqPath() + "/" + entry->d_name, entry->d_name);
     }
@@ -263,7 +270,6 @@ void Response::serveError(const response_code &err_code)
     }
     Path root_err_path(DEFAULT_ERROR_PAGES);
     root_err_path += "/";
-    buffer_size = 0;
     switch (err_code)
     {
         case RES_BAD_REQUEST:
@@ -308,6 +314,7 @@ void Response::operator>>(Socket &client_sock)
         file >> res_buf;
     if ((sent_size = send(client_sock.getSockid(), res_buf, buffer_size, 0)) < 0)
         throw ResponseException(E_FAILED_SEND, NULL);
+    client.setLastActivity();
     FT::memmove(res_buf, res_buf + sent_size, buffer_size - sent_size);
     buffer_size -= sent_size;
     if (buffer_size == 0 && *file)

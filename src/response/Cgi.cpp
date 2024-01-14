@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/09 21:48:20 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/13 22:35:22 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/14 19:07:48 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,10 @@ void Cgi::setEnv(Path &script, Path &req_path)
     temp_env = "PATH_TRANSLATED=";
     temp_env += root_path + *req_path;
     env.push_back(temp_env);
+    temp_env = "REDIRECT_STATUS=CGI";
+    env.push_back(temp_env);
+    temp_env = "AUTH_TYPE=";
+    env.push_back(temp_env);
     if (req.getBodySize() > 0)
     {
         ostringstream oss;
@@ -112,7 +116,6 @@ void Cgi::exec(Path &script_path)
         py_execution_args[1] = script_name.c_str();
         execve(py_execution_args[0], (char * const *)py_execution_args, (char * const *)p_env);
     }
-    cout << "did it execute ?????" << endl;
     exit(1);
 }
 
@@ -131,6 +134,7 @@ void Cgi::init(Path &script_path, Path &req_path)
         case 0:
             exec(script_path);
         default:
+            cout << "Exectuted and dusted" << endl;
            return ;
     }
 }
@@ -196,14 +200,17 @@ void Cgi::parseHeaders()
     res_file.read(buffer, HEADERS_MAX_SIZE);
     string keyval;
     size_t read_size = 0;
-    for (size_t i = 0; i < HEADERS_MAX_SIZE; i++)
+    size_t read_count = res_file.gcount();
+    cout << "the file read count is: " << read_count << endl; 
+    for (size_t i = 0; i < read_count; i+= 2)
     {
         size_t start = i;
-        while (i < HEADERS_MAX_SIZE && buffer[i] != '\n')
+        while (i < read_count && !(buffer[i] == '\r' 
+            && i + 1 < read_count && buffer[i + 1] == '\n'))
             i++;
-        if (i == HEADERS_MAX_SIZE)
+        if (i == read_count)
             throw Response::ResponseException(E_FAILED_CGI_EXEC, NULL);
-        if ( i == start && buffer[i] == '\n')
+        if (i == start)
         {
             file.setFilePath(cgi_output);
             file.setReadSize(i + 1);
@@ -231,7 +238,7 @@ bool Cgi::isDone()
         throw Response::ResponseException(E_FAILED_CGI_EXEC, NULL);
     if (WIFEXITED(status) && WEXITSTATUS(status) != 0)
         throw Response::ResponseException(E_FAILED_CGI_EXEC, NULL);
-    if (pid != 0)
+    if (pid > 0)
     {
         cout << "It executed perfectly ||||||||||||" << endl;
         proc_id = 0;

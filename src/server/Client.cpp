@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/26 08:12:04 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/13 23:08:56 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/14 20:08:57 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,15 +31,15 @@ Client::ClientExceptions::ClientExceptions(const client_errors &err, Client *cln
 }
 
 Client::Client(Socket *cl_sock, ServerSocket &s_sock): client_socket(cl_sock), 
-    server_socket(s_sock), req(buffer, *cl_sock, s_sock), res(buffer, req), err_code(RES_NONE)
+    server_socket(s_sock), req(buffer, *cl_sock, s_sock, *this), res(buffer, req, *this), err_code(RES_NONE), close_socket(false)
 {
     setLastActivity();
     cout << "New Client Created from socket" << endl; 
 }
 
 Client::Client(const Client &cpy_cl): client_socket(cpy_cl.client_socket), server_socket(cpy_cl.server_socket)
-    , req(buffer, *cpy_cl.client_socket,  server_socket) , res(buffer, req)
-    , last_activity(cpy_cl.last_activity) , err_code(cpy_cl.err_code)
+    , req(buffer, *cpy_cl.client_socket,  server_socket, *this) , res(buffer, req, *this)
+    , last_activity(cpy_cl.last_activity) , err_code(cpy_cl.err_code) , close_socket(cpy_cl.close_socket)
 {}
 
 Socket *Client::getSocket() const
@@ -56,7 +56,9 @@ void    Client::receive()
 {
     try
     {
-        setLastActivity();
+        char close_buff[1];
+        if (recv(client_socket->getSockid(),close_buff , 1, MSG_PEEK) <= 0)
+            throw ClientExceptions(E_CLIENT_CLOSED, NULL);
         req.read();
     }
     catch(const Request::RequestException &e)
@@ -88,7 +90,6 @@ void    Client::send()
             res.serveError(err_code);
             res >> *client_socket;
         }
-        setLastActivity();
         if (req.getServerConfig() && req.getBodyDone())
             res >> *client_socket;
     }
@@ -127,16 +128,15 @@ void Client::setLastActivity()
     last_activity = std::time(NULL);
 }
 
-bool Client::checkTimeout()
+void Client::checkTimeout()
 {
-    if (std::time(NULL) - last_activity >= MAX_TIMEOUT)
-        return true;
-    return false;
+    if (!err_code && std::time(NULL) - last_activity >= MAX_TIMEOUT)
+        err_code = RES_NOT_FOUND;
 }
 
 Client::~Client()
 {
-    if (client_socket)
+    if (close_socket && client_socket != NULL)
         delete client_socket;
 }
 

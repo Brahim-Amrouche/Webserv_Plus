@@ -1,6 +1,7 @@
 #!/usr/bin/php-cgi
 <?php
-echo "Content-Type: text/html\n\n";
+header("Content-Length: 100");
+header("Content-Line: 10");
 
 echo "<html>
 <head>

@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/25 14:24:24 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/13 22:07:58 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/14 17:36:44 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ typedef enum LOADBALANCER_ERR_CODES
     E_LOADBALANCER_OUTOFMEM,
 } loadbalancer_errors;
 
-typedef deque<Client>::iterator ClientDeqIt;
+typedef map<SOCKET_ID, Client>::iterator ClientMapIt;
 typedef deque<ServerSocket>::iterator SrvSockDeqIt;
 
 class LoadBalancer
@@ -40,7 +40,7 @@ class LoadBalancer
         EPOLL_EVENT events[MAX_EVENTS];
         int events_trigered;
         int load;
-        deque<Client> clients;
+        map<SOCKET_ID, Client> clients;
     public :
         class LoadBalancerExceptions: public TException<loadbalancer_errors, LoadBalancer>
         {
@@ -56,9 +56,8 @@ class LoadBalancer
         void loop();
         void handle_request();
         void add_client(int event_id, SrvSockDeqIt &server);
-        ClientDeqIt find_client(SOCKET_ID &sock_id);
         SrvSockDeqIt find_server(SOCKET_ID &sock_id);
-        void remove_client(ClientDeqIt &rm_cl);
+        void remove_client(ClientMapIt &rm_cl);
         void check_timeouts();
         ~LoadBalancer();
 };
