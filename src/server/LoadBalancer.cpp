@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/25 14:24:00 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/15 18:59:34 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/15 22:43:43 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,7 +103,6 @@ void LoadBalancer::handle_request()
         event_fd =  events[i].data.fd;
         if ((srv_sock = find_server(event_fd)) != listeners->end())
         {
-            cout << "the fd of event done :" << event_fd << " with i being: "<< i << endl;
             if (events[i].events & EPOLLIN)
                 add_client(i, srv_sock);
         }
@@ -113,9 +112,9 @@ void LoadBalancer::handle_request()
             {
                 if (events[i].events & EPOLLHUP)
                     throw Client::ClientExceptions(E_CLIENT_CLOSED, NULL);
-                else if (events[i].events & EPOLLIN)
+                if (events[i].events & EPOLLIN)
                     cl_it->second.receive();
-                else if (events[i].events & EPOLLOUT)
+                if (events[i].events & EPOLLOUT)
                     cl_it->second.send();
             }
             catch (const Client::ClientExceptions &e)

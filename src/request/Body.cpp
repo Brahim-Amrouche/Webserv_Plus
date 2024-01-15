@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 00:23:26 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/15 19:49:27 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/15 22:42:12 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,7 @@ void Body::fromConfig()
 
 void Body::fromHeaders()
 {
+    cout << "counfiguring it" << endl;
     if (headers[TRANSFER_ENCODING] != "")
     {
         if (headers[TRANSFER_ENCODING] == "chunked")
@@ -71,14 +72,15 @@ void Body::fromHeaders()
         else
             throw BodyException(E_INVALID_BODY_HEADERS, NULL);
     }
-    if (headers[CONTENT_LENGTH] != "" && (mode == M_CHUNKED || mode == M_IDENTITY))
+    if (headers[CONTENT_LENGTH] != "" && mode == M_CHUNKED)
         throw BodyException(E_INVALID_BODY_HEADERS, NULL);
-    else if (headers[CONTENT_LENGTH] != "")
+    else if (headers[CONTENT_LENGTH] != "" || mode == M_IDENTITY)
     {
         string content_lenght_header = headers[CONTENT_LENGTH];
         const char *start = content_lenght_header.c_str();
         char *end = NULL;
         content_length = strtol(start, &end, 10);
+        cout << "the content length is: " << content_length << endl;;
         if (end == start || *end != '\0' || content_length <= 0 || content_length > max_config_size)
             throw BodyException(E_INVALID_BODY_HEADERS, NULL);
         mode = M_CONTENT_LENGTH;
@@ -142,15 +144,15 @@ bool Body::readChunked(ssize_t &buffer_size)
     return false;
 }
 
-bool Body::readIdentity(ssize_t &buffer_size)
-{
-    if (body_size + buffer_size > max_config_size)
-        throw BodyException(E_BODY_SIZE_OVERFLOW, NULL);
-    body_file.write(buffer, buffer_size);
-    body_size += buffer_size;
-    buffer_size = 0;
-    return false;
-}
+// bool Body::readIdentity(ssize_t &buffer_size)
+// {
+//     if (body_size + buffer_size > max_config_size)
+//         throw BodyException(E_BODY_SIZE_OVERFLOW, NULL);
+//     body_file.write(buffer, buffer_size);
+//     body_size += buffer_size;
+//     buffer_size = 0;
+//     return false;
+// }
 
 bool Body::readContentLength(ssize_t &buffer_size)
 {
@@ -159,6 +161,7 @@ bool Body::readContentLength(ssize_t &buffer_size)
     if (body_size + buffer_size > content_length 
         || body_size + buffer_size > max_config_size)
         throw BodyException(E_BODY_SIZE_OVERFLOW, NULL);
+    cout <<"In Content_Length" << endl;
     body_file.write(buffer, buffer_size);
     body_size += buffer_size;
     buffer_size = 0;
@@ -187,8 +190,6 @@ bool Body::operator<<(ssize_t &buffer_size)
             body_done = readChunked(buffer_size);
             break;
         case M_IDENTITY:
-            body_done = readIdentity(buffer_size);
-            break;
         case M_CONTENT_LENGTH:
             body_done = readContentLength(buffer_size);
             break;

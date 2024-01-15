@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/06 19:49:43 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/15 20:02:29 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/15 22:31:17 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -211,8 +211,6 @@ void Response::generateResponse()
     Path req_path(root_directory + req.getReqPath());
     CGI_LANG lang = L_UNKNOWN;
     Path cgi_script;
-    cout << "the request path:|" << req.getReqPath()<< "|" << endl;
-    cout << "with the whole thing being:|" << *req_path << "|" << endl;
     if (redirection)
     {
         stringstream ss;
