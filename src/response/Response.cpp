@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/06 19:49:43 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/14 20:20:12 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/15 17:42:52 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -301,16 +301,29 @@ void Response::serveError(const response_code &err_code)
     }
 }
 
-
-
 void Response::operator>>(Socket &client_sock)
 {
-    generateResponse();
-    if (!res_headers_done || !cgi.isDone())
-        return ;
-    ssize_t sent_size = 0;
-    if (!(*file))
-        file >> res_buf;
+    try
+    {
+        generateResponse();
+        if (!res_headers_done || !cgi.isDone())
+            return ;
+        if (!(*file))
+            file >> res_buf;
+    }
+    catch (const ResponseException &e)
+    {
+        switch (e.err_c)
+        {
+            case E_FAILED_CGI_EXEC:
+                return serveError(RES_INTERNAL_SERVER_ERROR);       
+            case E_FAILED_RESPONSE_BODY_READ:
+                return serveError(RES_UNAUTHORIZED);
+            default:
+                return serveError(RES_FORBIDDEN);
+        }
+    }
+    ssize_t sent_size = 0;   
     if ((sent_size = send(client_sock.getSockid(), res_buf, buffer_size, 0)) < 0)
         throw ResponseException(E_FAILED_SEND, NULL);
     client.setLastActivity();

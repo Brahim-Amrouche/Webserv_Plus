@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/04 20:34:53 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/11 20:27:09 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/15 15:06:45 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,9 +36,10 @@ enum REQUEST_HEADERS
     TRANSFER_ENCODING,
     CONTENT_TYPE,
     UPLOAD_FILE,
+    COOKIE,
 };
 
-extern const char *request_headers[5];
+extern const char *request_headers[6];
 
 class ServerSocket;
 class Socket;

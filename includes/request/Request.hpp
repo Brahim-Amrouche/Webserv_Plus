@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 14:23:31 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/14 18:48:16 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/15 16:09:52 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,6 +85,10 @@ class Request
         ServerSocket &getServerSock()
         {
             return (server_sock);
+        };
+        void debugHeaders()
+        {
+            headers.debugHeaders();
         };
         string &operator*();
         deque<string> *operator[](const string &server_key);

@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/25 14:24:00 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/14 20:29:30 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/15 16:59:52 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ LoadBalancer::LoadBalancer(deque<ServerSocket> *sockets):listeners(sockets), epo
     for (size_t i = 0; i < listeners->size() ; i++)
     {
         FT::memset(events, 0, sizeof(EPOLL_EVENT));
-        (*listeners)[i].fill_epoll_event(events, EPOLLIN | EPOLLET);
+        (*listeners)[i].fill_epoll_event(events, EPOLLIN);
         if (epoll_ctl(epoll_fd, EPOLL_CTL_ADD, (*listeners)[i].getSockid(), events) == -1)
         {
             close(epoll_fd);

@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/09 21:48:20 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/14 19:07:48 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/15 17:40:35 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,20 +68,17 @@ void Cgi::setEnv(Path &script, Path &req_path)
     env.push_back(temp_env);
     temp_env = "AUTH_TYPE=";
     env.push_back(temp_env);
-    if (req.getBodySize() > 0)
-    {
-        ostringstream oss;
-        temp_env = "CONTENT_LENGTH=";
-        oss << req.getBodySize();
-        temp_env += oss.str();
-        env.push_back(temp_env);
-    }
-    if (req[CONTENT_TYPE] != "")
-    {
-        temp_env = "CONTENT_TYPE=";
-        temp_env += req[CONTENT_TYPE];
-        env.push_back(temp_env);
-    }
+    ostringstream oss;
+    temp_env = "CONTENT_LENGTH=";
+    oss << req.getBodySize();
+    temp_env += oss.str();
+    env.push_back(temp_env);
+    temp_env = "CONTENT_TYPE=";
+    temp_env += req[CONTENT_TYPE];
+    env.push_back(temp_env);
+    temp_env = "HTTP_COOKIE=";
+    temp_env += req[COOKIE];
+    env.push_back(temp_env);
 }
 
 const char *php_execution_args[3] = {PHP_CGI_PATH, NULL, NULL};
@@ -99,8 +96,10 @@ void Cgi::exec(Path &script_path)
     int res_file = open(cgi_output.c_str(), O_RDWR | O_CREAT, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
     if (res_file < 0)
         exit(1);
-    if (dup2(body_file, 0) == -1  || dup2(res_file, 1) == -1 )
+    if (dup2(body_file, STDIN_FILENO) == -1  || dup2(res_file, STDOUT_FILENO) == -1 || dup2(res_file, STDERR_FILENO) == -1)
         exit(1);
+    close(body_file);
+    close(res_file);
     string script_name = script_path.getFileRoute();
     --script_path;
     script_path = string(".") + (*script_path);
@@ -148,7 +147,6 @@ void Cgi::validateHeaders(size_t &read_size)
     {
         stringstream ss;
         ss << (end_pos - read_size);
-        cout << "the size of result is:" << ss.str() << endl;
         headers.insert(std::pair<string, string>("Content-Length", ss.str()));
     }
     ifs.close();
@@ -201,7 +199,6 @@ void Cgi::parseHeaders()
     string keyval;
     size_t read_size = 0;
     size_t read_count = res_file.gcount();
-    cout << "the file read count is: " << read_count << endl; 
     for (size_t i = 0; i < read_count; i+= 2)
     {
         size_t start = i;

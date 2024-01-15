@@ -6,18 +6,19 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/04 21:02:47 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/11 17:57:57 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/15 15:07:28 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "webserv.hpp"
 
-const char *request_headers[5] = {
+const char *request_headers[6] = {
     "Host",
     "Content-Length",
     "Transfer-Encoding",
     "Content-Type",
     "Upload-File",
+    "Cookie",
 };
 
 Headers::HeadersException::HeadersException(const headers_err &err, Headers *cln):TException("Headers Error: ", err, cln)

@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 14:36:31 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/14 20:16:36 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/15 16:51:47 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,10 @@ void File::operator>>(char (&buf)[HEADERS_MAX_SIZE + 1])
     file.read(buf + buffer_size, size_to_read);
     buffer_size += size_to_read;
     if (read_size == file_size)
+    {
+        cout << "the file is served||" << path << "||" << endl; 
         file_done = true;
+    }
     file.close();
 }
 
