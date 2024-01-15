@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 00:23:26 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/13 01:55:05 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/15 19:49:27 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,10 +100,7 @@ void Body::configBody()
 bool Body::readChunked(ssize_t &buffer_size)
 {
     if (body_done)
-    {
-        cout << "It's done" << endl;
         return body_done;
-    }
     try
     {
         if (content_length == -2

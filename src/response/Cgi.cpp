@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/09 21:48:20 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/15 17:40:35 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/15 19:10:03 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,7 +124,6 @@ void Cgi::init(Path &script_path, Path &req_path)
     cgi_done = false;
     setEnv(script_path, req_path);
     cgi_output = req.getReqId() + ".res";
-    cout << "Initiating the script <<<<<<<<<<<<<<<<" << endl;
     proc_id = fork();
     switch (proc_id)
     {
@@ -133,7 +132,6 @@ void Cgi::init(Path &script_path, Path &req_path)
         case 0:
             exec(script_path);
         default:
-            cout << "Exectuted and dusted" << endl;
            return ;
     }
 }
@@ -150,7 +148,7 @@ void Cgi::validateHeaders(size_t &read_size)
         headers.insert(std::pair<string, string>("Content-Length", ss.str()));
     }
     ifs.close();
-    if (headers.find("Content-Type") == headers.end())
+    if (headers.find("Content-Type") == headers.end() && headers.find("Content-type") == headers.end())
         headers.insert(std::pair<string, string>("Content-Type", "application/octet-stream"));
     if (headers.find("Status") == headers.end())
         headers.insert(std::pair<string, string>("Status", "200 OK"));
@@ -221,6 +219,8 @@ void Cgi::parseHeaders()
         headers.insert(std::pair<string, string>(keyval.substr(0, Pos), keyval.substr(Pos + 2)));
     }
     res_file.close();
+    for(map<string, string>::iterator it = headers.begin(); it != headers.end() ; it++)
+        cout << it->first << ": " << it->second << endl;
     validateHeaders(read_size);
     pushHeaders();
 }
@@ -237,7 +237,6 @@ bool Cgi::isDone()
         throw Response::ResponseException(E_FAILED_CGI_EXEC, NULL);
     if (pid > 0)
     {
-        cout << "It executed perfectly ||||||||||||" << endl;
         proc_id = 0;
         parseHeaders();
         cgi_done = true;

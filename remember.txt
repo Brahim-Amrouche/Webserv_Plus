@@ -1,6 +1,3 @@
 test 127.0.0.0
 
 // protect agains that weird transfer encoding
-// test rules removed from error templates
-// google double connection issue
-// the double php Content-Type headers

@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/25 14:24:00 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/15 16:59:52 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/15 18:59:34 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,10 @@ void LoadBalancer::loop()
         if (events_trigered < 0)
             throw LoadBalancer::LoadBalancerExceptions(E_EPOLLWAIT, this);
         else if (events_trigered > 0)
+        {
             handle_request();
+            // throw LoadBalancer::LoadBalancerExceptions(E_EPOLLWAIT, this);
+        }
         // else
         //     cout << "listening..." << endl;
         check_timeouts();
@@ -100,7 +103,7 @@ void LoadBalancer::handle_request()
         event_fd =  events[i].data.fd;
         if ((srv_sock = find_server(event_fd)) != listeners->end())
         {
-            cout << "the fd of event done :" << event_fd << endl;
+            cout << "the fd of event done :" << event_fd << " with i being: "<< i << endl;
             if (events[i].events & EPOLLIN)
                 add_client(i, srv_sock);
         }
@@ -142,7 +145,6 @@ void LoadBalancer::add_client(int event_id, SrvSockDeqIt &server)
     if (epoll_ctl(epoll_fd, EPOLL_CTL_ADD, new_client_sock->getSockid(), &(events[event_id])) == -1)
         throw LoadBalancer::LoadBalancerExceptions(E_EPOLLCTL, this);
     ++load;
-    cout << "New Client Added: "<< new_client_sock->getSockid()  << endl;
 }
 
 void    LoadBalancer::remove_client(ClientMapIt &rm_cl)

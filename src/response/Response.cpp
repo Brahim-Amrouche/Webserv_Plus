@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/06 19:49:43 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/15 17:42:52 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/15 20:02:29 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,10 +78,14 @@ void Response::serveErrorHeaders(const response_code &err_code)
     string content_length("Content-Length: 5\r\n");
     RESH::pushHeaders(res_buf, content_length, buffer_size);
     pushDefaultHeaders();
-    string content("Error");
-    FT::memmove(res_buf + buffer_size, content.c_str(), content.length());
+    char content[] = "Error";
+    FT::memmove(res_buf + buffer_size, content, sizeof(content));
+    buffer_size += sizeof(content);
+    res_buf[buffer_size] = 0;
+    cout << res_buf << endl;
     file.setFileDone(true);
     res_headers_done = true;
+    cgi.setCgiDone(true);
 }
 
 void Response::serveFile(Path &path_dir, const response_code &res_code)
@@ -99,9 +103,6 @@ void Response::serveFile(Path &path_dir, const response_code &res_code)
         pushDefaultHeaders();
         res_headers_done = true;
         cgi.setCgiDone(true);
-        // res_buf[buffer_size] = '\0';
-        // cout << "the file is here :|" << *path_dir << "|" << endl;
-        // cout << "the buffer is:|" << res_buf << "|" << endl;
     }
     catch (const RESH::RESHException &e)
     {
@@ -172,8 +173,6 @@ void Response::serveDirectory(Path &path_dir)
     }
     else if (upload_path.isSubPath(req.getReqPath()))
     {
-        // cout << "the upload Path is:|" << *upload_path << "|" << endl;
-        // cout << "the req path is:|" << req.getReqPath() << "|" << endl;
         Path delete_file(root_directory + req.getReqPath());
         if (req.getReqMethod() == METHOD_POST && req.getBodyMode() != M_NO_BODY)
             return uploadFile();
@@ -194,8 +193,6 @@ void Response::uploadFile()
     string upload_dir(root_directory + req.getReqPath() + "/" + req[UPLOAD_FILE]);
     const char *tmp_file_path = req_file.c_str();
     const char *upload_file_path = upload_dir.c_str();
-    // cout << "the tmpfile path is:|" << tmp_file_path << "|" << endl;
-    // cout << "the upload file path is:|" << upload_file_path << "|" << endl;
     if (rename(tmp_file_path, upload_file_path) != 0)
         return serveError(RES_UNAUTHORIZED);
     Path upload_res(DEFAULT_ROOT);
@@ -233,7 +230,6 @@ void Response::generateResponse()
         else if ((*cgi_active)[0] == "py" && lang != L_PYTHON)
             return serveError(RES_FORBIDDEN);
         Path full_path(req.getReqPath());
-        cout << "the cgi path is:|" << *full_path << "| with lang is:" << lang << endl;
         cgi.setLang(lang);
         cgi.init(cgi_script, full_path);
         cgi.isDone();

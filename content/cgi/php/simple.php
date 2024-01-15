@@ -2,6 +2,7 @@
 <?php
 header("Content-Length: 100");
 header("Content-Line: 10");
+header("Content-Type: text/javascript");
 
 echo "<html>
 <head>
