@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/25 14:24:00 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/15 22:43:43 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/16 16:47:07 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,12 +64,7 @@ void LoadBalancer::loop()
         if (events_trigered < 0)
             throw LoadBalancer::LoadBalancerExceptions(E_EPOLLWAIT, this);
         else if (events_trigered > 0)
-        {
             handle_request();
-            // throw LoadBalancer::LoadBalancerExceptions(E_EPOLLWAIT, this);
-        }
-        // else
-        //     cout << "listening..." << endl;
         check_timeouts();
     }
 }
@@ -120,7 +115,7 @@ void LoadBalancer::handle_request()
             catch (const Client::ClientExceptions &e)
             {
                 cout << e.what() << endl;
-                clients.erase(cl_it);
+                remove_client(cl_it);
                 --load;
             }
         }

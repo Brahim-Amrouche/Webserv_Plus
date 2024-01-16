@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/25 10:12:41 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/08 20:17:29 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/16 17:02:16 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,13 +18,10 @@ t_cleanup cleanup_data = {NULL, NULL};
 
 void sigIntHandler(int sigNum)
 {
-    cout << "Cleaning Up..." << endl;
     if (cleanup_data.cleanup_server_sock)
         delete cleanup_data.cleanup_server_sock;
     if (cleanup_data.cleanup_loadbalancer)
         delete cleanup_data.cleanup_loadbalancer;
-    // if (cleanup_data.cleanup_mimetypes)
-    //     delete cleanup_data.cleanup_mimetypes;
     exit(sigNum);
 }
 

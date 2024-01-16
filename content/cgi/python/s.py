@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import time
 
 print("Content-Type: text/html\r")
 print("Status: 200 OK\r")

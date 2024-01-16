@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/09 21:48:20 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/15 19:10:03 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/16 17:06:31 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,7 +120,6 @@ void Cgi::exec(Path &script_path)
 
 void Cgi::init(Path &script_path, Path &req_path)
 {
-    (void) buffer;
     cgi_done = false;
     setEnv(script_path, req_path);
     cgi_output = req.getReqId() + ".res";
@@ -219,8 +218,6 @@ void Cgi::parseHeaders()
         headers.insert(std::pair<string, string>(keyval.substr(0, Pos), keyval.substr(Pos + 2)));
     }
     res_file.close();
-    for(map<string, string>::iterator it = headers.begin(); it != headers.end() ; it++)
-        cout << it->first << ": " << it->second << endl;
     validateHeaders(read_size);
     pushHeaders();
 }
@@ -249,7 +246,7 @@ Cgi::~Cgi()
     if (proc_id > 0)
     {
         kill(proc_id, SIGKILL);
-        waitpid(proc_id, &status, 0);
+        waitpid(proc_id, &status, WUNTRACED);
     }
     remove(cgi_output.c_str());
 }

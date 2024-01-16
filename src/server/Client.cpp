@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/26 08:12:04 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/15 16:33:08 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/16 16:59:47 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,14 +31,14 @@ Client::ClientExceptions::ClientExceptions(const client_errors &err, Client *cln
 }
 
 Client::Client(Socket *cl_sock, ServerSocket &s_sock): client_socket(cl_sock), 
-    server_socket(s_sock), req(buffer, *cl_sock, s_sock, *this), res(buffer, req, *this), err_code(RES_NONE), close_socket(false)
+    server_socket(s_sock), req(buffer, *cl_sock, s_sock, *this), res(buffer, req, *this), err_code(RES_NONE), err_set(false) ,close_socket(false)
 {
     setLastActivity();
 }
 
 Client::Client(const Client &cpy_cl): client_socket(cpy_cl.client_socket), server_socket(cpy_cl.server_socket)
     , req(buffer, *cpy_cl.client_socket,  server_socket, *this) , res(buffer, req, *this)
-    , last_activity(cpy_cl.last_activity) , err_code(cpy_cl.err_code) , close_socket(cpy_cl.close_socket)
+    , last_activity(cpy_cl.last_activity) , err_code(cpy_cl.err_code) , err_set(cpy_cl.err_set) ,close_socket(cpy_cl.close_socket)
 {}
 
 Socket *Client::getSocket() const
@@ -55,6 +55,8 @@ void    Client::receive()
 {
     try
     {
+        if (err_code != RES_NONE)
+            return;
         char close_buff[1];
         if (recv(client_socket->getSockid(),close_buff , 1, MSG_PEEK) <= 0)
             throw ClientExceptions(E_CLIENT_CLOSED, NULL);
@@ -86,7 +88,11 @@ void    Client::send()
     {
         if (err_code != RES_NONE)
         {
-            res.serveError(err_code);
+            if (!err_set)
+            {
+                res.serveError(err_code);
+                err_set = true;
+            }
             res >> *client_socket;
         }
         if (req.getServerConfig() && req.getBodyDone())
@@ -130,10 +136,7 @@ void Client::setLastActivity()
 void Client::checkTimeout()
 {
     if (!err_code && std::time(NULL) - last_activity >= MAX_TIMEOUT)
-    {
-        cout << "something timed out: " << this->getSocketId() << endl;
         err_code = RES_REQUEST_TIMEOUT;
-    }
 }
 
 Client::~Client()

@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/05 00:23:26 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/15 22:42:12 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/16 17:03:05 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,6 @@ void Body::fromConfig()
 
 void Body::fromHeaders()
 {
-    cout << "counfiguring it" << endl;
     if (headers[TRANSFER_ENCODING] != "")
     {
         if (headers[TRANSFER_ENCODING] == "chunked")
@@ -80,7 +79,6 @@ void Body::fromHeaders()
         const char *start = content_lenght_header.c_str();
         char *end = NULL;
         content_length = strtol(start, &end, 10);
-        cout << "the content length is: " << content_length << endl;;
         if (end == start || *end != '\0' || content_length <= 0 || content_length > max_config_size)
             throw BodyException(E_INVALID_BODY_HEADERS, NULL);
         mode = M_CONTENT_LENGTH;
@@ -161,7 +159,6 @@ bool Body::readContentLength(ssize_t &buffer_size)
     if (body_size + buffer_size > content_length 
         || body_size + buffer_size > max_config_size)
         throw BodyException(E_BODY_SIZE_OVERFLOW, NULL);
-    cout <<"In Content_Length" << endl;
     body_file.write(buffer, buffer_size);
     body_size += buffer_size;
     buffer_size = 0;
@@ -207,4 +204,5 @@ Body::~Body()
 {
     if (body_file.is_open())
         body_file.close();
+    remove(req_id.c_str());
 }

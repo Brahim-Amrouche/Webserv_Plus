@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/06 19:49:43 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/15 22:31:17 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/16 17:11:34 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,6 @@ void Response::redirect(Path &redi_conf, const response_code &code)
 
 void Response::serveErrorHeaders(const response_code &err_code)
 {
-    cout << "Some type of error led us here|||||||||||||||" << endl;
     buffer_size = 0;
     string status_line = RESH::getStatusLine(err_code);
     RESH::pushHeaders(res_buf, status_line, buffer_size);
@@ -82,7 +81,6 @@ void Response::serveErrorHeaders(const response_code &err_code)
     FT::memmove(res_buf + buffer_size, content, sizeof(content));
     buffer_size += sizeof(content);
     res_buf[buffer_size] = 0;
-    cout << res_buf << endl;
     file.setFileDone(true);
     res_headers_done = true;
     cgi.setCgiDone(true);
@@ -167,7 +165,6 @@ void Response::serveDirectory(Path &path_dir)
         if (index_file_path.isFile())
         {
             Path index_route(req.getReqPath() + "/" + index);
-            cout << "it reached here *:|" << *index_route << "|" << endl;
             return redirect(index_route, RES_FOUND);
         }
     }
@@ -190,6 +187,8 @@ void Response::serveDirectory(Path &path_dir)
 void Response::uploadFile()
 {
     string req_file(req.getReqId());
+    if (req[UPLOAD_FILE] == "")
+        return serveError(RES_BAD_REQUEST);
     string upload_dir(root_directory + req.getReqPath() + "/" + req[UPLOAD_FILE]);
     const char *tmp_file_path = req_file.c_str();
     const char *upload_file_path = upload_dir.c_str();
@@ -252,6 +251,7 @@ void Response::serveError(const response_code &err_code)
         int i_code = static_cast<int>(err_code);
         stringstream ss;
         ss << i_code;
+        cout <<"The code is : " << ss.str() << endl;
         deque<string>::iterator result = std::find(err_page->begin(), err_page->end(), ss.str());
         if (result != err_page->end())
         {
