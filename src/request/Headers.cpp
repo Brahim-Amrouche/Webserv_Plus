@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/04 21:02:47 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/16 17:03:14 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/16 18:08:56 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,6 +83,7 @@ void Headers::parseRequestLine()
 void Headers::configureRequest()
 {
     string host_string = (*this)[HOST];
+    cout << "host_string: " << host_string << endl;
     if (host_string.empty())
         throw HeadersException(E_NO_HOST_HEADER, NULL);
     req_config = server_sock[host_string]; 

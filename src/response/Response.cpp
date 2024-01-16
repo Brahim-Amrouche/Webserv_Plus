@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/06 19:49:43 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/16 17:11:34 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/16 17:58:47 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,16 +71,24 @@ void Response::serveErrorHeaders(const response_code &err_code)
     buffer_size = 0;
     string status_line = RESH::getStatusLine(err_code);
     RESH::pushHeaders(res_buf, status_line, buffer_size);
-    Path content_ext(".txt");
+    Path content_ext(".html");
     string content_type = RESH::getContentTypeHeader(content_ext);
     RESH::pushHeaders(res_buf, content_type, buffer_size);
-    string content_length("Content-Length: 5\r\n");
+    stringstream ss;
+    ss << err_code;
+    string page(DEFAULT_ERROR_HTML);
+    page += ss.str();
+    page += "</title></head><body><h1>Error ";
+    page += ss.str();
+    page += "</h1></body></html>";
+    ss.str("");
+    string content_length("Content-Length: ");
+    ss << page.size();
+    content_length += ss.str() + "\r\n";
     RESH::pushHeaders(res_buf, content_length, buffer_size);
     pushDefaultHeaders();
-    char content[] = "Error";
-    FT::memmove(res_buf + buffer_size, content, sizeof(content));
-    buffer_size += sizeof(content);
-    res_buf[buffer_size] = 0;
+    FT::memmove(res_buf + buffer_size, page.c_str(), page.size());
+    buffer_size += page.size();
     file.setFileDone(true);
     res_headers_done = true;
     cgi.setCgiDone(true);
@@ -251,14 +259,14 @@ void Response::serveError(const response_code &err_code)
         int i_code = static_cast<int>(err_code);
         stringstream ss;
         ss << i_code;
-        cout <<"The code is : " << ss.str() << endl;
         deque<string>::iterator result = std::find(err_page->begin(), err_page->end(), ss.str());
         if (result != err_page->end())
         {
             while (!PH::strIsPath(*(++result)))
                 ;
-            Path err_redir(*result);
-            return redirect(err_redir , RES_FOUND);
+            Path err_redir(root_directory + *result);
+            error_served = err_code;
+            return serveFile(err_redir, error_served);
         }
     }
     Path root_err_path(DEFAULT_ERROR_PAGES);
