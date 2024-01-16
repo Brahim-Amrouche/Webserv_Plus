@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/06 19:49:43 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/16 17:58:47 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/16 19:37:11 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -269,8 +269,10 @@ void Response::serveError(const response_code &err_code)
             return serveFile(err_redir, error_served);
         }
     }
-    Path root_err_path(DEFAULT_ERROR_PAGES);
+    Path root_err_path(DEFAULT_ROOT);
+    root_err_path += DEFAULT_ERROR_PAGES;
     root_err_path += "/";
+    cout << *root_err_path << endl;
     switch (err_code)
     {
         case RES_BAD_REQUEST:

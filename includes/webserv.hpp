@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/25 14:12:51 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/16 17:53:10 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/16 19:30:02 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,12 @@
 #include "./response/Response.hpp"
 #include <climits>
 
-#define DEFAULT_CONFIG "./config/default_config.conf"
-#define DEFAULT_ROOT "./content"
-#define DEFAULT_ERROR_PAGES "./content/error_pages"
-#define DEFAULT_TMP_FOLDER "./tmp"
+#define DEFAULT_CONFIG "/config/default_config.conf"
+#ifndef DEFAULT_ROOT
+    #define DEFAULT_ROOT "/"
+#endif
+#define DEFAULT_ERROR_PAGES "/content/error_pages"
+#define DEFAULT_TMP_FOLDER "/tmp"
 #define DEFAULT_INDEX "index.html"
 
 #define DEFAULT_ERROR_HTML "<!DOCTYPE html><html lang='en'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><title>Error: "

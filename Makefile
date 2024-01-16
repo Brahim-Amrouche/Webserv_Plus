@@ -26,27 +26,31 @@ SRCS = main.cpp \
 
 CC = c++
 
+DEFAULT_ROOT := ${shell pwd}
+
 OBJECT_FILES = $(patsubst %.cpp,%.o,$(SRCS))
 
 %.o : %.cpp
-	@$(CC) $(FLAGS) -c $^ -o $@
+	@$(CC) $(FLAGS) -DDEFAULT_ROOT='"${DEFAULT_ROOT}"' -c $^ -o $@
 
 all : $(NAME)
 
 $(NAME) : $(OBJECT_FILES)
-	@$(CC) $(FLAGS) $^ -o $(NAME)
+	-mkdir ./tmp
+	$(CC) $(FLAGS) $^ -o $(NAME) 
 
 clean :
 	@rm -rf ${OBJECT_FILES}
 
 fclean : clean
 	@rm -rf $(NAME)
-	rm -rf ${wildcard ./tmp/*.tmp} ${wildcard ./tmp/*.res}
 
 re : fclean all
+
+bonus : all
 
 run : re
 	clear
 	./webserv
 
-.PHONY : all clean fclean re
+.PHONY : all clean fclean re run

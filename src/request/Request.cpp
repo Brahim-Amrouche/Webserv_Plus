@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/02 14:48:01 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/15 17:42:42 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/16 19:45:19 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ void Request::read()
             case E_INVALID_METHOD:
                 throw RequestException(E_REQUEST_ERROR_405, NULL);    
             default:
-                throw RequestException(E_FAILED_HEADERS_READ, NULL);
+                throw RequestException(E_REQUEST_ERROR_400, NULL);
         }
     }
     catch (const Body::BodyException &e)
@@ -76,11 +76,15 @@ void Request::read()
             case E_INVALID_BODY_CONFIG:
             case E_INVALID_BODY_HEADERS:
             case E_BODY_SIZE_OVERFLOW:
+                cout << "body size overflow" << endl;
                 throw RequestException(E_REQUEST_ERROR_400, NULL);
             case E_BODY_READING:
+            case E_UNABLE_TO_OPEN_TMP_FILE:
+                cout << "body reading failed" << endl;
                 throw RequestException(E_REQUEST_ERROR_500, NULL);
             default:
-                throw RequestException(E_FAILED_BODY_READ, NULL);
+                cout << "body default failed" << endl;
+                throw RequestException(E_REQUEST_ERROR_400, NULL);
         }
     }
 }

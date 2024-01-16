@@ -6,7 +6,7 @@
 /*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/25 10:12:41 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/16 17:02:16 by bamrouch         ###   ########.fr       */
+/*   Updated: 2024/01/16 19:23:18 by bamrouch         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,11 @@ int main(int argc, char *argv[])
 {
     deque<ServerSocket> *server_sockets = NULL;
     if (argc == 1)
-       server_sockets = configure(DEFAULT_CONFIG);
+    {
+       string root_folder(DEFAULT_ROOT);
+       string config_file(root_folder + DEFAULT_CONFIG);
+       server_sockets = configure(config_file.c_str());
+    }
     else if(argc == 2)
         server_sockets = configure(argv[1]);
     else
@@ -47,6 +51,7 @@ int main(int argc, char *argv[])
     }
     try
     {
+            
         LoadBalancer *load_balancer = new LoadBalancer(server_sockets);
         cleanup_data.cleanup_server_sock = NULL;
         cleanup_data.cleanup_loadbalancer = load_balancer;
