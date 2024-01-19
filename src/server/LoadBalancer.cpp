@@ -1,14 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   LoadBalancer.cpp                                   :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/12/25 14:24:00 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/16 16:47:07 by bamrouch         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
 
 #include "webserv.hpp"
 #include "TException.hpp"
@@ -114,7 +103,6 @@ void LoadBalancer::handle_request()
             }
             catch (const Client::ClientExceptions &e)
             {
-                cout << e.what() << endl;
                 remove_client(cl_it);
                 --load;
             }

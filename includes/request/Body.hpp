@@ -1,14 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Body.hpp                                           :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/01/04 20:21:15 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/12 15:44:48 by bamrouch         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
 
 #pragma once
 #include <fstream>
@@ -39,7 +28,7 @@ class Body
     private:
         string  &req_id;
         char   (&buffer)[HEADERS_MAX_SIZE + 1];
-        ServerConfiguration *(&conf);
+        ServerConfiguration *&conf;
         Headers &headers;
         ssize_t max_config_size;
         ssize_t content_length;

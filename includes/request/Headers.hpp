@@ -1,14 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Headers.hpp                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/01/04 20:34:53 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/15 15:06:45 by bamrouch         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
 
 #pragma once
 #include "../server/Socket.hpp"
@@ -49,7 +38,7 @@ class Headers
     private:
         char  (&req_buffer)[HEADERS_MAX_SIZE + 1];
         ServerSocket &server_sock;
-        ServerConfiguration *(&req_config);
+        ServerConfiguration *&req_config;
         map<string, string> headers;
         string  req_line;
         string  req_path;

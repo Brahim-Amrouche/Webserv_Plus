@@ -1,14 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Body.cpp                                           :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/01/05 00:23:26 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/16 19:44:55 by bamrouch         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
 
 #include "webserv.hpp"
 
@@ -67,10 +56,7 @@ void Body::fromHeaders()
             mode = M_CHUNKED;
         }
         else if (headers[TRANSFER_ENCODING] == "identity")
-        {
             mode = M_IDENTITY;
-            cout << "hello here |||||||||||" << endl;
-        }
         else
             throw BodyException(E_INVALID_BODY_HEADERS, NULL);
     }
@@ -88,7 +74,6 @@ void Body::fromHeaders()
     }
     else if (mode == M_NO_CONF)
         mode = M_NO_BODY;
-    cout << "body config mode: " << mode << endl;
 }
 
 void Body::configBody()
@@ -174,10 +159,8 @@ bool Body::operator<<(ssize_t &buffer_size)
     if (buffer_size == 0)
         return (body_done = true);
     body_file.open(req_id.c_str(), std::ios::app | std::ios::binary);
-    cout << "before opening" << endl;
     if (!body_file.is_open())
         throw BodyException(E_UNABLE_TO_OPEN_TMP_FILE, NULL);
-    cout << "after opening" << endl;
     if (mode == M_NO_CONF)
         configBody();
     if (mode == M_NO_BODY && buffer_size != 0)

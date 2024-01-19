@@ -1,14 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Headers.cpp                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/01/04 21:02:47 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/16 18:37:18 by bamrouch         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
 
 #include "webserv.hpp"
 
@@ -93,7 +82,7 @@ bool Headers::operator<<(ssize_t &buffer_size)
 {
     if (headers_done)
         return headers_done;
-    size_t res = 0;
+    ssize_t res = 0;
     try{
         if ((res = REQH::get_headers(req_buffer, buffer_size, req_line, headers)) < 0)
             return headers_done;

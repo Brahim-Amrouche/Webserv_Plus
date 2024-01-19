@@ -1,14 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Socket.cpp                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: bamrouch <bamrouch@student.1337.ma>        +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/12/25 12:36:29 by bamrouch          #+#    #+#             */
-/*   Updated: 2024/01/16 18:29:05 by bamrouch         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
 
 #include "webserv.hpp"
 
@@ -89,7 +78,6 @@ Socket &Socket::operator=(const Socket &eq_sock)
 
 void Socket::sockBind()
 {
-    cout << "Binding Socket" << endl;
     if (bind(sock_id, &sock_addr, sock_addr_len))
         throw Socket::SocketExceptions(E_SOCKET_BIND_FAILED, this);
     cout << "Binding successfull" << endl;
@@ -97,7 +85,6 @@ void Socket::sockBind()
 
 void Socket::sockListen()
 {
-    cout << "Attempting to listen on socket" << endl;
     if (listen(sock_id, SOMAXCONN))
         throw Socket::SocketExceptions(E_LISTEN_FAILED, this);
     cout << "Socket listening" << endl;
@@ -138,7 +125,6 @@ Socket::~Socket()
 {
     if (ISVALIDSOCKET(sock_id))
         close(sock_id);
-    cout << "Socket closed" << endl;
 }
 
 
@@ -148,7 +134,7 @@ ServerSocket::ServerSocket(ServerConfiguration &first_server, const char *host, 
     configs->push_back(first_server);
 }
 
-ServerSocket::ServerSocket(const ServerSocket &cpy_srv_sock)
+ServerSocket::ServerSocket(const ServerSocket &cpy_srv_sock):Socket()
 {
     ServerSocket::operator=(cpy_srv_sock);
 }
