@@ -12,6 +12,7 @@ void Cgi::setQueryParams(Path &req_path)
         return;
     string query_params = "QUERY_STRING=";
     query_params += last_path.substr(qmark_pos + 1);
+    env.push_back(query_params);
     string path_info = (*req_path).substr(0, slash_pos + 1) + last_path.substr(0, qmark_pos);
     req_path = path_info;
 }

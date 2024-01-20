@@ -92,7 +92,6 @@ void Socket::sockListen()
 
 Socket *Socket::sockAccept()
 {
-    cout << "Accepting a new connection" << endl;
     Socket *client_socket = new Socket();
     if (!client_socket)
         throw Socket::SocketExceptions(E_SOCKET_ACCEPT, this);

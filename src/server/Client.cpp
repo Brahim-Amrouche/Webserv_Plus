@@ -89,7 +89,6 @@ void    Client::send()
     }
     catch(const Response::ResponseException &e)
     {
-        cout << e.what() << endl;
         throw ClientExceptions(E_CLIENT_SEND, NULL);
     }
 }

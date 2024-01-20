@@ -331,7 +331,7 @@ void    ConfigParser::parseIndexDirective(TokenIt &start_token)
     if (depth < 1)
         throw ConfigParserException(E_INDEX_DIRECTIVE, this);
     std::advance(start_token, 1);
-    if (start_token == tokens->end() || PH::strIsBreakToken(*start_token))
+    if (start_token == tokens->end() || PH::strIsPath(*start_token) || PH::strIsBreakToken(*start_token))
         throw ConfigParserException(E_INDEX_DIRECTIVE, this);
     try
     {
@@ -477,7 +477,7 @@ void ConfigParser::generateServerSockets()
             continue;
         ServerConfiguration *curr_dir = servers[i][directives[LISTEN]];
         deque<string> *listen_val = **curr_dir;
-        string host_val = (*listen_val)[0], port_val= (*listen_val)[1];
+        string host_val = (*listen_val)[0] == "localhost" ? "127.0.0.1" : (*listen_val)[0], port_val= (*listen_val)[1];
         ServerSocket *new_server = new ServerSocket(servers[i], host_val.c_str(), port_val.c_str());
         servers[i].setToNull();
         new_server->sockBind();
@@ -487,7 +487,7 @@ void ConfigParser::generateServerSockets()
         {
             ServerConfiguration *tmp_dir = servers[j][directives[LISTEN]];
             deque<string> *tmp_listen_val = **tmp_dir;
-            string tmp_host = (*tmp_listen_val)[0], tmp_port = (*tmp_listen_val)[1];
+            string tmp_host = (*tmp_listen_val)[0] == "localhost" ? "127.0.0.1" : (*tmp_listen_val)[0], tmp_port = (*tmp_listen_val)[1];
             if(tmp_host == host_val && tmp_port == port_val)
             {
                 new_server->pushServerConfig(servers[j]);

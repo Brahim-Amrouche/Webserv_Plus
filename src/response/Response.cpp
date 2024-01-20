@@ -174,6 +174,7 @@ void Response::serveDirectory(Path &path_dir)
         {
             remove((*delete_file).c_str());
             Path delete_res(DEFAULT_ROOT);
+            delete_res += DEFAULT_CONTENT;
             delete_res += "/200.html";
             return serveFile(delete_res, RES_OK);
         }
@@ -192,6 +193,7 @@ void Response::uploadFile()
     if (rename(tmp_file_path, upload_file_path) != 0)
         return serveError(RES_UNAUTHORIZED);
     Path upload_res(DEFAULT_ROOT);
+    upload_res += DEFAULT_CONTENT;
     upload_res += "/201.html";
     return serveFile(upload_res, RES_CREATED);
     

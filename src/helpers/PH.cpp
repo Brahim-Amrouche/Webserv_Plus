@@ -60,14 +60,16 @@ void PH::parseHostString(const string &str, string (&info)[2])
 string PH::parseBodySize(const string &str)
 {
     size_t size_pos = str.find_first_of("MK");
-    if (size_pos == string::npos || size_pos + 1 < str.size())
+    if (size_pos != string::npos && size_pos + 1 < str.size())
         throw PHException();  
     string body_size = str.substr(0, size_pos);
     stringstream ss(body_size);
     long long bytes_size = 0;
     if (!(ss >> bytes_size) || bytes_size <= 0)
         throw PHException();
-    if (str[size_pos] == 'K')
+    if (size_pos == string::npos)
+        ;
+    else if (str[size_pos] == 'K')
         bytes_size *= 1024;
     else if (str[size_pos] == 'M')
         bytes_size *= 1024 * 1024;

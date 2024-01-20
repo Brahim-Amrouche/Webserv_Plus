@@ -70,6 +70,11 @@ bool Path::isSubPath(Path subpath) const
 CGI_LANG Path::isCgiPath(Path req_path, Path &script)
 {
     Path tmp(*this);
+    string rm_query_strings = *tmp;
+    size_t q_pos = 0;
+    if ((q_pos = rm_query_strings.find_first_of("?")) != string::npos)
+        rm_query_strings = rm_query_strings.substr(0, q_pos);
+    tmp = rm_query_strings;
     while (req_path.value != "")
     {
         if (tmp.isPhpFile())

@@ -11,6 +11,7 @@
 #ifndef DEFAULT_ROOT
     #define DEFAULT_ROOT "/"
 #endif
+#define DEFAULT_CONTENT "/content"
 #define DEFAULT_ERROR_PAGES "/content/error_pages"
 #define DEFAULT_TMP_FOLDER "/tmp"
 #define DEFAULT_INDEX "index.html"
