@@ -48,6 +48,7 @@ void LoadBalancer::loop()
 {
     while (true)
     {   
+        load = load >= MAX_EVENTS ? MAX_EVENTS : load;
         FT::memset(events, 0, sizeof(EPOLL_EVENT) * load);
         events_trigered = epoll_wait(epoll_fd, events, load, LOADBALANCER_CHECK_DELAY);
         if (events_trigered < 0)
