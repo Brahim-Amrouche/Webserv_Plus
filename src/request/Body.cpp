@@ -156,8 +156,6 @@ bool Body::readContentLength(ssize_t &buffer_size)
 
 bool Body::operator<<(ssize_t &buffer_size)
 {
-    if (buffer_size == 0)
-        return (body_done = true);
     body_file.open(req_id.c_str(), std::ios::app | std::ios::binary);
     if (!body_file.is_open())
         throw BodyException(E_UNABLE_TO_OPEN_TMP_FILE, NULL);

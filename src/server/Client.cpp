@@ -46,9 +46,9 @@ void    Client::receive()
     {
         if (err_code != RES_NONE)
             return;
-        char close_buff[1];
-        if (recv(client_socket->getSockid(),close_buff , 1, MSG_PEEK) <= 0)
-            throw ClientExceptions(E_CLIENT_CLOSED, NULL);
+        // char close_buff[1];
+        // if (recv(client_socket->getSockid(),close_buff , 1, MSG_PEEK) <= 0)
+        //     throw ClientExceptions(E_CLIENT_CLOSED, NULL);
         req.read();
     }
     catch(const Request::RequestException &e)
@@ -64,6 +64,8 @@ void    Client::receive()
             case E_REQUEST_ERROR_500:
                 err_code = RES_INTERNAL_SERVER_ERROR;
                 break;
+            case E_FAILED_READ:
+                throw ClientExceptions(E_CLIENT_CLOSED, NULL);
             default:
                 err_code = RES_BAD_REQUEST;   
                 break;

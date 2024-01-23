@@ -32,7 +32,7 @@ void Request::read()
     if (headers.headersDone() && body.bodyDone())
         throw RequestException(E_READING_DONE, NULL);
     ssize_t temp = 0;
-    if ((temp = recv(client_sock.getSockid(), req_buffer + buffer_size, HEADERS_MAX_SIZE - buffer_size, 0)) < 0)
+    if ((temp = recv(client_sock.getSockid(), req_buffer + buffer_size, HEADERS_MAX_SIZE - buffer_size, 0)) <= 0)
         throw RequestException(E_FAILED_READ, NULL);
     client.setLastActivity();
     buffer_size += temp;
@@ -65,14 +65,11 @@ void Request::read()
             case E_INVALID_BODY_CONFIG:
             case E_INVALID_BODY_HEADERS:
             case E_BODY_SIZE_OVERFLOW:
-                cout << "body size overflow" << endl;
                 throw RequestException(E_REQUEST_ERROR_400, NULL);
             case E_BODY_READING:
             case E_UNABLE_TO_OPEN_TMP_FILE:
-                cout << "body reading failed" << endl;
                 throw RequestException(E_REQUEST_ERROR_500, NULL);
             default:
-                cout << "body default failed" << endl;
                 throw RequestException(E_REQUEST_ERROR_400, NULL);
         }
     }

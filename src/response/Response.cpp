@@ -172,6 +172,8 @@ void Response::serveDirectory(Path &path_dir)
             return uploadFile();
         else if (req.getReqMethod() == METHOD_DELETE && delete_file.isFile())
         {
+            if (access((*delete_file).c_str(), R_OK | W_OK) != 0)
+                return serveError(RES_UNAUTHORIZED);
             remove((*delete_file).c_str());
             Path delete_res(DEFAULT_ROOT);
             delete_res += DEFAULT_CONTENT;
@@ -185,12 +187,13 @@ void Response::serveDirectory(Path &path_dir)
 void Response::uploadFile()
 {
     string req_file(req.getReqId());
-    if (req[UPLOAD_FILE] == "")
-        return serveError(RES_BAD_REQUEST);
-    string upload_dir(root_directory + req.getReqPath() + "/" + req[UPLOAD_FILE]);
+    // if (req[UPLOAD_FILE] == "")
+    //     return serveError(RES_BAD_REQUEST);
+    string upload_dir(root_directory + req.getReqPath());
     const char *tmp_file_path = req_file.c_str();
     const char *upload_file_path = upload_dir.c_str();
-    if (rename(tmp_file_path, upload_file_path) != 0)
+    Path upload_path (upload_dir);
+    if (upload_path.isDir() || upload_path.isFile() || rename(tmp_file_path, upload_file_path) != 0)
         return serveError(RES_UNAUTHORIZED);
     Path upload_res(DEFAULT_ROOT);
     upload_res += DEFAULT_CONTENT;
@@ -318,7 +321,7 @@ void Response::operator>>(Socket &client_sock)
         }
     }
     ssize_t sent_size = 0;   
-    if ((sent_size = send(client_sock.getSockid(), res_buf, buffer_size, 0)) < 0)
+    if ((sent_size = send(client_sock.getSockid(), res_buf, buffer_size, 0)) <= 0)
         throw ResponseException(E_FAILED_SEND, NULL);
     client.setLastActivity();
     FT::memmove(res_buf, res_buf + sent_size, buffer_size - sent_size);
