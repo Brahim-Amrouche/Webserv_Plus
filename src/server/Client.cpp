@@ -46,9 +46,6 @@ void    Client::receive()
     {
         if (err_code != RES_NONE)
             return;
-        // char close_buff[1];
-        // if (recv(client_socket->getSockid(),close_buff , 1, MSG_PEEK) <= 0)
-        //     throw ClientExceptions(E_CLIENT_CLOSED, NULL);
         req.read();
     }
     catch(const Request::RequestException &e)
