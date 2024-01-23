@@ -1,14 +1,9 @@
 #!/usr/bin/env python3
-import time
-
 print("Content-Type: text/html\r")
 print("Status: 200 OK\r")
 print("\r")
-
-while True:
-    continue
     
 print("<html>")
-print("<head><title>Infinite CGI Loop (for testing)</title></head>")
+print("<head><title>Simple Python CGI (for testing)</title></head>")
 print("<body>")
-print("<h1>Infinite CGI Loop (for testing)</h1>")
+print("<h1>Simple CGI (for testing)</h1>")

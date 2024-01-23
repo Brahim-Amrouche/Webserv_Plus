@@ -42,14 +42,11 @@ Socket::Socket(const char *host, const char *port)
     hints.ai_flags = LISTEN_ON_HOST_NET;
 
     ADDRESS_INFO *bind_address = NULL;
-    cout << "Looking for address info..." << endl;
     int dns_lookup_res = getaddrinfo(host, port, &hints, &bind_address);
     if (dns_lookup_res > 0)
         throw Socket::SocketExceptions(E_ADDRESS_LOOKUP, NULL);
     FT::memcpy(&sock_addr, bind_address->ai_addr, sizeof(SOCK_ADDR_STORAGE));
     sock_addr_len = bind_address->ai_addrlen;
-    cout << "Address info found" << endl;
-    cout << "Openning new TCP socket ..." << endl;
     sock_id = socket(bind_address->ai_family, bind_address->ai_socktype, bind_address->ai_protocol);
     freeaddrinfo(bind_address);
     if (!ISVALIDSOCKET(sock_id))
@@ -80,7 +77,6 @@ void Socket::sockBind()
 {
     if (bind(sock_id, &sock_addr, sock_addr_len))
         throw Socket::SocketExceptions(E_SOCKET_BIND_FAILED, this);
-    cout << "Binding successfull" << endl;
 }
 
 void Socket::sockListen()

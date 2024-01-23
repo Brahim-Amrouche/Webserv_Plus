@@ -47,6 +47,7 @@ class Response
         void serveError(const response_code &err_code);
 
         void generateResponse();
+        void setRootDirectory(const string &root);
         void operator>>(Socket &clien_sock);
         ~Response();
 };

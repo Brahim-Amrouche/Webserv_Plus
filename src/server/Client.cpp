@@ -81,6 +81,9 @@ void    Client::send()
         {
             if (!err_set)
             {
+                deque<string> *root_dir = req[directives[ROOT]];
+                if (root_dir)
+                    res.setRootDirectory((*root_dir)[0]);
                 res.serveError(err_code);
                 err_set = true;
             }

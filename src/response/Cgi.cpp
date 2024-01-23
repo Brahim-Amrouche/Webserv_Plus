@@ -1,7 +1,7 @@
 
 #include "webserv.hpp"
 
-void Cgi::setQueryParams(Path &req_path)
+void Cgi::setQueryParams(Path &script, Path &req_path)
 {
     size_t slash_pos = (*req_path).find_last_of('/');
     if (slash_pos == string::npos)
@@ -15,6 +15,11 @@ void Cgi::setQueryParams(Path &req_path)
     env.push_back(query_params);
     string path_info = (*req_path).substr(0, slash_pos + 1) + last_path.substr(0, qmark_pos);
     req_path = path_info;
+    slash_pos = (*script).find_last_of('/');
+    last_path = (*script).substr(slash_pos + 1);
+    qmark_pos = last_path.find('?');
+    path_info = (*script).substr(0, slash_pos + 1) + last_path.substr(0,qmark_pos);
+    script = path_info;
 }
 
 void Cgi::setServerEnv()
@@ -44,10 +49,10 @@ void Cgi::setEnv(Path &script, Path &req_path)
     temp_env = "REMOTE_ADDR=";
     env.push_back(temp_env);
     setServerEnv();
+    setQueryParams(script, req_path);
     temp_env = "SCRIPT_NAME=";
     temp_env += *script;
     env.push_back(temp_env);
-    setQueryParams(req_path);
     temp_env = "PATH_INFO=";
     temp_env += *req_path;
     env.push_back(temp_env);

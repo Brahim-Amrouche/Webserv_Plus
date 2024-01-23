@@ -485,6 +485,8 @@ void ConfigParser::generateServerSockets()
         server_sockets->push_back(*new_server);
         for (size_t j = i + 1; j < servers.size(); j++)
         {
+            if (std::find(similar_servers.begin(), similar_servers.end(), j) != similar_servers.end())
+                continue;
             ServerConfiguration *tmp_dir = servers[j][directives[LISTEN]];
             deque<string> *tmp_listen_val = **tmp_dir;
             string tmp_host = (*tmp_listen_val)[0] == "localhost" ? "127.0.0.1" : (*tmp_listen_val)[0], tmp_port = (*tmp_listen_val)[1];

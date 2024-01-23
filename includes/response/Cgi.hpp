@@ -31,7 +31,7 @@ class Cgi
             lang = l;
         };
         void setServerEnv();
-        void setQueryParams(Path &req_path);
+        void setQueryParams(Path &script, Path &req_path);
         void setEnv(Path &script, Path &req_path);
         void exec(Path &script_path);
         void validateHeaders(size_t &read_size);

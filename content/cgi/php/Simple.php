@@ -1,7 +1,6 @@
 #!/usr/bin/php-cgi
 <?php
 header("Content-Type: text/html");
-header("Content-Length: 1000");
 
 echo "<html>
 <head>

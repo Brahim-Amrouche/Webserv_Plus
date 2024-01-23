@@ -330,6 +330,12 @@ void Response::operator>>(Socket &client_sock)
         throw ResponseException(E_CLOSE_CONNECTION, NULL);
 }
 
+
+void Response::setRootDirectory(const string &root)
+{
+    root_directory = root;
+}
+
 Response::~Response()
 {}
 

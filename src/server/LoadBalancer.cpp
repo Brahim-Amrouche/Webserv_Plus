@@ -25,7 +25,6 @@ LoadBalancer::LoadBalancerExceptions::LoadBalancerExceptions(const loadbalancer_
 
 LoadBalancer::LoadBalancer(deque<ServerSocket> *sockets):listeners(sockets), epoll_fd(-1), events_trigered(0) ,load(0)
 {
-    cout << "Initiating The Load Balancer" << endl;
     if ((epoll_fd = epoll_create(1)) < 0)
         throw LoadBalancer::LoadBalancerExceptions(E_EPOLLINIT, NULL);
     for (size_t i = 0; i < listeners->size() ; i++)
