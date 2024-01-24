@@ -237,6 +237,7 @@ void    ConfigParser::parseLocationDirective(TokenIt &start_token)
     try
     {
         ServerConfiguration temp(directives[LOCATION]);
+        *start_token = *start_token == "" ? "/" : *start_token;
         temp.pushConfValue(*start_token);
         config->pushSubdirective(*start_token, temp);
         temp.setToNull();

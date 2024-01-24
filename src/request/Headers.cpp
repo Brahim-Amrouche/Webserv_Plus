@@ -54,7 +54,7 @@ void Headers::parseRequestLine()
     req_path = req_line.substr(pos + 1, pos2 - pos - 1);
     if (!PH::strIsPath(req_path))
         throw HeadersException(E_REQUEST_LINE, NULL);
-    Path path_obj(req_path);
+    Path path_obj(req_path == "" ? "/" : req_path);
     req_config = (*req_config)[path_obj];
     ServerConfiguration *allowed_methods = (*req_config)[directives[ALLOW_METHODS]];
     deque<string>::iterator it = (**allowed_methods)->begin(), end = (**allowed_methods)->end();
@@ -73,7 +73,7 @@ void Headers::configureRequest()
 {
     string host_string = (*this)[HOST];
     if (host_string.empty())
-        throw HeadersException(E_NO_HOST_HEADER, NULL);
+        throw HeadersException(E_NO_HOST_HEADER, NULL); 
     req_config = server_sock[host_string]; 
     parseRequestLine();
 }

@@ -2,7 +2,7 @@ NAME = webserv
 
 INCLUDES = -I./includes -I./includes/server -I./includes/helpers -I./includes/config  -I./includes/request -I./includes/response
 
-FLAGS = -Wall -Wextra -Werror -std=c++98 ${INCLUDES}
+FLAGS = -Wall -Wextra -Werror -std=c++98 ${INCLUDES} -fsanitize=address
 
 SRCS = main.cpp \
 ./src/helpers/REQH.cpp \
