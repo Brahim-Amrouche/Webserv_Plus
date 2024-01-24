@@ -202,8 +202,8 @@ void Cgi::parseHeaders()
         if (i == start)
         {
             file.setFilePath(cgi_output);
-            file.setReadSize(i + 1);
-            read_size = i + 1;
+            file.setReadSize(i + 2);
+            read_size = i + 2;
             break;
         }
         keyval = string(buffer + start, i - start);
