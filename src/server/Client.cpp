@@ -85,6 +85,7 @@ void    Client::send()
                 err_set = true;
             }
             res >> *client_socket;
+            return;
         }
         if (req.getServerConfig() && req.getBodyDone())
             res >> *client_socket;
