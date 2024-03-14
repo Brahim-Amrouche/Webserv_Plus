@@ -56,6 +56,7 @@ void Headers::parseRequestLine()
         throw HeadersException(E_REQUEST_LINE, NULL);
     Path path_obj(req_path == "" ? "/" : req_path);
     req_config = (*req_config)[path_obj];
+    req_path = *path_obj == "/" ? "" : *path_obj;
     ServerConfiguration *allowed_methods = (*req_config)[directives[ALLOW_METHODS]];
     deque<string>::iterator it = (**allowed_methods)->begin(), end = (**allowed_methods)->end();
     if (std::find(it, end, method) == end)

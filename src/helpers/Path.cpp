@@ -56,6 +56,16 @@ bool Path::isDir()
 
 }
 
+string Path::extract_subpath(const string &subpath)
+{
+    if (this->value == "/" || subpath == "/")
+        return this->value;
+    size_t found_subpath = this->value.find(subpath);
+    if (found_subpath == string::npos)
+        return this->value;
+    return this->value.substr(subpath.size());
+}
+
 bool Path::isSubPath(Path subpath) const
 {
     while (subpath.value != "")

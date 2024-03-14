@@ -28,6 +28,7 @@ class Path
         CGI_LANG isCgiPath(Path req_path, Path &script);
         string operator*();
         string getFileRoute();
+        string extract_subpath(const string &sub_path);
         bool isSubPath(Path subpath) const;
         bool isPythonFile();
         bool isPhpFile();

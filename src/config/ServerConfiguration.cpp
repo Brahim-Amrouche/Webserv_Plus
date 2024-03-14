@@ -95,7 +95,7 @@ void ServerConfiguration::normalizeLocations()
 {
     if (!subdirective)
         return;
-    string &server_name = (*config_values)[1];
+    // string &server_name = (*config_values)[1];
     for (ConfigIt it = subdirective->begin(); it != subdirective->end(); it++)
     {
         if (!PH::strIsPath(it->first))
@@ -103,7 +103,7 @@ void ServerConfiguration::normalizeLocations()
         ServerConfiguration &location = it->second;
         string location_path = (*location.config_values)[1];
         (*location.config_values).pop_back();
-        (*location.config_values).push_back(server_name + location_path);
+        (*location.config_values).push_back(location_path);
         for (ConfigIt it2 = subdirective->begin(); it2 != subdirective->end(); it2++)
         {
             if(PH::strIsPath(it2->first) || it2->first == directives[INDEX])
@@ -126,13 +126,18 @@ ServerConfiguration *ServerConfiguration::operator[](Path &location_path)
 {
     if (!subdirective)
         return NULL;
+    Path full_req_path(*location_path);
     while (*location_path != "")
     {
         map<string, ServerConfiguration>::iterator found = subdirective->find(*location_path);
         if (found != subdirective->end())
+        {
+            location_path = full_req_path.extract_subpath(*location_path);   
             return &(found->second);
+        }
         --location_path;
     }
+    location_path = full_req_path;
     return this;
 }
 
